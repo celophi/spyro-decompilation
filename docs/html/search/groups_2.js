@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['psy_2dq_20functions_0',['PSY-Q Functions',['../group__psyq__functions.html',1,'']]]
+  ['global_20variables_0',['Labeled Global Variables',['../group__labeled__global__variables.html',1,'']]]
 ];

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['r_0',['R',['../struct_r_g_b_a__u8.html#aa6a68467d7c4508817fa499c9925129c',1,'RGBA_u8::R'],['../struct_r_g_b__u8.html#a26ae3844f300978e7b20f311d51a618a',1,'RGB_u8::R'],['../struct_b_g_r__u8.html#ac7d9bc4cdad96e29c1a3754474dfdba6',1,'BGR_u8::R']]],
+  ['r_0',['r',['../struct_r_g_b_a__u8.html#aa6a68467d7c4508817fa499c9925129c',1,'RGBA_u8::R'],['../struct_r_g_b__u8.html#a26ae3844f300978e7b20f311d51a618a',1,'RGB_u8::R'],['../struct_b_g_r__u8.html#ac7d9bc4cdad96e29c1a3754474dfdba6',1,'BGR_u8::R']]],
   ['relativesparxangle_1',['RelativeSparxAngle',['../struct_spyro.html#ad219ef709afe0a94947264e75fcee47a',1,'Spyro']]],
   ['requiredhud1_2',['requiredHUD1',['../struct_moby.html#a0ee1c23e1693dd0be01dafffc66c4b30',1,'Moby']]],
   ['requiredhud2_3',['requiredHUD2',['../struct_moby.html#a44090dcbf27f7338fc44a44c4af502f8',1,'Moby']]],

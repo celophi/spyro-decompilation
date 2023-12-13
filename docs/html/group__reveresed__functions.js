@@ -1,8 +1,12 @@
 var group__reveresed__functions =
 [
+    [ "ApplyImageFading", "group__reveresed__functions.html#gae8efda2e00f497b3f486bd0a0833ce1b", null ],
     [ "CalculateCompletionPercentage", "group__reveresed__functions.html#ga9365f0a572e6aa39a13f62ef55d0cf62", null ],
     [ "CdStatus", "group__reveresed__functions.html#ga8f0e9694e79d77fecae20bc0ac7be23d", null ],
+    [ "Convert32To16RGBA", "group__reveresed__functions.html#ga90726d258be9896f823b1d9c63e72546", null ],
+    [ "CopyHudToShaded", "group__reveresed__functions.html#ga0589eb5821063bea3efc5f10a0843000", null ],
     [ "DrawArrow", "group__reveresed__functions.html#ga2cd7ba44c8a0d989bf998d4134344376", null ],
+    [ "DrawDemoText", "group__reveresed__functions.html#gaf6f157ac51fc75ee83fc91496d9480c9", null ],
     [ "DrawPrimitive", "group__reveresed__functions.html#ga8b0e4dff97c23e1601315a0dc193b968", null ],
     [ "DrawTextAll", "group__reveresed__functions.html#ga1c7c7b6680b4dea7383eaf81d6210942", null ],
     [ "DrawTextbox", "group__reveresed__functions.html#ga569e10703075154925accd8955d39d8d", null ],

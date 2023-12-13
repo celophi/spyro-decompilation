@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['B',['../struct_r_g_b_a__u8.html#a988722cace9191ad38ab8a11dd09ca85',1,'RGBA_u8::B'],['../struct_r_g_b__u8.html#a6903868c8c224eba170f78ce54a78846',1,'RGB_u8::B'],['../struct_b_g_r__u8.html#a73abec38c78dbeb5efb75b1feda5ec82',1,'BGR_u8::B']]],
+  ['b_0',['b',['../struct_r_g_b_a__u8.html#a988722cace9191ad38ab8a11dd09ca85',1,'RGBA_u8::B'],['../struct_r_g_b__u8.html#a6903868c8c224eba170f78ce54a78846',1,'RGB_u8::B'],['../struct_b_g_r__u8.html#a73abec38c78dbeb5efb75b1feda5ec82',1,'BGR_u8::B']]],
   ['balloonist_5fstate_5fballoon_5floading_5fpart_5f1_1',['BALLOONIST_STATE_BALLOON_LOADING_PART_1',['../common_8h.html#aafda7831dc46fb549a30a4bb88171a73a8fc729ecf790ef4d8139b515a9264c08',1,'common.h']]],
   ['balloonist_5fstate_5fballoon_5floading_5fpart_5f2_2',['BALLOONIST_STATE_BALLOON_LOADING_PART_2',['../common_8h.html#aafda7831dc46fb549a30a4bb88171a73a2bffdc7f07eab6c01aad19b5a9bb07e6',1,'common.h']]],
   ['balloonist_5fstate_5fballoon_5flowering_3',['BALLOONIST_STATE_BALLOON_LOWERING',['../common_8h.html#aafda7831dc46fb549a30a4bb88171a73af8c345529e5d6a7dedcfda3c7c9a63f6',1,'common.h']]],

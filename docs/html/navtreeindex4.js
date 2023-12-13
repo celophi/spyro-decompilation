@@ -1,5 +1,9 @@
 var NAVTREEINDEX4 =
 {
+"struct_spyro.html#a7cbffa507b20bc785ae7ec2653cb5f4d":[4,0,26,14],
+"struct_spyro.html#a7e4e636caca393102a3b5fa079f2504a":[4,0,26,33],
+"struct_spyro.html#a7e55848aeca27552ee1568611953d804":[4,0,26,103],
+"struct_spyro.html#a7f376a19291439f3629472fa6fe999b4":[4,0,26,130],
 "struct_spyro.html#a82920eaba4870170026c97d30338684b":[4,0,26,112],
 "struct_spyro.html#a842cb982b3a21c96a187a16b0c745b45":[4,0,26,10],
 "struct_spyro.html#a8b9ac5a116e445af3b801d6858279e59":[4,0,26,80],
@@ -99,6 +103,7 @@ var NAVTREEINDEX4 =
 "symbol_map.html#in_game_variables":[2,0],
 "text_8h.html":[5,0,1,9],
 "text_8h_source.html":[5,0,1,9],
+"topics.html":[3],
 "vector_8c.html":[5,0,2,0,0,6],
 "vector_8c_source.html":[5,0,2,0,0,6],
 "vector_8h.html":[5,0,1,10],

@@ -1,5 +1,9 @@
 var NAVTREEINDEX3 =
 {
+"struct_lowercase_text_info.html#a19af0e07f1b58c359e1beb6f4fd56564":[4,0,10,0],
+"struct_lowercase_text_info.html#a22bf0b7b7e2aabbdc2bf926b4846a7f4":[4,0,10,1],
+"struct_m_a_t_r_i_x3_b_y3.html":[4,0,11],
+"struct_m_a_t_r_i_x3_b_y3.html#a619c7594ec0ac9f7936a16ee03d49e8d":[4,0,11,0],
 "struct_moby.html":[4,0,12],
 "struct_moby.html#a0a447f9a77c62404f860681950b06c5a":[4,0,12,18],
 "struct_moby.html#a0a7aa28fa97c8faca47c9b7b1c06692e":[4,0,12,32],
@@ -245,9 +249,5 @@ var NAVTREEINDEX3 =
 "struct_spyro.html#a73d6b20ece6fda18fc84d6cfa3ba2b8f":[4,0,26,2],
 "struct_spyro.html#a75505ceae7b711bdee9b5bbf8806facd":[4,0,26,21],
 "struct_spyro.html#a77f8db32914e539bf9370bd2193e7f91":[4,0,26,36],
-"struct_spyro.html#a78b28fd422c2a15f684711b99ba55b36":[4,0,26,61],
-"struct_spyro.html#a7cbffa507b20bc785ae7ec2653cb5f4d":[4,0,26,14],
-"struct_spyro.html#a7e4e636caca393102a3b5fa079f2504a":[4,0,26,33],
-"struct_spyro.html#a7e55848aeca27552ee1568611953d804":[4,0,26,103],
-"struct_spyro.html#a7f376a19291439f3629472fa6fe999b4":[4,0,26,130]
+"struct_spyro.html#a78b28fd422c2a15f684711b99ba55b36":[4,0,26,61]
 };

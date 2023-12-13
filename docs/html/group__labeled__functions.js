@@ -1,6 +1,5 @@
 var group__labeled__functions =
 [
-    [ "CopyHudToShaded", "group__labeled__functions.html#ga0589eb5821063bea3efc5f10a0843000", null ],
     [ "CreateParticle", "group__labeled__functions.html#gafa04dcf27e1fe9f4aafafb42d72a91b0", null ],
     [ "DrawLine", "group__labeled__functions.html#gada9570ed4664ad96d93dccebca0c1427", null ],
     [ "DrawSync", "group__labeled__functions.html#gad56f9938eee28784699addcac124548d", null ],

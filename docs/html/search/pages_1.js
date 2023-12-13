@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['overview_0',['Overview',['../index.html',1,'']]]
+  ['map_0',['Symbol Map',['../symbol_map.html',1,'']]]
 ];

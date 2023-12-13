@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['labeled_20functions_0',['Labeled Functions',['../group__labeled__functions.html',1,'']]],
-  ['labeled_20global_20variables_1',['Labeled Global Variables',['../group__labeled__global__variables.html',1,'']]]
+  ['functions_0',['functions',['../group__reveresed__functions.html',1,'Decompiled Functions'],['../group__labeled__functions.html',1,'Labeled Functions'],['../group__psyq__functions.html',1,'PSY-Q Functions']]]
 ];

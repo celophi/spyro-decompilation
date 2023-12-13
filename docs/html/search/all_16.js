@@ -1,5 +1,12 @@
 var searchData=
 [
-  ['x_0',['x',['../struct_r_e_c_t.html#ac5a7e092265414dc2a538767937b3804',1,'RECT::x'],['../struct_capital_text_info.html#af6117cf077c284d9080accf817c3f97f',1,'CapitalTextInfo::x'],['../struct_vec3.html#a47ccb74f80c697cf605475aa53e541ea',1,'Vec3::x'],['../struct_vec2.html#ae76e144847d9ef65bd288df4dc83f8a3',1,'Vec2::x'],['../struct_vec3_padding.html#a181727cea139cdcd56acfb5a5076c775',1,'Vec3Padding::x'],['../struct_vec3__u16.html#a63deada6c1e911be89d2fddb94817a0f',1,'Vec3_u16::x'],['../struct_vec3__u8.html#a3d77c73319faacd31695b915b493c51a',1,'Vec3_u8::x'],['../struct_vec2__u16.html#acb8abb020111f1f37d86d317985b4e49',1,'Vec2_u16::x'],['../struct_vec2__u8.html#a4cb3c33722ed59a8bab54628565a2ce8',1,'Vec2_u8::x']]],
-  ['x_5fbutton_1',['X_BUTTON',['../common_8h.html#a2200c9a3564da59c1160338587ecb034a4660347a1d83bfe7edd5bf83f0fcd8ad',1,'common.h']]]
+  ['w_0',['w',['../struct_r_e_c_t.html#ab80cb925cb934a151bbd1c241d3233e9',1,'RECT']]],
+  ['walking_1',['WALKING',['../spyro_8h.html#aa2de79fdccfb5675aaecead602c22579a7f92908f6f669259d971b608823d2ebb',1,'spyro.h']]],
+  ['walkingacceleration_2',['walkingAcceleration',['../struct_spyro.html#ad5e16462bce6182fdfa4cd2d735c34c6',1,'Spyro']]],
+  ['walkingmomentum_3',['walkingMomentum',['../struct_spyro.html#aee5d479f655e7eb14b1d6e23c4d4f243',1,'Spyro']]],
+  ['whirlwind_4',['WHIRLWIND',['../spyro_8h.html#aa2de79fdccfb5675aaecead602c22579a4f40e870d16c3f7b0020bd5548640b3e',1,'spyro.h']]],
+  ['wild_5fflight_5fid_5',['WILD_FLIGHT_ID',['../common_8h.html#a31a61db791e237dda9149b2f5a496f2ba37393876c9cd0587bf25b83bf6360edf',1,'common.h']]],
+  ['wizard_5fpeak_5fid_6',['WIZARD_PEAK_ID',['../common_8h.html#a31a61db791e237dda9149b2f5a496f2ba1e4814e7ce02abf3c9802b10fdbb1e96',1,'common.h']]],
+  ['workflow_7',['Outline of our current workflow',['../index.html#autotoc_md5',1,'']]],
+  ['world_5funit_8',['WORLD_UNIT',['../common_8h.html#a467b88d9ef473346a2afa59126234609',1,'common.h']]]
 ];

@@ -107,5 +107,9 @@ var moby_8h =
       [ "FIVE_GEM_HELD_ID", "moby_8h.html#a0954ce21587d5f086b93016903a08f62a8998e405ddc1a992fb68a72f214070eb", null ],
       [ "TEN_GEM_HELD_ID", "moby_8h.html#a0954ce21587d5f086b93016903a08f62af8b679ca8e3cdca59f4ac4502597006a", null ],
       [ "TWENTYFIVE_GEM_HELD_ID", "moby_8h.html#a0954ce21587d5f086b93016903a08f62af994fbfaf8cb01d6b4a0318d48926794", null ]
-    ] ]
+    ] ],
+    [ "_ptr_hudMobys", "moby_8h.html#a53fce2b82812da0b17f6a957672cfa1a", null ],
+    [ "_ptr_hudMobysHead", "moby_8h.html#a5ecf9b5d28a0cec26871f378c9f78fd8", null ],
+    [ "_ptr_hudMobysQueue", "moby_8h.html#a0d8126e785b00f6a50ae4b73c29629da", null ],
+    [ "_ptrTextUnk", "moby_8h.html#abdba4650f6d008d9b64204cbaaa4be08", null ]
 ];

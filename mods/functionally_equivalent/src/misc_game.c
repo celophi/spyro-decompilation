@@ -105,5 +105,55 @@ void ApplyImageFading(uint *source, uint *destination, int contrast)
   }
 }
 
+/**
+ * @brief Converts a 32-bit RGBA pixel to 16-bit.
+ * @details Converts 32-bit RGBA pixels at the specified source and stores them as 16-bit at the same location.
+ * @param uint* source - pointer to an array of 32-bit pixels
+ * @param int size - number of pixels
+ * @note Function: Convert32To16RGBA \n
+   Original Address: 0x80017E98 \n
+   Hook File: convert_32_to_16_rgba.s \n
+   Prototype: misc_game.h \n
+   Amount of instructions: More (https://decomp.me/scratch/E3XCJ) \n
+  * @see Convert32To16RGBA()
+*/
+void Convert32To16RGBA(uint *source, int size)
+{
+  // RGB masks
+  const int blueMask = 0x1F;
+  const int redMask = 0x7C00;
+  const int greenMask = 0x3E0;
+
+  uint blue;
+  uint green;
+  uint red;
+  uint remainder;
+  
+  byte *end = (byte *)((int)source + size);
+  byte *cursor = (byte *)source;
+  
+  while (cursor != end)
+  {
+    // Each color is 5 bits RGB555.
+    blue = *source & blueMask;
+    green = *source & greenMask;
+    red = *source & redMask;
+
+    // Originally, I thought this is alpha, but it seems too large.
+    remainder = *source >> 0x10;
+
+    // Convert the RGB portions to fit into 16 bits.
+    *cursor++ = (char)(blue * 4 + (green >> 4) + (green >> 5) + (red >> 10) >> 3);
+
+    // Perform the conversion for the second half.
+    blue = remainder & blueMask;
+    green = remainder & greenMask;
+    red = remainder & redMask;
+
+    *cursor++ = (char)(blue * 4 + (green >> 4) + (green >> 5) + (red >> 10) >> 3);
+
+    source++;
+  }
+}
 
 /** @} */ // end of reveresed_functions

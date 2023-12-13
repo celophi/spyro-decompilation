@@ -57,4 +57,18 @@ void CopyHudToShaded();
 */
 void ApplyImageFading(uint *source, uint *destination, int contrast);
 
+/**
+ * @brief Converts a 32-bit RGBA pixel to 16-bit.
+ * @details Converts 32-bit RGBA pixels at the specified source and stores them as 16-bit at the same location.
+ * @param uint* source - pointer to an array of 32-bit pixels
+ * @param int size - number of pixels
+ * @note Function: Convert32To16RGBA \n
+   Original Address: 0x80017E98 \n
+   Hook File: convert_32_to_16_rgba.s \n
+   Prototype: misc_game.h \n
+   Amount of instructions: More (https://decomp.me/scratch/E3XCJ) \n
+  * @see Convert32To16RGBA()
+*/
+void ApplyGradient(uint *param_1,int size);
+
 #endif /* MISC_GAME_H */

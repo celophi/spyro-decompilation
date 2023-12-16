@@ -20,22 +20,23 @@
  * Prototype: draw_stuff.h \n
  * Amount of instructions: Same Amount (https://decomp.me/scratch/wd3wE) \n 
 */
-void DrawPrimitive(void* primitive)
-
+void DrawPrimitive(int primitive)
 {
-  int* local_gfx_ptrs;
-  short* unk_first_gfx_ptr;
-  
-  local_gfx_ptrs = _ptr_arrayGraphicsRelatedPointers;
-  unk_first_gfx_ptr = (short*) *_ptr_arrayGraphicsRelatedPointers;
-  *_ptr_arrayGraphicsRelatedPointers = (int*)primitive;
-  if (unk_first_gfx_ptr != 0x0) {
-    *unk_first_gfx_ptr = (short)primitive;
-    *(char *)(unk_first_gfx_ptr + 1) = (char)((uint)primitive >> 0x10);
+    short *unk_first_gfx_ptr;
+    int *local_gfx_ptrs;
+
+    local_gfx_ptrs = _ptr_arrayGraphicsRelatedPointers;
+    unk_first_gfx_ptr = (short *)*_ptr_arrayGraphicsRelatedPointers;
+    *_ptr_arrayGraphicsRelatedPointers = primitive;
+
+    if (unk_first_gfx_ptr != (short *)0x0) 
+    {
+        *unk_first_gfx_ptr = (short)primitive;
+        *(char *)(unk_first_gfx_ptr + 1) = (char)((uint)primitive >> 0x10);
+        return;
+    }
+    local_gfx_ptrs[1] = primitive;
     return;
-  }
-  local_gfx_ptrs[1] = (int*)primitive;
-  return;
 }
 
 /// @brief Draws a blinking text arrow facing left or right.
@@ -91,7 +92,7 @@ void DrawTextbox(int xBound1,int xBound2,int yBound1,int yBound2)
   Poly4FPadded* ptr_prim = (Poly4FPadded*)_ptr_primitivesArray;          
 
   PrimitiveAlphaHack(_ptr_primitivesArray,1,0,0x40,0);      // Trasparent black background hack
-  DrawPrimitive(ptr_prim);
+  DrawPrimitive((int)ptr_prim);
   ptr_prim->tag = 0x5000000;
   ptr_prim->code = POLY4F_TRANSPARENT;
   ptr_prim->point1Pos.x = xBound1;
@@ -105,8 +106,8 @@ void DrawTextbox(int xBound1,int xBound2,int yBound1,int yBound2)
   ptr_prim->color.R = 0x70;
   ptr_prim->color.G = 0x70;
   ptr_prim->color.B = 0x70;
-  DrawPrimitive((byte*)ptr_prim + 0xC);
-  _ptr_primitivesArray = (byte*)ptr_prim + 0x24;            // Make space in the array of primitives for the next one
+  DrawPrimitive((int)((byte*)ptr_prim + 0xC));
+  _ptr_primitivesArray = (int*)((byte*)ptr_prim + 0x24);            // Make space in the array of primitives for the next one
 
   // Outline of textbox
   DrawLine(xBound1,yBound1,xBound2,yBound1);

@@ -15,7 +15,7 @@
  * Prototype: draw_stuff.h \n
  * Amount of instructions: Same Amount (https://decomp.me/scratch/wd3wE) \n 
 */
-void DrawPrimitive(void* primitive);
+void DrawPrimitive(int primitive);
 
 
 

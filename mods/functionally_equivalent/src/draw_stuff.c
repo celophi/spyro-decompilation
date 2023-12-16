@@ -2,6 +2,7 @@
 #include <custom_types.h>
 #include <moby.h>
 #include <shapes.h>
+#include <memory.h>
 
 /** @ingroup reveresed_functions
  *  @{
@@ -19,60 +20,55 @@
  * Prototype: draw_stuff.h \n
  * Amount of instructions: Same Amount (https://decomp.me/scratch/wd3wE) \n 
 */
-void DrawPrimitive(void* primitive)
-
+void DrawPrimitive(int primitive)
 {
-  int* local_gfx_ptrs;
-  short* unk_first_gfx_ptr;
-  
-  local_gfx_ptrs = _ptr_arrayGraphicsRelatedPointers;
-  unk_first_gfx_ptr = (short*) *_ptr_arrayGraphicsRelatedPointers;
-  *_ptr_arrayGraphicsRelatedPointers = (int*)primitive;
-  if (unk_first_gfx_ptr != 0x0) {
-    *unk_first_gfx_ptr = (short)primitive;
-    *(char *)(unk_first_gfx_ptr + 1) = (char)((uint)primitive >> 0x10);
+    short *unk_first_gfx_ptr;
+    int *local_gfx_ptrs;
+
+    local_gfx_ptrs = _ptr_arrayGraphicsRelatedPointers;
+    unk_first_gfx_ptr = (short *)*_ptr_arrayGraphicsRelatedPointers;
+    *_ptr_arrayGraphicsRelatedPointers = primitive;
+
+    if (unk_first_gfx_ptr != (short *)0x0) 
+    {
+        *unk_first_gfx_ptr = (short)primitive;
+        *(char *)(unk_first_gfx_ptr + 1) = (char)((uint)primitive >> 0x10);
+        return;
+    }
+    local_gfx_ptrs[1] = primitive;
     return;
-  }
-  local_gfx_ptrs[1] = (int*)primitive;
-  return;
 }
 
-
-/**
- * @brief Draws a blinking arrow facing left or right. 
- * @details Fills out full moby struct into the pointer to the hud moby buffer
- 
- * @param void* hudMobyInfo - pointer to basic info about the arrow you want to draw (x, y, size)
- * @param uint timer - timer that counts every frame to be used for the pre-determined 16 frame intervals.
- * @param int leftOrRightArrow - 0 for right, 1 for left
- 
- * @note Function: DrawArrow \n
- * Original Address: 0x80018534 \n
- * Hook File: draw_arrow.s \n
- * Prototype: draw_stuff.h \n
- * Amount of instructions: Same Amount (https://decomp.me/scratch/IvMFp) \n
-*/
-void DrawArrow(HudMobyInfo* hudMobyInfo, uint timer, int leftOrRightArrow)
+/// @brief Draws a blinking text arrow facing left or right.
+/// @param position Position to draw on the screen.
+/// @param timer Timer that counts every frame to be used for the pre-determined 16 frame intervals.
+/// @param leftOrRight Determines if the arrow points left or right.
+void DrawTextArrow(Vector3D *position, uint timer, int leftOrRight)
 {
-  if ((timer % 32) < 16)                                                        // Alternate from being visible, and not every 16 frames
-  {  
-    _ptr_hudMobys = _ptr_hudMobys - sizeof(Moby);                               // Make space in the array of moby structs to be drawn to the hud
-    memset(_ptr_hudMobys,'\0', sizeof(Moby));                                   // 0 out the area
+    Vector3D *destination;
 
-    ((Moby*) _ptr_hudMobys)->type = 0x105;                                      // Set Moby Type to the ascii number 1 for an arrow
+    // Alternate from being visible, and not every 16 frames
+    if ((timer & 31) < 16) {
+        _ptr_hudMobys = _ptr_hudMobys + -1;
 
-    Vec3Copy(&((Moby*) _ptr_hudMobys)->position, hudMobyInfo);                  // Set Moby Position from info struct (Z represents size/depth in 2D)
+        Memset(_ptr_hudMobys, 0, sizeof(Moby));
 
-    if (leftOrRightArrow < 2) {
-        ((Moby*) _ptr_hudMobys)->rotation.x = 64;                               // Setting default roll rotation for a right arrow
-        ((Moby*) _ptr_hudMobys)->rotation.z = (byte)(leftOrRightArrow * 128);   // Bitshifting the arrow choice by 7 (multiplying by 128) to result in
-                                                                                // the yaw rotation of the number 1 to a left arrow.
+        destination = &_ptr_hudMobys->position;
+
+        // Set Moby Type to the ascii number 1 for an arrow (clever)
+        _ptr_hudMobys->type = 261;
+
+        CopyVector3D(destination, position);
+
+        if (leftOrRight < 2) {
+            _ptr_hudMobys->rotation.x = 64;
+            _ptr_hudMobys->rotation.z = (char)(leftOrRight << 7);
+        }
+                    /* Possible PsyQ macro: setSprt16() + setSemiTrans(sprt16, 1) + setShadeTex(sprt16, 1) */
+        _ptr_hudMobys->requiredHUD1 = 0x7F;
+        _ptr_hudMobys->color = 11;
+        _ptr_hudMobys->requiredHUD2 = 0xFF;
     }
-    ((Moby*) _ptr_hudMobys)->requiredHUD1 = 0x7f;           // Required for hud? Must be positive
-    ((Moby*) _ptr_hudMobys)->color = MOBY_COLOR_GOLD;       // Setting the color to gold
-    ((Moby*) _ptr_hudMobys)->requiredHUD2 = -1;             // Required for hud 2? Must be negative
-  }
-  return;
 }
 
 
@@ -96,7 +92,7 @@ void DrawTextbox(int xBound1,int xBound2,int yBound1,int yBound2)
   Poly4FPadded* ptr_prim = (Poly4FPadded*)_ptr_primitivesArray;          
 
   PrimitiveAlphaHack(_ptr_primitivesArray,1,0,0x40,0);      // Trasparent black background hack
-  DrawPrimitive(ptr_prim);
+  DrawPrimitive((int)ptr_prim);
   ptr_prim->tag = 0x5000000;
   ptr_prim->code = POLY4F_TRANSPARENT;
   ptr_prim->point1Pos.x = xBound1;
@@ -110,8 +106,8 @@ void DrawTextbox(int xBound1,int xBound2,int yBound1,int yBound2)
   ptr_prim->color.R = 0x70;
   ptr_prim->color.G = 0x70;
   ptr_prim->color.B = 0x70;
-  DrawPrimitive((byte*)ptr_prim + 0xC);
-  _ptr_primitivesArray = (byte*)ptr_prim + 0x24;            // Make space in the array of primitives for the next one
+  DrawPrimitive((int)((byte*)ptr_prim + 0xC));
+  _ptr_primitivesArray = (int*)((byte*)ptr_prim + 0x24);            // Make space in the array of primitives for the next one
 
   // Outline of textbox
   DrawLine(xBound1,yBound1,xBound2,yBound1);

@@ -1,3 +1,3 @@
 .set noreorder
-j DrawArrow
+j DrawTextArrow
 nop                 

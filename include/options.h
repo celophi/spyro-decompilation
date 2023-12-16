@@ -1,5 +1,4 @@
-#ifndef OPTIONS_H
-#define OPTIONS_H
+#pragma once
 
 enum CameraMode
 {
@@ -19,5 +18,3 @@ enum PauseMenuState
     PAUSED_OPTIONS,
     PAUSED_QUIT_GAME
 };
-
-#endif /* OPTIONS_H */

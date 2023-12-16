@@ -1,3 +1,3 @@
 .set noreorder
-j CopyHudToShaded
+j Memcpy
 nop

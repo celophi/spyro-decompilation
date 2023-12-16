@@ -1,5 +1,4 @@
-#ifndef SOUND_H
-#define SOUND_H
+#pragma once
 
 enum SoundPlaybackModes
 {
@@ -93,5 +92,3 @@ SOUND_EFFECT_SPARX_FULL_EAT = 0x4A,
 SOUND_EFFECT_LIFE_CHEST_BLINK = 0x4B,
 SOUND_EFFECT_DRAGON_IDLE_SHAKE = 0x4C
 };
-
-#endif //SOUND_H

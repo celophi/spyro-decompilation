@@ -1,5 +1,4 @@
-#ifndef MOBY_H
-#define MOBY_H
+#pragma once
 
 #include <common.h>
 
@@ -137,7 +136,7 @@ enum GemColors
 //~~~~~~~
 typedef struct HudMobyInfo
 {
-    Vec3 position;                  // Coords in hud act different than in world space. X and Y act like 2D plane. Z is effective size in HUD.
+    Vector3D position;                  // Coords in hud act different than in world space. X and Y act like 2D plane. Z is effective size in HUD.
 }HudMobyInfo;
 
 
@@ -154,7 +153,7 @@ typedef struct Moby
     int empty1;
     int* ptr_colision;
 
-    struct Vec3 position;
+    struct Vector3D position;
 
     short UNK21;                              
     
@@ -225,5 +224,3 @@ extern Moby* _ptrTextUnk; //0x800720f4                        //? Not too sure.
 extern Moby* _ptr_hudMobys; //0x80075710                      //? A pointer to a dynamic downwards growing array of moby structs to render that gets rendered to the hud every frame.
 extern Moby* _ptr_hudMobysQueue; //0x800756fc                 //? A pointer to a what seems to be a global queue of moby structs to process. _ptr_hudMobys are added to this.
 extern Moby* _ptr_hudMobysHead; //0x800720f8                  //? A pointer to the head of the HUD mobys queue.
-
-#endif /* MOBY_H */

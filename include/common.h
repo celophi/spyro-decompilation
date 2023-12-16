@@ -1,5 +1,4 @@
-#ifndef COMMON_H
-#define COMMON_H
+#pragma once
 
 #include "custom_types.h"
 #include "vector.h"
@@ -221,7 +220,7 @@ typedef struct BGR_u8
  */
 int printf (const char * format, ...);
 int sprintf(char *output, const char *format, ...);
-void memset(void *str, int c, int n);
+
 int rand();
 void srand(int seed);
 /** @} */ // end of psyq_functions
@@ -447,9 +446,9 @@ extern short _flyInAnimation;
 
 /**
  * @brief Camera Position \n Address: 0x80076DF8 
- * @see Vec3
+ * @see Vector3D
  */ 
-extern Vec3 _cameraPosition;
+extern Vector3D _cameraPosition;
 
 /**
  * @brief Camera Angle (yaw, pitch, roll) \n Address: 0x80076E1C
@@ -557,5 +556,3 @@ extern int* _maybe_ptr_levelTextureRelated; //0x800785f0
 
 extern byte _cdStatus; //0x80074e44
 /** @} */ // end of labeled_global_variables
-
-#endif /* COMMON_H */

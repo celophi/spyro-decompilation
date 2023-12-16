@@ -1,59 +1,28 @@
 #include <custom_types.h>
+#include <vector.h>
+#include <memory.h>
 
 /** @ingroup reveresed_functions
  *  @{
  */
 
-/**
- * @brief Adds vector 'a' and vector 'b' together, and stores the resulting vector in 'result'
-
- * @param int* result - The resulting vector.
- * @param int* a - The first vector to add.
- * @param int* b - The second vector to add.
- 
- * @note Function: Vec3Add \n
- * Original Address: 0x80017758 \n
- * Hook File: vec3_add.s \n
- * Prototype: vector.h \n
- * Amount of instructions: Same Amount (https://decomp.me/scratch/8OigK) \n
-*/
-void Vec3Add(int* result, int* a, int* b)
+/// @brief Adds two vectors together and puts the result in the destination.
+/// @param destination Resulting vector.
+/// @param first First vector as part of the sum.
+/// @param second Second vector as part of the sum.
+void AddVector3D(Vector3D* destination, Vector3D* first, Vector3D* second) 
 {
-   int temp_a1 = a[1];
-   int temp_a2 = a[2];
-   int temp_b1 = b[1];
-   int temp_b2 = b[2];
-
-   result[0] = a[0] + b[0];
-   result[1] = temp_a1 + temp_b1;
-   result[2] = temp_a2 + temp_b2;
-
-   return;
+    destination->X = first->X + second->X;
+    destination->Y = first->Y + second->Y;
+    destination->Z = first->Z + second->Z;
 }
 
-
-/**
- * @brief Copies the 'src' Vector to the 'dst' Vector.
-
- * @param int* src - The source vector.
- * @param int* dst - The destination vector.
- 
- * @note Function: Vec3Copy \n
- * Original Address: 0x80017700 \n
- * Hook File: vec3_copy.s \n
- * Prototype: vector.h \n
- * Amount of instructions: Same Amount (https://decomp.me/scratch/ycHxN) \n
-*/
-void Vec3Copy(int* dst, int* src)
+/// @brief Copies the source vector to the destination vector.
+/// @param destination Destination vector to get copied to.
+/// @param source Source vector to copy from.
+void CopyVector3D(Vector3D* destination, Vector3D* source) 
 {
-  int temp_src1 = src[1];
-  int temp_src2 = src[2];
-
-  dst[0] = src[0];
-  dst[1] = temp_src1;
-  dst[2] = temp_src2;
-
-  return;
+    Memcpy(destination, source, sizeof(Vector3D));
 }
 
 /**

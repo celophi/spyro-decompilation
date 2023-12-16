@@ -1,5 +1,5 @@
-#ifndef CD_H
-#define CD_H
+#pragma once
+
 #include <common.h>
 
 
@@ -56,6 +56,3 @@ int CdSync_(int mode, unsigned char * result);
 void read_cb(unsigned char status, unsigned char *result);
 
 extern int _musicSectors;
-
-
-#endif /* CD_H */

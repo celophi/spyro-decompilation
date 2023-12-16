@@ -1,3 +1,3 @@
 .set noreorder
-j Vec3Copy  
+j DrawVaryingText
 nop                 

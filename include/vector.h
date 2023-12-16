@@ -4,12 +4,13 @@
 //~~~~~~~
 //Structs
 //~~~~~~~
-typedef struct Vec3
+
+typedef struct Vector3D
 {
-    int x;
-    int y;
-    int z;
-}Vec3;
+    int X;
+    int Y;
+    int Z;
+} Vector3D;
 
 typedef struct Vec2
 {
@@ -105,18 +106,18 @@ typedef struct MATRIX3BY3
 //In Game Functions
 //~~~~~~~~~
 
-void Vec3Subtract(Vec3* destVector, Vec3* a, Vec3* b);
+void Vec3Subtract(Vector3D* destVector, Vector3D* a, Vector3D* b);
 
-void Vec3Scale(Vec3* result, Vec3* vector, int multiplier);                 //Scales the s
+void Vec3Scale(Vector3D* result, Vector3D* vector, int multiplier);                 //Scales the s
 
-void Vec3ScaleDownByPowerOfTwo(Vec3* vector, unsigned int pot);
+void Vec3ScaleDownByPowerOfTwo(Vector3D* vector, unsigned int pot);
 
-void Vec3ScaleDownBy4(Vec3_u16 result, Vec3* source);                        //Scales down the source vector by 4, then stores it in a short vector. 
+void Vec3ScaleDownBy4(Vec3_u16 result, Vector3D* source);                        //Scales down the source vector by 4, then stores it in a short vector. 
 
-void Vec3ScaleByFractionPowerOfTwo(Vec3* param_1, int numerator, unsigned int denominatorExponent);               //80017614     
-void Vec3ScaleByFraction(Vec3* param_1, int denominator, int numerator);
+void Vec3ScaleByFractionPowerOfTwo(Vector3D* param_1, int numerator, unsigned int denominatorExponent);               //80017614     
+void Vec3ScaleByFraction(Vector3D* param_1, int denominator, int numerator);
 
-unsigned int Vec3CalculateLengthE(Vec3* vector, bool flag3D);
+unsigned int Vec3CalculateLengthE(Vector3D* vector, bool flag3D);
 
 void Vec3ApplyRotationMatrix(int* rotationMatrix, unsigned int* inputVector, int* outputVector);
 
@@ -124,4 +125,7 @@ void MatrixTranspose(unsigned int *dest, unsigned int *src);
 
 void Vec3Swap(int *param_1,int *param_2);
 
-void Vec3Copy(int* dst, int* src);
+/// @brief Copies the source vector to the destination vector.
+/// @param destination Destination vector to get copied to.
+/// @param source Source vector to copy from.
+void CopyVector3D(Vector3D* destination, Vector3D* source);

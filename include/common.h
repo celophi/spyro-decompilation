@@ -446,9 +446,9 @@ extern short _flyInAnimation;
 
 /**
  * @brief Camera Position \n Address: 0x80076DF8 
- * @see Vec3
+ * @see Vector3D
  */ 
-extern Vec3 _cameraPosition;
+extern Vector3D _cameraPosition;
 
 /**
  * @brief Camera Angle (yaw, pitch, roll) \n Address: 0x80076E1C

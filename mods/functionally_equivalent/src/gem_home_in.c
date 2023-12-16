@@ -24,13 +24,13 @@ void GemHomeIn()
     register void* s1 asm("$s1");
     register void* s3 asm("$s3");
 
-    Vec3 gemToSpyroDistanceVec = {0};
+    Vector3D gemToSpyroDistanceVec = {0};
     unsigned int gemOriginToSpyroLength = 0;
 
     //* Since we are replacing a branch (if), this is that equivalent branch
     if (*((char*)s1 + 0xf) < 0x20)                                                                          //! If gem is homing but not finished
     {
-        Vec3Subtract(&gemToSpyroDistanceVec, &_spyro.position, (Vec3*)s1);                                  // Subtract spyro's position from gem origin to get distance vec
+        Vec3Subtract(&gemToSpyroDistanceVec, &_spyro.position, (Vector3D*)s1);                                  // Subtract spyro's position from gem origin to get distance vec
         Vec3ScaleDownByPowerOfTwo(&gemToSpyroDistanceVec, 5);                                               // Scale down result by 32
         const int FLAG_3D = 1;
         gemOriginToSpyroLength = Vec3CalculateLengthE(&gemToSpyroDistanceVec, FLAG_3D);                     // Calculate length of distance vector
@@ -42,19 +42,19 @@ void GemHomeIn()
         Vec3Scale(&gemToSpyroDistanceVec,&gemToSpyroDistanceVec, *((char*)s1 + 0xf));
         Vec3Add(&((Moby*)s3)->position, s1, &gemToSpyroDistanceVec);                                        // Add origin to distance vec to get new location from 0,0,0
         const int SINE_WAVE_SPEED = 4   ;                                                                        // 4 is the speed required to get 1 half circle (128 steps through the 256 array)
-        ((Moby*)s3)->position.z = ((Moby*)s3)->position.z + (_sinArray[*((char*)s1 + 0xf) * SINE_WAVE_SPEED] / 12);
+        ((Moby*)s3)->position.Z = ((Moby*)s3)->position.Z + (_sinArray[*((char*)s1 + 0xf) * SINE_WAVE_SPEED] / 12);
         }
 
         else 
         {
-        Vec3Copy(&((Moby*)s3)->position, &_spyro.position);                                                 // Set gem position to spyro's position
+        CopyVector3D(&((Moby*)s3)->position, &_spyro.position);                                                 // Set gem position to spyro's position
         *((char*)s1 + 0xf) = 0x20;                                                                          // Set gem hoam timer to near end
         }
     }
 
     else
     {
-        Vec3Copy(&((Moby*)s3)->position, &_spyro.position);   
+        CopyVector3D(&((Moby*)s3)->position, &_spyro.position);   
     }
     return;
 }

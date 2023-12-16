@@ -62,7 +62,7 @@ void DrawArrow(HudMobyInfo* hudMobyInfo, uint timer, int leftOrRightArrow)
 
     ((Moby*) _ptr_hudMobys)->type = 0x105;                                      // Set Moby Type to the ascii number 1 for an arrow
 
-    Vec3Copy(&((Moby*) _ptr_hudMobys)->position, hudMobyInfo);                  // Set Moby Position from info struct (Z represents size/depth in 2D)
+    CopyVector3D(&((Moby*) _ptr_hudMobys)->position, hudMobyInfo);                  // Set Moby Position from info struct (Z represents size/depth in 2D)
 
     if (leftOrRightArrow < 2) {
         ((Moby*) _ptr_hudMobys)->rotation.x = 64;                               // Setting default roll rotation for a right arrow

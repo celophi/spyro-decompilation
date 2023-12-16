@@ -211,10 +211,10 @@ typedef struct ShadedLine
 
 typedef struct Poly4F_Vec3 
 {
-    struct Vec3 point1Pos;
-    struct Vec3 point2Pos;
-    struct Vec3 point3Pos;
-    struct Vec3 point4Pos;
+    struct Vector3D point1Pos;
+    struct Vector3D point2Pos;
+    struct Vector3D point3Pos;
+    struct Vector3D point4Pos;
 
 } Poly4F_Vec3;
 

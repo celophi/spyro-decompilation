@@ -1,4 +1,6 @@
 #include <custom_types.h>
+#include <vector.h>
+#include <memory.h>
 
 /** @ingroup reveresed_functions
  *  @{
@@ -32,28 +34,12 @@ void Vec3Add(int* result, int* a, int* b)
 }
 
 
-/**
- * @brief Copies the 'src' Vector to the 'dst' Vector.
-
- * @param int* src - The source vector.
- * @param int* dst - The destination vector.
- 
- * @note Function: Vec3Copy \n
- * Original Address: 0x80017700 \n
- * Hook File: vec3_copy.s \n
- * Prototype: vector.h \n
- * Amount of instructions: Same Amount (https://decomp.me/scratch/ycHxN) \n
-*/
-void Vec3Copy(int* dst, int* src)
+/// @brief Copies the source vector to the destination vector.
+/// @param destination Destination vector to get copied to.
+/// @param source Source vector to copy from.
+void CopyVector3D(Vector3D* destination, Vector3D* source) 
 {
-  int temp_src1 = src[1];
-  int temp_src2 = src[2];
-
-  dst[0] = src[0];
-  dst[1] = temp_src1;
-  dst[2] = temp_src2;
-
-  return;
+    Memcpy(destination, source, sizeof(Vector3D));
 }
 
 /**

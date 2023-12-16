@@ -53,7 +53,7 @@ typedef enum SpyroStates
 typedef struct Spyro
 {
 
-    struct Vec3 position;                               //? Spyro's position vector.
+    struct Vector3D position;                               //? Spyro's position vector.
 
     struct Angle_u8 RelativeSparxAngle;                  //? Something to do with sparx's rotation based on spyros angle I think.
 
@@ -119,7 +119,7 @@ typedef struct Spyro
     int unkown14;
     int unkown15;
 
-    struct Vec3 maybe_positionRelative;
+    struct Vector3D maybe_positionRelative;
 
     int timer_framesIdle;                               //? The amount of frames you have spent idleing.
 
@@ -141,13 +141,13 @@ typedef struct Spyro
 
 
 
-    struct Vec3 groundedChargeMomentum;                 //? Spyro's grounded charge momentum vector.
+    struct Vector3D groundedChargeMomentum;                 //? Spyro's grounded charge momentum vector.
 
-    struct Vec3 walkingMomentum;                        //? Spyro's walking momentum vector.
+    struct Vector3D walkingMomentum;                        //? Spyro's walking momentum vector.
 
-    struct Vec3 groundedChargeMomentum2;                //? Spyro's groundedChargeMomentum vector again? Unsure.
+    struct Vector3D groundedChargeMomentum2;                //? Spyro's groundedChargeMomentum vector again? Unsure.
 
-    struct Vec3 airMomentum;                            //? Spyro's air momentum vector.
+    struct Vector3D airMomentum;                            //? Spyro's air momentum vector.
 
     int unkown_angleRelated8;
     int unkown16;
@@ -195,7 +195,7 @@ typedef struct Spyro
 
     int unkown32;
 
-    struct Vec3 lastGroundedPosition;                   //? Spyro's last grounded position vector.
+    struct Vector3D lastGroundedPosition;                   //? Spyro's last grounded position vector.
 
     int unkown33;
     int unkown34;
@@ -352,19 +352,19 @@ extern int _spyroFramesInCurrentState;
  * @brief  Spyros grouded charging momentum vector. \n Address: 0x80078b28
  * @see Spyro
  */ 
-extern Vec3 _spyroGroundedChargeMomentum;
+extern Vector3D _spyroGroundedChargeMomentum;
 
 /**
  * @brief  Spyros walking momentum vector. \n Address: 0x80078b34
  * @see Spyro
  */ 
-extern Vec3 _spyroWalkingChargeMomentum;
+extern Vector3D _spyroWalkingChargeMomentum;
 
 /**
  * @brief  Spyros air momentum vector. \n Address: 0x80078b4c
  * @see Spyro
  */ 
-extern Vec3 _spyroAirMomentum;
+extern Vector3D _spyroAirMomentum;
 
 /**
  * @brief  Spyros absolute momentum as a scalar. \n Address: 0x80078b70

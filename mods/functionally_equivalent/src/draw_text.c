@@ -32,7 +32,7 @@ char* DrawTextCapitals(char *text,int *textInfo, int spacing, char color)
     if (currentCharacter != 0x20) {                                             // Not a space character
       _ptr_hudMobys -= 1;                                                       // Shifts the moby pointer to a new empty slot
       Memset(_ptr_hudMobys, 0, sizeof(Moby));                                   // Clears the new slot
-      Vec3Copy(&_ptr_hudMobys->position,textInfo);                              // Copy text x pos, y pos, and size(z pos) to the new moby
+      CopyVector3D(&_ptr_hudMobys->position,textInfo);                              // Copy text x pos, y pos, and size(z pos) to the new moby
       currentCharacter = *text;                                                 // Puts each character of the string in currentCharacter each iteration of the loop
       if(currentCharacter - '0' < 10) {                                         // If currentCharacter 0-9
         _ptr_hudMobys->type = currentCharacter + 0xd4;         
@@ -109,13 +109,13 @@ int DrawTextAll(char *text,int *capitalTextInfo,int *lowercaseTextInfo,int spaci
     else {
       _ptr_hudMobys -= 1;                                                       // Shifts the moby pointer to a new empty slot
       Memset(_ptr_hudMobys, '\0', sizeof(Moby));
-      Vec3Copy(&_ptr_hudMobys->position,capitalTextInfo);
+      CopyVector3D(&_ptr_hudMobys->position,capitalTextInfo);
       if ((*text == '!') || (*text == '?')) {                                   // If ! or ? then make capital
         isCapital = TRUE;
       }
       if (!isCapital) {
-        _ptr_hudMobys->position.y += lowercaseTextInfo[1];                      // Increases the Y position by the "y offset" for lowercase letters
-        _ptr_hudMobys->position.z = lowercaseTextInfo[2];                       // sets the size to be the lowercase size
+        _ptr_hudMobys->position.Y += lowercaseTextInfo[1];                      // Increases the Y position by the "y offset" for lowercase letters
+        _ptr_hudMobys->position.Z = lowercaseTextInfo[2];                       // sets the size to be the lowercase size
       }
       currentCharacter = *text;
       if (currentCharacter - '0' < 10) {                                        // If character is 0-9
@@ -138,7 +138,7 @@ int DrawTextAll(char *text,int *capitalTextInfo,int *lowercaseTextInfo,int spaci
       }
       else {                                                                    // Default Case (apostrophe but it's really a comma up in the air lol)
         _ptr_hudMobys->type = 0x4c;
-        _ptr_hudMobys->position.y -= (*lowercaseTextInfo * 2) / 3;              // Decreases y position (makes it go up) so the comma looks like an apostrophe
+        _ptr_hudMobys->position.Y -= (*lowercaseTextInfo * 2) / 3;              // Decreases y position (makes it go up) so the comma looks like an apostrophe
       }
       _ptr_hudMobys->requiredHUD1 = 0x7F;
       _ptr_hudMobys->color = color;
@@ -198,8 +198,8 @@ void CopyHudToShaded() {
   * @see DrawDemoText()
 */
 void DrawDemoText() {
-  const Vec3 capitalTextInfo = { .x = 199, .y = 200, .z = 4352 };
-  const Vec3 lowercaseTextInfo = { .x = 16, .y = 1, .z = 5120 };
+  const Vector3D capitalTextInfo = { .X = 199, .Y = 200, .Z = 4352 };
+  const Vector3D lowercaseTextInfo = { .X = 16, .Y = 1, .Z = 5120 };
   const byte spacing = 18;
   const char color = 2;
   const int sinArrayIncrement = 12;

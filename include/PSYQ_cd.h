@@ -1,6 +1,7 @@
 #pragma once
 
 #include <common.h>
+#include <custom_types.h>
 
 
 enum CdControlPrimatives
@@ -26,8 +27,6 @@ enum CdControlPrimatives
     CdlReadS = 0x1B
 };
 
-typedef void (*CdlCB)(unsigned char,unsigned char *);
-
 typedef struct CdlFILTER{
     unsigned char file;         //File ID, Always 1
     unsigned char chan;         //Channel ID, Picks a song from the current music file (goes up to 7)
@@ -42,10 +41,8 @@ typedef struct CdlLOC{
 } CdlLOC;
 
 int CdRead(int sectors, unsigned int * buf, int mode);
-int CdInit();
-CdlCB CdReadCallback(CdlCB func);
 //int CdStatus(void);
-int CdSync(int mode, unsigned char * result);
+
 int CdControl(unsigned char com, unsigned char * param, unsigned char * result);  //Tells the CD-DRIVE to do a primitive function, and someimes allows concurrent cd functions
 int CdControlB(unsigned char com, unsigned char * param, unsigned char * result); //Tells the CD-DRIVE to do a primitive function, and ONLY that one function. 
 void *CdDataCallback(void (*func)());

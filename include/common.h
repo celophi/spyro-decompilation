@@ -345,11 +345,6 @@ extern int _globalTimer;
 extern int _pausedTimer;   
 
 /**
- * @brief This is the pause/inventory menu timer. It is only running in those menus. \n Address: 0x8007588c
- */  
-extern int _loadingTimer;
-
-/**
  * @brief This is a level specific timer. This timer is running when when you are able to control spyro, and doesn't reset until you enter a new level. \n Address: 0x8007572C 
  */ 
 extern int _levelTimerWhenActive;   

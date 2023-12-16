@@ -1,3 +1,15 @@
+CdControl = 0x80063C48;
+CdRead = 0x8006606C;
+
+
+
+
+
+
+
+
+
+
 printf = 0x8006279c;
 sprintf = 0x80062fd4;
 
@@ -55,11 +67,11 @@ Maybe_ResetHudTimers = 0x80058c7c;
 ApplyImageFading_ = 0x80017f24;
 
 
-CdRead = 0x8006606C;
+
 CdInit = 0x8006397C;
 CdReadCallback = 0x8006623C;
 CdSync = 0x80063BD8;
-CdControl = 0x80063C48;
+
 CdControlB = 0x80063EAC;
 CdDataCallback = 0x80064050;
 CdIntToPos = 0x80064094;

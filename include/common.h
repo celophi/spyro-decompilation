@@ -220,7 +220,7 @@ typedef struct BGR_u8
  */
 int printf (const char * format, ...);
 int sprintf(char *output, const char *format, ...);
-void memset(void *str, int c, int n);
+
 int rand();
 void srand(int seed);
 /** @} */ // end of psyq_functions

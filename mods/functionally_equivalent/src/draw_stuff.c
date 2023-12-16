@@ -2,6 +2,7 @@
 #include <custom_types.h>
 #include <moby.h>
 #include <shapes.h>
+#include <memory.h>
 
 /** @ingroup reveresed_functions
  *  @{
@@ -57,7 +58,7 @@ void DrawArrow(HudMobyInfo* hudMobyInfo, uint timer, int leftOrRightArrow)
   if ((timer % 32) < 16)                                                        // Alternate from being visible, and not every 16 frames
   {  
     _ptr_hudMobys = _ptr_hudMobys - sizeof(Moby);                               // Make space in the array of moby structs to be drawn to the hud
-    memset(_ptr_hudMobys,'\0', sizeof(Moby));                                   // 0 out the area
+    Memset(_ptr_hudMobys,'\0', sizeof(Moby));                                   // 0 out the area
 
     ((Moby*) _ptr_hudMobys)->type = 0x105;                                      // Set Moby Type to the ascii number 1 for an arrow
 

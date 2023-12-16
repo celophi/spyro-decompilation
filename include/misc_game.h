@@ -1,5 +1,6 @@
 #pragma once
 
+#include <custom_types.h>
 
 /**
  * @brief Returns the current completion percentage.

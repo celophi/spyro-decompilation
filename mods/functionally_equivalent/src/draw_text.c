@@ -2,6 +2,7 @@
 #include <moby.h>
 #include <vector.h>
 #include <custom_types.h>
+#include <memory.h>
 
 /** @ingroup reveresed_functions
  *  @{
@@ -30,7 +31,7 @@ char* DrawTextCapitals(char *text,int *textInfo, int spacing, char color)
   while (currentCharacter != 0) {                                               // Not a NULL terminator
     if (currentCharacter != 0x20) {                                             // Not a space character
       _ptr_hudMobys -= 1;                                                       // Shifts the moby pointer to a new empty slot
-      memset(_ptr_hudMobys, 0, sizeof(Moby));                                   // Clears the new slot
+      Memset(_ptr_hudMobys, 0, sizeof(Moby));                                   // Clears the new slot
       Vec3Copy(&_ptr_hudMobys->position,textInfo);                              // Copy text x pos, y pos, and size(z pos) to the new moby
       currentCharacter = *text;                                                 // Puts each character of the string in currentCharacter each iteration of the loop
       if(currentCharacter - '0' < 10) {                                         // If currentCharacter 0-9
@@ -107,7 +108,7 @@ int DrawTextAll(char *text,int *capitalTextInfo,int *lowercaseTextInfo,int spaci
     }
     else {
       _ptr_hudMobys -= 1;                                                       // Shifts the moby pointer to a new empty slot
-      memset(_ptr_hudMobys, '\0', sizeof(Moby));
+      Memset(_ptr_hudMobys, '\0', sizeof(Moby));
       Vec3Copy(&_ptr_hudMobys->position,capitalTextInfo);
       if ((*text == '!') || (*text == '?')) {                                   // If ! or ? then make capital
         isCapital = TRUE;

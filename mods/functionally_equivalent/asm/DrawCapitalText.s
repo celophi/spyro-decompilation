@@ -1,3 +1,3 @@
 .set noreorder
-j DrawTextAll
+j DrawCapitalText
 nop                 

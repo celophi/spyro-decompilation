@@ -1,5 +1,9 @@
 #pragma once
 
+#include <custom_types.h>
+#include <vector.h>
+#include <moby.h>
+
 /**
  * @brief Draws a text string to the screen (Only capital characters allowed) 
  * @details Fills out a moby struct in the hud mobys array, using arguments for Capital ASCII text
@@ -14,7 +18,7 @@
    Prototype: n/a \n
  * @see DrawTextAll()
 */
-char* DrawTextCapitals(char *text,int *textInfo, int spacing, char color);
+Moby* DrawCapitalText(char* text, Vector3D* pointA, int horizontalAdjustment, byte color);
 
 
 
@@ -33,7 +37,7 @@ char* DrawTextCapitals(char *text,int *textInfo, int spacing, char color);
    Prototype: n/a \n
   * @see DrawTextCapitals()
 */
-int DrawTextAll(char *text,int *capitalTextInfo,int *lowercaseTextInfo,int spacing,char color);
+Moby* DrawVaryingText(char* text, Vector3D* leadingDimensions, Vector3D* followingDimensions, byte spacing, byte color);
 
 /**
  * @brief Draws the demo text on the screen.

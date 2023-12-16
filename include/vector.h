@@ -125,6 +125,12 @@ void MatrixTranspose(unsigned int *dest, unsigned int *src);
 
 void Vec3Swap(int *param_1,int *param_2);
 
+/// @brief Adds two vectors together and puts the result in the destination.
+/// @param destination Resulting vector.
+/// @param first First vector as part of the sum.
+/// @param second Second vector as part of the sum.
+void AddVector3D(Vector3D* destination, Vector3D* first, Vector3D* second);
+
 /// @brief Copies the source vector to the destination vector.
 /// @param destination Destination vector to get copied to.
 /// @param source Source vector to copy from.

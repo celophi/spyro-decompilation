@@ -4,6 +4,9 @@ build/spyro1.bin
 mods/functionally_equivalent/crash.log
 plugins/__pycache__/
 
+# build artifacts
+*.o
+*.dep
 mods/functionally_equivalent/Makefile
 mods/functionally_equivalent/debug/
 mods/functionally_equivalent/output/

@@ -40,7 +40,7 @@ void GemHomeIn()
         if (gemOriginToSpyroLength < MINIMUM_DISTANCE_FROM_GEM) 
         {                                                             
         Vec3Scale(&gemToSpyroDistanceVec,&gemToSpyroDistanceVec, *((char*)s1 + 0xf));
-        Vec3Add(&((Moby*)s3)->position, s1, &gemToSpyroDistanceVec);                                        // Add origin to distance vec to get new location from 0,0,0
+        AddVector3D(&((Moby*)s3)->position, s1, &gemToSpyroDistanceVec);                                        // Add origin to distance vec to get new location from 0,0,0
         const int SINE_WAVE_SPEED = 4   ;                                                                        // 4 is the speed required to get 1 half circle (128 steps through the 256 array)
         ((Moby*)s3)->position.Z = ((Moby*)s3)->position.Z + (_sinArray[*((char*)s1 + 0xf) * SINE_WAVE_SPEED] / 12);
         }

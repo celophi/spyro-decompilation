@@ -8,154 +8,254 @@
  *  @{
  */
 
-/**
- * @brief Draws a text string to the screen (Only capital characters allowed) 
- * @details Fills out a moby struct in the hud mobys array, using arguments for Capital ASCII text
- 
- * @param char* text - text to be drawn.
- * @param int* textInfo - pointer to the desired location and size of the text.
- * @param int spacing - how much space between characters.
- * @param char color - color.
- * @note Function: DrawTextCapitals \n
-   Original Address: 0x80017fe4 \n
-   Hook File: draw_text_capitals_hook.s \n
-   Prototype: n/a \n
- * @see DrawTextAll()
-*/
-char* DrawTextCapitals(char *text,int *textInfo, int spacing, char color)
-{
-  unsigned int currentCharacter;                                                //? Needs to be unsigned lmao?
 
-  currentCharacter = *text;                                                     // Puts first character of string in currentcCharacter
-
-  while (currentCharacter != 0) {                                               // Not a NULL terminator
-    if (currentCharacter != 0x20) {                                             // Not a space character
-      _ptr_hudMobys -= 1;                                                       // Shifts the moby pointer to a new empty slot
-      Memset(_ptr_hudMobys, 0, sizeof(Moby));                                   // Clears the new slot
-      CopyVector3D(&_ptr_hudMobys->position,textInfo);                              // Copy text x pos, y pos, and size(z pos) to the new moby
-      currentCharacter = *text;                                                 // Puts each character of the string in currentCharacter each iteration of the loop
-      if(currentCharacter - '0' < 10) {                                         // If currentCharacter 0-9
-        _ptr_hudMobys->type = currentCharacter + 0xd4;         
-      }
-      else if(currentCharacter - 'A' < 26) {                                    // If currentCharacter is A-Z
-        _ptr_hudMobys->type = currentCharacter + 0x169;        
-      }
-      else {          
-        short mobyType;                                                          // Special Characters
-        if(currentCharacter == '/') {
-          mobyType = 0x115;
-        }
-        else if(currentCharacter == '?') {
-          mobyType = 0x116;
-        }
-        else if(currentCharacter == '%') {
-          mobyType = 0x110;
-        }
-        else if(currentCharacter == '^') {
-          mobyType = 0x141;
-        }
-        else if(currentCharacter == '+') {
-          mobyType = 0x13d;
-          }
-        else {                                                                  // Default Character (_)
-          mobyType = 0x147;
-        }
-        _ptr_hudMobys->type = mobyType;
-      }
-      _ptr_hudMobys->requiredHUD1 = 0x7F;
-      _ptr_hudMobys->color = color;
-      _ptr_hudMobys->requiredHUD2 = 0xff;
-    }
-    text++;                                                                     // Move to next char in String
-    textInfo[0] += spacing;                                                     // The x position in the textInfo struct is increased by the spacing amount
-    currentCharacter = *text;                                                   // currentCharacter is updated to the next character
-  }
-  //printf("my print: %X\n", _ptr_hudMobyData);
-  return _ptr_hudMobys;
+bool IsCharacterQuestionMark(const unsigned int character) {
+    return character == 63;
 }
 
-/**
- * @brief Draws a text string to the screen (Capital & Lowercase allowed)
- * @details Fills out a moby struct in the hud mobys array, using arguments for ASCII text
- 
- * @param char* text - text to be drawn.
- * @param int* capitalTextInfo - pointer to the desired location and size of the text.
- * @param int* lowercaseextInfo - pointer to the desired spacing and size of lowercase text.
- * @param int spacing - how much space between characters.
- * @param char color - color.
- * @note Function: DrawTextAll \n
-   Original Address: 0x800181AC \n
-   Hook File: draw_text_all_hook.s \n
-   Prototype: n/a \n
-  * @see DrawTextCapitals()
-*/
-int DrawTextAll(char *text,int *capitalTextInfo,int *lowercaseTextInfo,int spacing,char color)
-{
-  unsigned int currentCharacter;
-  bool isCapital;
-  int spaceSize;
-  
-  isCapital = TRUE;
-  currentCharacter = *text;
-  while (currentCharacter != 0) {                                               // While not a NULL terminator
-    if (currentCharacter == 0x20) {                                             // If a space
-      spaceSize = *lowercaseTextInfo * 3;                                       
-      isCapital = TRUE;                                                         // Character is uppercase
-      if (spaceSize < 0) {                                                      //? Weird Failsafe?   
-        spaceSize = spaceSize + 3;
-      }
-      capitalTextInfo[0] += (spaceSize / 4);                                    // Updates X position using spaceSize
-    }
-    else {
-      _ptr_hudMobys -= 1;                                                       // Shifts the moby pointer to a new empty slot
-      Memset(_ptr_hudMobys, '\0', sizeof(Moby));
-      CopyVector3D(&_ptr_hudMobys->position,capitalTextInfo);
-      if ((*text == '!') || (*text == '?')) {                                   // If ! or ? then make capital
-        isCapital = TRUE;
-      }
-      if (!isCapital) {
-        _ptr_hudMobys->position.Y += lowercaseTextInfo[1];                      // Increases the Y position by the "y offset" for lowercase letters
-        _ptr_hudMobys->position.Z = lowercaseTextInfo[2];                       // sets the size to be the lowercase size
-      }
-      currentCharacter = *text;
-      if (currentCharacter - '0' < 10) {                                        // If character is 0-9
-        _ptr_hudMobys->type = currentCharacter + 0xd4;
-      }
-      else if (currentCharacter - 'A' < 26) {                                   // If character is A-Z
-        _ptr_hudMobys->type = currentCharacter + 0x169;
-      }
-      else if (currentCharacter == '!') {
-        _ptr_hudMobys->type = 0x4b;                                             // Special Characters
-      }
-      else if (currentCharacter == ',') {
-        _ptr_hudMobys->type = 0x4c;
-      }
-      else if (currentCharacter == '?') {
-        _ptr_hudMobys->type = 0x116;
-      }
-      else if (currentCharacter == '.') {
-        _ptr_hudMobys->type = 0x147;
-      }
-      else {                                                                    // Default Case (apostrophe but it's really a comma up in the air lol)
-        _ptr_hudMobys->type = 0x4c;
-        _ptr_hudMobys->position.Y -= (*lowercaseTextInfo * 2) / 3;              // Decreases y position (makes it go up) so the comma looks like an apostrophe
-      }
-      _ptr_hudMobys->requiredHUD1 = 0x7F;
-      _ptr_hudMobys->color = color;
-      _ptr_hudMobys->requiredHUD2 = 0xff;
-      if (isCapital) {
-        *capitalTextInfo += spacing;                                            // If capital increase X position using default spacing
-      }
-      else {
-        *capitalTextInfo += *lowercaseTextInfo;                                 // If not capital increase X position using lowercase spacing
-      }
-      isCapital = (unsigned int)(*text - 0x30) < 10;                            // Sets isCapitral to false when the character is not a number
-    }
-    text++;
-    currentCharacter = *text;
-  }
-  return _ptr_hudMobys;
+bool IsCharacterPeriod(const unsigned int character) {
+    return character == 46;
 }
+
+bool IsUppercaseAlpha(const unsigned int character) {
+    return character - 65 < 26;
+}
+
+bool IsCharacterNumberOrSymbol(const unsigned int character) {
+    return character - 48 < 10;
+}
+
+bool IsCharacterExclamationPoint(const unsigned int character) {
+    return character == 33;
+}
+
+bool IsCharacterComma(const unsigned int character) {
+    return character == 44;
+}
+
+bool IsCharacterPercent(const unsigned int character) {
+    return character == 37;
+}
+
+bool IsCharacterCaret(const unsigned int character) {
+    return character == 94;
+}
+
+bool IsCharacterPlus(const unsigned int character) {
+    return character == 43;
+}
+
+bool IsCharacterForwardSlash(const unsigned int character) {
+    return character == 47;
+}
+
+bool IsCharacterSpace(const unsigned int character) {
+    return character == 32;
+}
+
+void SetTextAreaFormatAndColor(byte color) {
+
+    _ptr_hudMobys->requiredHUD1 = 0x7F;
+    _ptr_hudMobys->color = color;
+    _ptr_hudMobys->requiredHUD2 = 0xFF;
+}
+
+/// @brief Grows the global text area list and copies the Point3D to it. TextArea grows backwards.
+/// @param point 
+void GrowTextArea(Vector3D* position) {
+    _ptr_hudMobys = _ptr_hudMobys - 1;
+    Memset(_ptr_hudMobys, 0, sizeof(Moby));
+    CopyVector3D(&_ptr_hudMobys->position, position);
+}
+
+
+/// @brief Formats text in a way similar to title casing, but the first letter is just a different size than the rest.
+/// @param text String to render
+/// @param leadingDimensions The dimensions to apply to the first character in each word.
+///     X = Screen offset from the left.
+///     Y = Screen offset from the top.
+///     Z = Distance away from the camera.
+/// @param followingDimensions
+///     X = Spacing between minor characters.
+///     Y = Offset from the "Y" position of the leadingDimensions.
+///     Z = Distance away from the camera.
+/// @param spacing Spacing away from major characters to start drawing minor ones.
+/// @param color Color of the text
+/// @return 
+Moby* DrawVaryingText(char* text, Vector3D* leadingDimensions, Vector3D* followingDimensions, byte spacing, byte color) {
+    bool bVar1;
+    int horizontalAdjustment;
+    unsigned int currentCharacter;
+    Moby* textArea;
+    char textPtr;
+
+    bVar1 = 1;
+    textPtr = *text;
+
+    while (textPtr != 0) {
+        if (IsCharacterSpace(textPtr)) {
+            horizontalAdjustment = followingDimensions->X * 3;
+            bVar1 = true;
+
+            if (horizontalAdjustment < 0) {
+                horizontalAdjustment = horizontalAdjustment + 3;
+            }
+
+            leadingDimensions->X = leadingDimensions->X + (horizontalAdjustment >> 2);
+        }
+        else {
+            GrowTextArea(leadingDimensions);
+
+            textArea = _ptr_hudMobys;
+            // if character is ! or ?
+            if ((IsCharacterExclamationPoint(*text)) || (IsCharacterQuestionMark(*text))) {
+                bVar1 = true;
+            }
+
+            if (!bVar1) {
+                (_ptr_hudMobys->position).Y = (_ptr_hudMobys->position).Y + followingDimensions->Y;
+                (textArea->position).Z = followingDimensions->Z;
+            }
+
+            textArea = _ptr_hudMobys;
+            textPtr = *text;
+            currentCharacter = (unsigned int)textPtr;
+
+            // if the character is a number or symbol
+            if (IsCharacterNumberOrSymbol(currentCharacter)) {
+                _ptr_hudMobys->type = textPtr + 212;
+            }
+            else {
+                if (IsUppercaseAlpha(currentCharacter)) {
+                    _ptr_hudMobys->type = textPtr + 361;
+                }
+                else {
+                    if (IsCharacterExclamationPoint(currentCharacter)) {
+                        _ptr_hudMobys->type = 75;
+                    }
+                    else {
+                        if (IsCharacterComma(currentCharacter)) {
+                            _ptr_hudMobys->type = 76;
+                        }
+                        else {
+                            if (IsCharacterQuestionMark(currentCharacter)) {
+                                _ptr_hudMobys->type = 278;
+                            }
+                            else if (IsCharacterPeriod(currentCharacter)) {
+                                _ptr_hudMobys->type = 327;
+                            }
+                            else {
+
+                                // apostraphe's in all other cases (which is actually the comma but moved upward!)
+                                _ptr_hudMobys->type = 76;
+                                (textArea->position).Y = (textArea->position).Y - (followingDimensions->X << 1) / 3;
+                            }
+                        }
+                    }
+                }
+            }
+
+            SetTextAreaFormatAndColor(color);
+
+            if (bVar1) {
+                horizontalAdjustment = leadingDimensions->X + spacing;
+            }
+            else {
+                horizontalAdjustment = leadingDimensions->X + followingDimensions->X;
+            }
+
+            leadingDimensions->X = horizontalAdjustment;
+            bVar1 = *text - 48 < 10;
+        }
+
+        text = text + 1;
+        textPtr = *text;
+    }
+
+    // In newer decompilations from Ghidra there is some extra stuff here????
+    // Might be missing it...
+
+    return _ptr_hudMobys;
+}
+
+
+
+
+void TranslateCharacter(char* text) {
+    
+    if (IsCharacterNumberOrSymbol(*text)) {
+        _ptr_hudMobys->type = *text + 212;
+        return;
+    }
+    
+    if (IsUppercaseAlpha(*text)) {
+        _ptr_hudMobys->type = *text + 361;
+        return;
+    }
+
+    if (IsCharacterForwardSlash(*text)) {
+        _ptr_hudMobys->type = 277;
+        return;
+    }
+    
+    if (IsCharacterQuestionMark(*text)) {
+        _ptr_hudMobys->type = 278;
+        return;
+    }
+    
+    if (IsCharacterPercent(*text)) {
+        _ptr_hudMobys->type = 272;
+        return;
+    }
+
+    if (IsCharacterCaret(*text)) {
+        _ptr_hudMobys->type = 321;
+        return;
+    }
+
+    if (IsCharacterPlus(*text)) {
+        _ptr_hudMobys->type = 317;
+        return;
+    }
+
+    _ptr_hudMobys->type = 327;
+}
+
+#pragma endregion
+
+/// @brief Iterates through all characters in the given text string and creates text areas.
+/// @param text 
+/// @param pointA 
+/// @param horizontalAdjustment 
+/// @param color 
+/// @return 
+Moby* DrawCapitalText(char* text, Vector3D* pointA, int horizontalAdjustment, byte color) {
+    
+    byte character = *text;
+    
+    while (character != 0) {
+
+        if (!IsCharacterSpace(character)) {
+            GrowTextArea(pointA);
+            TranslateCharacter(text);
+            SetTextAreaFormatAndColor(color);
+        }
+
+        text = text + 1;
+        pointA->X = pointA->X + horizontalAdjustment;
+        character = *text;
+    }
+
+    return _ptr_hudMobys;
+}
+
+
+
+
+
+
+
+
 
 /**
  * @brief Copies generated moby structs to the end of a global list.
@@ -207,7 +307,7 @@ void DrawDemoText() {
   Moby* mobyPtr = _ptr_hudMobys;
   unsigned int sinArrayIndex = 0;
   
-  DrawTextAll("DEMO MODE", &capitalTextInfo, &lowercaseTextInfo, spacing, color);
+  DrawVaryingText("DEMO MODE", &capitalTextInfo, &lowercaseTextInfo, spacing, color);
   mobyPtr--;
   
   while (_ptr_hudMobys <= mobyPtr) {

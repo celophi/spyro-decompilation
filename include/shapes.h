@@ -1,5 +1,4 @@
-#ifndef FILTERS_H
-#define FILTERS_H
+#pragma once
 
 #include <common.h>
 
@@ -237,5 +236,3 @@ typedef struct Poly4FPadded      //! FOR IN GAME
     struct Vec2_u16 point4Pos;
 
 } Poly4FPadded;
-
-#endif //FILTERS_H

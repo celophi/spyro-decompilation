@@ -1,5 +1,4 @@
-#ifndef MENUS_H
-#define MENUS_H
+#pragma once
 
 /**
  * @brief Handles the required steps for exiting the inventory menu. 
@@ -13,5 +12,3 @@
 
 */
 void ExitInventoryMenu(void);
-
-#endif /* MENUS_H */

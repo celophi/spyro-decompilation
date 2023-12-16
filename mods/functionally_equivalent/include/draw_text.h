@@ -1,5 +1,4 @@
-#ifndef DRAW_TEXT_H
-#define DRAW_TEXT_H
+#pragma once
 
 /**
  * @brief Draws a text string to the screen (Only capital characters allowed) 
@@ -59,4 +58,3 @@ void DrawDemoText();
 */
 void CopyHudToShaded();
 
-#endif /* DRAW_TEXT_H */

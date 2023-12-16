@@ -1,5 +1,4 @@
-#ifndef MISC_GAME_H
-#define MISC_GAME_H
+#pragma once
 
 
 /**
@@ -70,5 +69,3 @@ void ApplyImageFading(uint *source, uint *destination, int contrast);
   * @see Convert32To16RGBA()
 */
 void ApplyGradient(uint *param_1,int size);
-
-#endif /* MISC_GAME_H */

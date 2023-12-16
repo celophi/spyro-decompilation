@@ -1,5 +1,5 @@
-#ifndef DRAW_STUFF_H
-#define DRAW_STUFF_H
+#pragma once
+
 #include <moby.h>
 #include <custom_types.h>
 
@@ -54,4 +54,3 @@ void DrawArrow(HudMobyInfo* hudMobyInfo,  uint timer, int leftOrRightArrow);
 */
 void DrawTextbox(int xBound1, int xBound2, int yBound1, int yBound2);
 
-#endif /* DRAW_STUFF_H */

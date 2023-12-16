@@ -1,5 +1,4 @@
-#ifndef TEXT_H
-#define TEXT_H
+#pragma once
 
 //~~~~~~~
 //Structs
@@ -20,4 +19,3 @@ typedef struct LowercaseTextInfo
     int size;                                        //Higher number, smaller size
 }LowercaseTextInfo;
 
-#endif /* TEXT_H */

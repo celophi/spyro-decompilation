@@ -1,7 +1,3 @@
-#ifndef CD_H
-#define CD_H
+#pragma once
 
 byte CdStatus(void);
-
-//~~~~~~~
-#endif /* CD_H */

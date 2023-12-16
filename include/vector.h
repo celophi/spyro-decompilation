@@ -1,5 +1,4 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#pragma once
 
 
 //~~~~~~~
@@ -124,8 +123,3 @@ void Vec3ApplyRotationMatrix(int* rotationMatrix, unsigned int* inputVector, int
 void MatrixTranspose(unsigned int *dest, unsigned int *src);
 
 void Vec3Swap(int *param_1,int *param_2);
-
-
-
-
-#endif /* VECTOR_H */

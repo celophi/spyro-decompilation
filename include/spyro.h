@@ -1,5 +1,4 @@
-#ifndef SPYRO_H
-#define SPYRO_H
+#pragma once
 
 #include "common.h"
 
@@ -429,5 +428,3 @@ extern int _spyroCanSuperFly;
  */ 
 extern int _spyroIsOnSuperchargeGround;
 /** @} */ // end of labeled_global_variables
-
-#endif //SPYRO_H

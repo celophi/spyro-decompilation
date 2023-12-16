@@ -1,5 +1,4 @@
-#ifndef COMMON_H
-#define COMMON_H
+#pragma once
 
 #include "custom_types.h"
 #include "vector.h"
@@ -557,5 +556,3 @@ extern int* _maybe_ptr_levelTextureRelated; //0x800785f0
 
 extern byte _cdStatus; //0x80074e44
 /** @} */ // end of labeled_global_variables
-
-#endif /* COMMON_H */

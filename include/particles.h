@@ -1,5 +1,4 @@
-#ifndef PARTICLES_H
-#define PARTICLES_H
+#pragma once
 
 #include <common.h>
 
@@ -23,5 +22,3 @@ struct Particle
     short unk4;                     //0x12
     short unk5;                     //0x14
 };
-
-#endif //PARTICLES_H

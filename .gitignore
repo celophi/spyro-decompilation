@@ -1,3 +1,5 @@
+.vscode/
+
 build/spyro1.bin
 mods/functionally_equivalent/crash.log
 plugins/__pycache__/

@@ -19,23 +19,11 @@ void DrawPrimitive(void* primitive);
 
 
 
-/**
- * @brief Draws a blinking arrow facing left or right. 
- * @details Fills out full moby struct into the pointer to the hud moby buffer
- 
- * @param void* hudMobyInfo - pointer to basic info about the arrow you want to draw (x, y, size)
- * @param uint timer - timer that counts every frame to be used for the pre-determined 16 frame intervals.
- * @param int leftOrRightArrow - 0 for right, 1 for left
- 
- * @note Function: DrawArrow \n
- * Original Address: 0x80018534 \n
- * Hook File: draw_arrow.s \n
- * Prototype: draw_stuff.h \n
- * Amount of instructions: Same Amount (https://decomp.me/scratch/IvMFp) \n
-*/
-void DrawArrow(HudMobyInfo* hudMobyInfo,  uint timer, int leftOrRightArrow);
-
-
+/// @brief Draws a blinking text arrow facing left or right.
+/// @param position Position to draw on the screen.
+/// @param timer Timer that counts every frame to be used for the pre-determined 16 frame intervals.
+/// @param leftOrRight Determines if the arrow points left or right.
+void DrawTextArrow(Vector3D *position, uint timer, int leftOrRight);
 
 /**
  * @brief Draws a black textbox with a gold border. You can specify the bounds

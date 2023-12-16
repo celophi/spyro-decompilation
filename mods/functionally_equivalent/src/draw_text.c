@@ -221,29 +221,25 @@ void TranslateCharacter(char* text) {
     _ptr_hudMobys->type = 327;
 }
 
-#pragma endregion
-
-/// @brief Iterates through all characters in the given text string and creates text areas.
-/// @param text 
-/// @param pointA 
-/// @param horizontalAdjustment 
-/// @param color 
-/// @return 
-Moby* DrawCapitalText(char* text, Vector3D* pointA, int horizontalAdjustment, byte color) {
-    
-    byte character = *text;
-    
-    while (character != 0) {
-
-        if (!IsCharacterSpace(character)) {
-            GrowTextArea(pointA);
+/// @brief Draws text in all capitals.
+/// @param text String of text to draw.
+/// @param position Position on the screen to start drawing.
+/// @param spacing Horizontal space between each character. 
+/// @param color Color of the text.
+/// @return Pointer to the list of Mobys to draw.
+Moby* DrawCapitalText(char* text, Vector3D* position, int spacing, byte color) 
+{
+    while (*text != 0) 
+    {
+        if (!IsCharacterSpace(*text)) 
+        {
+            GrowTextArea(position);
             TranslateCharacter(text);
             SetTextAreaFormatAndColor(color);
         }
 
-        text = text + 1;
-        pointA->X = pointA->X + horizontalAdjustment;
-        character = *text;
+        position->X += spacing;
+        text += 1;
     }
 
     return _ptr_hudMobys;
@@ -298,8 +294,8 @@ void CopyHudToShaded() {
   * @see DrawDemoText()
 */
 void DrawDemoText() {
-  const Vector3D capitalTextInfo = { .X = 199, .Y = 200, .Z = 4352 };
-  const Vector3D lowercaseTextInfo = { .X = 16, .Y = 1, .Z = 5120 };
+  Vector3D capitalTextInfo = { .X = 199, .Y = 200, .Z = 4352 };
+  Vector3D lowercaseTextInfo = { .X = 16, .Y = 1, .Z = 5120 };
   const byte spacing = 18;
   const char color = 2;
   const int sinArrayIncrement = 12;

@@ -19,3 +19,14 @@ extern int _CdReadSectorsParameter;
 
 /// @brief 80076b9c
 extern u_long* _CdReadBuffer;
+
+/// @brief 800774b4
+extern int _CdReadSectors_U0;
+
+/// @brief 800776c4
+extern int _CdReadSectors_U1;
+
+/// @brief 800776c8
+extern int _CdReadSectors_U2;
+
+extern byte _GlimmerArray;

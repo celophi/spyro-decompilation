@@ -64,7 +64,7 @@ void SetTextAreaFormatAndColor(byte color) {
 /// @param point 
 void GrowTextArea(Vector3D* position) {
     _ptr_hudMobys = _ptr_hudMobys - 1;
-    Memset(_ptr_hudMobys, 0, sizeof(Moby));
+    memset(_ptr_hudMobys, 0, sizeof(Moby));
     CopyVector3D(&_ptr_hudMobys->position, position);
 }
 

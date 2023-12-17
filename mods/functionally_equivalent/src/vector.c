@@ -22,7 +22,7 @@ void AddVector3D(Vector3D* destination, Vector3D* first, Vector3D* second)
 /// @param source Source vector to copy from.
 void CopyVector3D(Vector3D* destination, Vector3D* source) 
 {
-    Memcpy(destination, source, sizeof(Vector3D));
+    memcpy(destination, source, sizeof(Vector3D));
 }
 
 /**

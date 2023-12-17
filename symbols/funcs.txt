@@ -1,7 +1,7 @@
 CdControl = 0x80063C48;
 CdRead = 0x8006606C;
-
-
+CdInit = 0x8006397C;
+CdReadCallback = 0x8006623C;
 
 
 
@@ -68,8 +68,8 @@ ApplyImageFading_ = 0x80017f24;
 
 
 
-CdInit = 0x8006397C;
-CdReadCallback = 0x8006623C;
+
+
 CdSync = 0x80063BD8;
 
 CdControlB = 0x80063EAC;

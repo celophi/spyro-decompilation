@@ -1,3 +1,3 @@
 .set noreorder
-j Memset
+j memset
 nop

@@ -4,6 +4,12 @@ _CdReadCallback_U0 = 0x80076bb8;
 _CdlLOC = 0x80076b98;
 _CdReadSectorsParameter = 0x80076b94;
 _CdReadBuffer = 0x80076b9c;
+_CdReadSectors_U0 = 0x800774b4;
+_CdReadSectors_U1 = 0x800776c4;
+_CdReadSectors_U2 = 0x800776c8;
+_GlimmerArray = 0x8006d908;
+
+
 
 
 

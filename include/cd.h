@@ -7,5 +7,9 @@
 /// @note Original Address: 0x80016490
 void CdReadCallbackFunc(char status);
 
+/// @brief Initializes the CD-ROM, sets the read callback, reads sectors.
+/// @note Original Address: 0x800163e4
+void CdReadSectors();
+
 
 byte CdStatus(void);

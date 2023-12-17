@@ -24,8 +24,8 @@ int GetLineGlimmerOffset(const int X, const int Y)
 
     uint result = (uint)(byte)(&_GlimmerArray)[(index << 6) / divisor];
 
-    // Determine the index into the quadrants based on the sign value of both X and Y.
-    int quadIndex = (Y < 0)
+    // Determine an offset multiplier based on the sign value of both X and Y.
+    int multiplier = (Y < 0)
         ? ((X < 0) ? 2 : 3)
         : ((X < 0) ? 1 : 0);
 
@@ -38,16 +38,15 @@ int GetLineGlimmerOffset(const int X, const int Y)
         invert = absX < absY;
     }
 
-    // When inverted, the quadrant index also gets adjusted forward.
+    // When inverted, the multiplier also gets adjusted forward.
     if (invert) 
     {
-        quadIndex++;
+        multiplier++;
         result *= -1;
     }
 
     // Adjust the result by a calculated offset.
-    const int quadrants[] = { 0, 64, 128, 192, 256 };
-    int offset = quadrants[quadIndex];
+    int offset = multiplier * 64;
 
     return offset + result;
 }

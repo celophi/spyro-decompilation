@@ -69,4 +69,4 @@ void ApplyImageFading(uint *source, uint *destination, int contrast);
    Amount of instructions: More (https://decomp.me/scratch/E3XCJ) \n
   * @see Convert32To16RGBA()
 */
-void ApplyGradient(uint *param_1,int size);
+void Convert32To16RGBA(uint *param_1,int size);

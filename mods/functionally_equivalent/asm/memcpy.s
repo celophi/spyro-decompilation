@@ -1,3 +1,3 @@
 .set noreorder
-j Memcpy
+j memcpy
 nop

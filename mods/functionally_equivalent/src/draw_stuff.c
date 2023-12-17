@@ -3,10 +3,54 @@
 #include <moby.h>
 #include <shapes.h>
 #include <memory.h>
+#include <symbols.h>
 
-/** @ingroup reveresed_functions
- *  @{
- */
+/// @brief Calculates an offset for applying a shine/glimmer to a drawn line.
+/// @param x Position of the X component of a vertex.
+/// @param y Position of the Y component of a vertex.
+/// @return 
+int GetLineGlimmerOffset(const int X, const int Y)
+{
+    // Get the absolute values of both X and Y.
+    const int absX = X < 0 ? -X : X;
+    const int absY = Y < 0 ? -Y : Y;
+
+    // If ABS(X) > ABS(Y) then swap the index and divisor.
+    const int index = absX > absY ? absY : absX;
+    int divisor = absX > absY ? absX : absY;
+
+    // Make sure divisor is not zero to avoid division by zero.
+    divisor = divisor == 0 ? 1 : divisor;
+
+    uint result = (uint)(byte)(&_GlimmerArray)[(index << 6) / divisor];
+
+    // Determine an offset multiplier based on the sign value of both X and Y.
+    int multiplier = (Y < 0)
+        ? ((X < 0) ? 2 : 3)
+        : ((X < 0) ? 1 : 0);
+
+    // Determine the result from the glimmer array needs to be inverted.
+    bool invert = absX >= absY;
+    
+    // Handle a specific case when both X and Y values are negative.
+    if (X < 0 && Y < 0)
+    {
+        invert = absX < absY;
+    }
+
+    // When inverted, the multiplier also gets adjusted forward.
+    if (invert) 
+    {
+        multiplier++;
+        result *= -1;
+    }
+
+    // Adjust the result by a calculated offset.
+    int offset = multiplier * 64;
+
+    return offset + result;
+}
+
 
 /**
  * @brief Draws a ps1 primitive to the screen. 
@@ -51,7 +95,7 @@ void DrawTextArrow(Vector3D *position, uint timer, int leftOrRight)
     if ((timer & 31) < 16) {
         _ptr_hudMobys = _ptr_hudMobys + -1;
 
-        Memset(_ptr_hudMobys, 0, sizeof(Moby));
+        memset(_ptr_hudMobys, 0, sizeof(Moby));
 
         destination = &_ptr_hudMobys->position;
 
@@ -110,12 +154,8 @@ void DrawTextbox(int xBound1,int xBound2,int yBound1,int yBound2)
   _ptr_primitivesArray = (int*)((byte*)ptr_prim + 0x24);            // Make space in the array of primitives for the next one
 
   // Outline of textbox
-  DrawLine(xBound1,yBound1,xBound2,yBound1);
-  DrawLine(xBound2,yBound1,xBound2,yBound2);
-  DrawLine(xBound2,yBound2,xBound1,yBound2);
-  DrawLine(xBound1,yBound2,xBound1,yBound1);
-  return;
+    DrawLine(xBound1,yBound1,xBound2,yBound1);
+    DrawLine(xBound2,yBound1,xBound2,yBound2);
+    DrawLine(xBound2,yBound2,xBound1,yBound2);
+    DrawLine(xBound1,yBound2,xBound1,yBound1);
 }
-
-
-/** @} */ // end of reveresed_functions

@@ -1,5 +1,12 @@
 #pragma once
 
+// PSYQ
+typedef	unsigned char u_char;
+typedef	unsigned long u_long;
+typedef void (*CdlCB)(u_char,u_char *);
+
+
+
 typedef int                     bool;
 #define TRUE 1
 #define FALSE 0

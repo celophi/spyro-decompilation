@@ -3,6 +3,13 @@
 #include <moby.h>
 #include <custom_types.h>
 
+
+/// @brief Calculates an offset for applying a shine/glimmer to a drawn line.
+/// @param x Position of the X component of a vertex.
+/// @param y Position of the Y component of a vertex.
+/// @return 
+int GetLineGlimmerOffset(const int X, const int Y);
+
 /**
  * @brief Draws a ps1 primitive to the screen. 
  * @details Places a primitive struct ptr into the array of primitives to be drawn every frame (Somewhat unsure)
@@ -41,4 +48,3 @@ void DrawTextArrow(Vector3D *position, uint timer, int leftOrRight);
  * Amount of instructions: MORE IN MODDERN GCC (https://decomp.me/scratch/MrfVL) \n
 */
 void DrawTextbox(int xBound1, int xBound2, int yBound1, int yBound2);
-

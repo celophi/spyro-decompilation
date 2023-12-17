@@ -3,10 +3,10 @@
 /// @brief Time-code based CD-ROM disc position.
 typedef struct 
 {
-	u_char minute;
-	u_char second;
-	u_char sector;
-	u_char track;
+    u_char minute;
+    u_char second;
+    u_char sector;
+    u_char track;
 } CdlLOC;
 
 enum CdPrimitive 

@@ -8,21 +8,22 @@
 /// @brief Calculates an offset for applying a shine/glimmer to a drawn line.
 /// @param x Position of the X component of a vertex.
 /// @param y Position of the Y component of a vertex.
-/// @return 
-int GetLineGlimmerOffset(const int X, const int Y)
+/// @return Offset for applying glimmer.
+/// @note Original Address: 0x800169ac
+int GetLineGlimmerOffset(const short X, const short Y)
 {
     // Get the absolute values of both X and Y.
-    const int absX = X < 0 ? -X : X;
-    const int absY = Y < 0 ? -Y : Y;
+    const short absX = X < 0 ? -X : X;
+    const short absY = Y < 0 ? -Y : Y;
 
     // If ABS(X) > ABS(Y) then swap the index and divisor.
-    const int index = absX > absY ? absY : absX;
-    int divisor = absX > absY ? absX : absY;
+    const short index = absX > absY ? absY : absX;
+    short divisor = absX > absY ? absX : absY;
 
     // Make sure divisor is not zero to avoid division by zero.
     divisor = divisor == 0 ? 1 : divisor;
 
-    uint result = (uint)(byte)(&_GlimmerArray)[(index << 6) / divisor];
+    uint result = (uint)(&_GlimmerArray)[(index << 6) / divisor];
 
     // Determine an offset multiplier based on the sign value of both X and Y.
     int multiplier = (Y < 0)
@@ -51,45 +52,44 @@ int GetLineGlimmerOffset(const int X, const int Y)
     return offset + result;
 }
 
-
-/**
- * @brief Draws a ps1 primitive to the screen. 
- * @details Places a primitive struct ptr into the array of primitives to be drawn every frame (Somewhat unsure)
- * 
- * @param void* hudMobyInfo - pointer to basic info about the arrow you want to draw (x, y, size)
-
- * @note Function: DrawPrimitve \n
- * Original Address: 0x800168dc \n
- * Hook File: draw_primitive.s \n 
- * Prototype: draw_stuff.h \n
- * Amount of instructions: Same Amount (https://decomp.me/scratch/wd3wE) \n 
-*/
-void DrawPrimitive(int primitive)
+/// @brief Calculates the 8-bit difference between the supplied value and a timer, then clamps between 0 and 127.
+/// @param value Supplied value.
+/// @param timer In most cases, the value of a cyclical timer in the game.
+/// @return Calculated value.
+int GetClampedDifference(int value, int timer)
 {
-    short *unk_first_gfx_ptr;
-    int *local_gfx_ptrs;
+    // Keep only the lower 8 bits.
+    byte result = (byte)(value - timer);
 
-    local_gfx_ptrs = _ptr_arrayGraphicsRelatedPointers;
-    unk_first_gfx_ptr = (short *)*_ptr_arrayGraphicsRelatedPointers;
-    *_ptr_arrayGraphicsRelatedPointers = primitive;
+    // Clamp the result between 0 and 127.
+    return (result >= 128) ? (256 - result) : result;
+}
 
-    if (unk_first_gfx_ptr != (short *)0x0) 
+/// @brief Adds a primitive to a linked list.
+/// @param primitive Primitive to draw
+/// @note Original Address: 0x800168dc
+void AddPrimitiveToList(PrimU0 *primitive)
+{
+    PrimitiveList *list = _PrimitiveList;
+    PrimU0 *head = _PrimitiveList->Head;
+    _PrimitiveList->Head = primitive;
+
+    if (head != 0) 
     {
-        *unk_first_gfx_ptr = (short)primitive;
-        *(char *)(unk_first_gfx_ptr + 1) = (char)((uint)primitive >> 0x10);
+        head->Tag.addr = (u_long)primitive;
         return;
     }
-    local_gfx_ptrs[1] = primitive;
-    return;
+
+    list->Tail = primitive;
 }
 
 /// @brief Draws a blinking text arrow facing left or right.
 /// @param position Position to draw on the screen.
 /// @param timer Timer that counts every frame to be used for the pre-determined 16 frame intervals.
 /// @param leftOrRight Determines if the arrow points left or right.
-void DrawTextArrow(Vector3D *position, uint timer, int leftOrRight)
+void DrawTextArrow(Vec3u32 *position, uint timer, int leftOrRight)
 {
-    Vector3D *destination;
+    Vec3u32 *destination;
 
     // Alternate from being visible, and not every 16 frames
     if ((timer & 31) < 16) {
@@ -136,7 +136,7 @@ void DrawTextbox(int xBound1,int xBound2,int yBound1,int yBound2)
   Poly4FPadded* ptr_prim = (Poly4FPadded*)_ptr_primitivesArray;          
 
   PrimitiveAlphaHack(_ptr_primitivesArray,1,0,0x40,0);      // Trasparent black background hack
-  DrawPrimitive((int)ptr_prim);
+  AddPrimitiveToList((int)ptr_prim);
   ptr_prim->tag = 0x5000000;
   ptr_prim->code = POLY4F_TRANSPARENT;
   ptr_prim->point1Pos.x = xBound1;
@@ -150,7 +150,7 @@ void DrawTextbox(int xBound1,int xBound2,int yBound1,int yBound2)
   ptr_prim->color.R = 0x70;
   ptr_prim->color.G = 0x70;
   ptr_prim->color.B = 0x70;
-  DrawPrimitive((int)((byte*)ptr_prim + 0xC));
+  AddPrimitiveToList((int)((byte*)ptr_prim + 0xC));
   _ptr_primitivesArray = (int*)((byte*)ptr_prim + 0x24);            // Make space in the array of primitives for the next one
 
   // Outline of textbox

@@ -18,7 +18,7 @@
    Prototype: n/a \n
  * @see DrawTextAll()
 */
-Moby* DrawCapitalText(char* text, Vector3D* pointA, int horizontalAdjustment, byte color);
+Moby* DrawCapitalText(char* text, Vec3u32* pointA, int horizontalAdjustment, byte color);
 
 
 
@@ -37,7 +37,7 @@ Moby* DrawCapitalText(char* text, Vector3D* pointA, int horizontalAdjustment, by
    Prototype: n/a \n
   * @see DrawTextCapitals()
 */
-Moby* DrawVaryingText(char* text, Vector3D* leadingDimensions, Vector3D* followingDimensions, byte spacing, byte color);
+Moby* DrawVaryingText(char* text, Vec3u32* leadingDimensions, Vec3u32* followingDimensions, byte spacing, byte color);
 
 /**
  * @brief Draws the demo text on the screen.

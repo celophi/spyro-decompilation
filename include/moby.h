@@ -136,7 +136,7 @@ enum GemColors
 //~~~~~~~
 typedef struct HudMobyInfo
 {
-    Vector3D position;                  // Coords in hud act different than in world space. X and Y act like 2D plane. Z is effective size in HUD.
+    Vec3u32 position;                  // Coords in hud act different than in world space. X and Y act like 2D plane. Z is effective size in HUD.
 }HudMobyInfo;
 
 
@@ -153,7 +153,7 @@ typedef struct Moby
     int empty1;
     int* ptr_colision;
 
-    struct Vector3D position;
+    Vec3u32 position;
 
     short UNK21;                              
     

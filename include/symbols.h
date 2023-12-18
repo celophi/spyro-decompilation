@@ -1,6 +1,7 @@
 #pragma once
 
 #include <PSYQ/LIBCD.h>
+#include "shapes.h"
 
 /// @brief This is the pause/inventory menu timer. It is only running in those menus. \n Address: 0x8007588c
 extern int _LoadingTimer;
@@ -30,3 +31,7 @@ extern int _CdReadSectors_U1;
 extern int _CdReadSectors_U2;
 
 extern byte _GlimmerArray;
+
+/// @brief Pointer to linked list of primitives to be drawn every frame.
+/// @note Address: 0x8007581c
+extern PrimitiveList* _PrimitiveList;

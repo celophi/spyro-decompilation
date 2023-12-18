@@ -5,9 +5,10 @@ NTSC, exe, 0x80016490, 0x0, asm/CdReadCallbackFunc.s
 NTSC, exe, 0x800169ac, 0x0, asm/GetLineGlimmerOffset.s
 NTSC, exe, 0x80016c58, 0x0, asm/sin_scaled.s
 NTSC, exe, 0x80016fd0, 0x0, asm/matrix_transpose_hook.s
-NTSC, exe, 0x800168DC, 0x0, asm/draw_primitive.s
+NTSC, exe, 0x800168DC, 0x0, asm/AddPrimitiveToList.s
 NTSC, exe, 0x80016914, 0x0, asm/memset.s
 NTSC, exe, 0x80016958, 0x0, asm/memcpy.s
+NTSC, exe, 0x80017908, 0x0, asm/GetClampedDifference.s
 NTSC, exe, 0x80017e98, 0x0, asm/convert_32_to_16_rgba.s
 NTSC, exe, 0x80017f24, 0x0, asm/apply_image_fading.s
 NTSC, exe, 0x80017fe4, 0x0, asm/DrawCapitalText.s

@@ -2,35 +2,32 @@
 
 #include <moby.h>
 #include <custom_types.h>
+#include <shapes.h>
 
 
 /// @brief Calculates an offset for applying a shine/glimmer to a drawn line.
 /// @param x Position of the X component of a vertex.
 /// @param y Position of the Y component of a vertex.
 /// @return 
-int GetLineGlimmerOffset(const int X, const int Y);
+int GetLineGlimmerOffset(const short X, const short Y);
 
-/**
- * @brief Draws a ps1 primitive to the screen. 
- * @details Places a primitive struct ptr into the array of primitives to be drawn every frame (Somewhat unsure)
- * 
- * @param void* hudMobyInfo - pointer to basic info about the arrow you want to draw (x, y, size)
+/// @brief Calculates the 8-bit difference between the supplied value and a timer, then clamps between 0 and 127.
+/// @param value Supplied value.
+/// @param timer In most cases, the value of a cyclical timer in the game.
+/// @return Calculated value.
+int GetClampedDifference(int value, int timer);
 
- * @note Function: DrawPrimitve \n
- * Original Address: 0x800168dc \n
- * Hook File: draw_primitive.s \n 
- * Prototype: draw_stuff.h \n
- * Amount of instructions: Same Amount (https://decomp.me/scratch/wd3wE) \n 
-*/
-void DrawPrimitive(int primitive);
-
+/// @brief Adds a primitive to a linked list.
+/// @param primitive Primitive to draw
+/// @note Original Address: 0x800168dc
+void AddPrimitiveToList(PrimU0 *primitive);
 
 
 /// @brief Draws a blinking text arrow facing left or right.
 /// @param position Position to draw on the screen.
 /// @param timer Timer that counts every frame to be used for the pre-determined 16 frame intervals.
 /// @param leftOrRight Determines if the arrow points left or right.
-void DrawTextArrow(Vector3D *position, uint timer, int leftOrRight);
+void DrawTextArrow(Vec3u32 *position, uint timer, int leftOrRight);
 
 /**
  * @brief Draws a black textbox with a gold border. You can specify the bounds

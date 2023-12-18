@@ -8,7 +8,7 @@ _CdReadSectors_U0 = 0x800774b4;
 _CdReadSectors_U1 = 0x800776c4;
 _CdReadSectors_U2 = 0x800776c8;
 _GlimmerArray = 0x8006d908;
-
+_PrimitiveList = 0x8007581c;
 
 
 

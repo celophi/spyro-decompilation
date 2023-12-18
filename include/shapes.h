@@ -1,6 +1,27 @@
 #pragma once
 
 #include <common.h>
+#include <PSYQ/LIBGPU.h>
+
+typedef struct
+{
+    P_TAG Tag;
+    Vec2u16 V1;
+    int u3;
+    Vec2u16 V2;
+    int u4;
+    int u5;
+    int u6;
+    int u7;
+    int u8;
+} PrimU0;
+
+typedef struct
+{
+    PrimU0 *Head;
+    PrimU0 *Tail;
+} PrimitiveList;
+
 
 //~~~~~~~~~
 //Constants
@@ -211,10 +232,10 @@ typedef struct ShadedLine
 
 typedef struct Poly4F_Vec3 
 {
-    struct Vector3D point1Pos;
-    struct Vector3D point2Pos;
-    struct Vector3D point3Pos;
-    struct Vector3D point4Pos;
+    Vec3u32 point1Pos;
+    Vec3u32 point2Pos;
+    Vec3u32 point3Pos;
+    Vec3u32 point4Pos;
 
 } Poly4F_Vec3;
 

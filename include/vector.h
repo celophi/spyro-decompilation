@@ -1,16 +1,26 @@
 #pragma once
 
+#include <custom_types.h>
+
+typedef struct
+{
+    int X;
+    int Y;
+    int Z;
+} Vec3u32;
+
+typedef struct
+{
+    ushort X;
+    ushort Y;
+} Vec2u16;
+
 
 //~~~~~~~
 //Structs
 //~~~~~~~
 
-typedef struct Vector3D
-{
-    int X;
-    int Y;
-    int Z;
-} Vector3D;
+
 
 typedef struct Vec2
 {
@@ -106,18 +116,18 @@ typedef struct MATRIX3BY3
 //In Game Functions
 //~~~~~~~~~
 
-void Vec3Subtract(Vector3D* destVector, Vector3D* a, Vector3D* b);
+void Vec3Subtract(Vec3u32* destVector, Vec3u32* a, Vec3u32* b);
 
-void Vec3Scale(Vector3D* result, Vector3D* vector, int multiplier);                 //Scales the s
+void Vec3Scale(Vec3u32* result, Vec3u32* vector, int multiplier);                 //Scales the s
 
-void Vec3ScaleDownByPowerOfTwo(Vector3D* vector, unsigned int pot);
+void Vec3ScaleDownByPowerOfTwo(Vec3u32* vector, unsigned int pot);
 
-void Vec3ScaleDownBy4(Vec3_u16 result, Vector3D* source);                        //Scales down the source vector by 4, then stores it in a short vector. 
+void Vec3ScaleDownBy4(Vec3_u16 result, Vec3u32* source);                        //Scales down the source vector by 4, then stores it in a short vector. 
 
-void Vec3ScaleByFractionPowerOfTwo(Vector3D* param_1, int numerator, unsigned int denominatorExponent);               //80017614     
-void Vec3ScaleByFraction(Vector3D* param_1, int denominator, int numerator);
+void Vec3ScaleByFractionPowerOfTwo(Vec3u32* param_1, int numerator, unsigned int denominatorExponent);               //80017614     
+void Vec3ScaleByFraction(Vec3u32* param_1, int denominator, int numerator);
 
-unsigned int Vec3CalculateLengthE(Vector3D* vector, bool flag3D);
+unsigned int Vec3CalculateLengthE(Vec3u32* vector, bool flag3D);
 
 void Vec3ApplyRotationMatrix(int* rotationMatrix, unsigned int* inputVector, int* outputVector);
 
@@ -129,9 +139,9 @@ void Vec3Swap(int *param_1,int *param_2);
 /// @param destination Resulting vector.
 /// @param first First vector as part of the sum.
 /// @param second Second vector as part of the sum.
-void AddVector3D(Vector3D* destination, Vector3D* first, Vector3D* second);
+void AddVector3D(Vec3u32* destination, Vec3u32* first, Vec3u32* second);
 
 /// @brief Copies the source vector to the destination vector.
 /// @param destination Destination vector to get copied to.
 /// @param source Source vector to copy from.
-void CopyVector3D(Vector3D* destination, Vector3D* source);
+void CopyVector3D(Vec3u32* destination, Vec3u32* source);

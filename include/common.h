@@ -441,9 +441,9 @@ extern short _flyInAnimation;
 
 /**
  * @brief Camera Position \n Address: 0x80076DF8 
- * @see Vector3D
+ * @see Vec3u32
  */ 
-extern Vector3D _cameraPosition;
+extern Vec3u32 _cameraPosition;
 
 /**
  * @brief Camera Angle (yaw, pitch, roll) \n Address: 0x80076E1C
@@ -528,6 +528,8 @@ extern int* _ptr_levelMobySpecialData;
 
 extern int* _ptr_primitivesArray; //0x800757b0                //? Not too sure.
 extern int* _ptr_arrayGraphicsRelatedPointers; //0x8007581c   //? Ptr the the array of primitives structs to be drawn every frame
+
+
 
 extern char* _ptr_particleLinkedList; //0x80075738           //? This is a pointer to the next available particle slot.
 

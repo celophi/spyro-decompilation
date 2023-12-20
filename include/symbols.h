@@ -34,4 +34,10 @@ extern byte _GlimmerArray;
 
 /// @brief Pointer to linked list of primitives to be drawn every frame.
 /// @note Address: 0x8007581c
-extern PrimitiveList* _PrimitiveList;
+extern PrimitiveLinkedList* _PrimitiveLinkedList;
+
+/// @brief 800757b0
+extern void* _PrimitiveList;
+
+/// @brief 800770f4
+extern int _CyclingTimer;

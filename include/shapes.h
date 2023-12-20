@@ -20,7 +20,7 @@ typedef struct
 {
     PrimU0 *Head;
     PrimU0 *Tail;
-} PrimitiveList;
+} PrimitiveLinkedList;
 
 
 //~~~~~~~~~

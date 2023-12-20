@@ -1,6 +1,7 @@
 #include <common.h>
 #include <symbols.h>
 #include <PSYQ/LIBCD.h>
+#include <PSYQ/LIBGPU.h>
 
 /// @brief Callback to execute after reading from the CD-ROM.
 /// @param status Result of the CD read operation.

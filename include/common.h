@@ -2,6 +2,7 @@
 
 #include "custom_types.h"
 #include "vector.h"
+#include <PSYQ/LIBGPU.h>
 
 //~~~~~~~~~~~~~~~~~~~~~~~~
 //Constants/Magic Numbers
@@ -176,10 +177,12 @@ typedef enum LevelFlyInAnimations
 //Structs
 //~~~~~~~
 
-typedef struct RECT 
+typedef struct
 {
-    short x, y, w, h;
-}RECT;
+    byte R;
+    byte G;
+    byte B;
+} RGBu8;
 
 typedef struct RGBA_u8
 {
@@ -249,11 +252,6 @@ void RenderNormalMobys();
 void RenderAllObjects();
 
 /**
- * @brief This is a weird hack that seems to be related to transparency for primitaves? \n Address: 0x80060670
-*/
-void PrimitiveAlphaHack(void* param_1, int param_2, int param_3, short colorSpace, int param_5);
-
-/**
  * @brief Draws a golden line to the screen \n Address: 0x8001844c
  * @details Fills out a moby struct with the provided coordinate information, and puts it into the _ptr_primitivesArray. Automatically fills out color data, and has it shimmer by using the wobble timer.
 
@@ -262,7 +260,7 @@ void PrimitiveAlphaHack(void* param_1, int param_2, int param_3, short colorSpac
  * @param int point2X - The X position of the second point of the line
  * @param int point2Y - The Y position of the second point of the line
 */
-void DrawLine(int point1X, int point1Y, int point2X, int point2Y);                                      //? This function draws a yellow line.
+void DrawLine(ushort X1, ushort Y1, ushort X2, ushort Y2);                                      //? This function draws a yellow line.
 
 void FillScreenColor(int colorSpace, char r, char g, char b);                                           //? Fills the screen with a specific color.
 

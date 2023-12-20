@@ -70,9 +70,9 @@ int GetClampedDifference(int value, int timer)
 /// @note Original Address: 0x800168dc
 void AddPrimitiveToList(PrimU0 *primitive)
 {
-    PrimitiveList *list = _PrimitiveList;
-    PrimU0 *head = _PrimitiveList->Head;
-    _PrimitiveList->Head = primitive;
+    PrimitiveLinkedList *list = _PrimitiveLinkedList;
+    PrimU0 *head = _PrimitiveLinkedList->Head;
+    _PrimitiveLinkedList->Head = primitive;
 
     if (head != 0) 
     {
@@ -82,6 +82,57 @@ void AddPrimitiveToList(PrimU0 *primitive)
 
     list->Tail = primitive;
 }
+
+/// @brief Sets the color of a vertex calculating a difference in contrast based on the position.
+/// @param rgb Reference to a pixel to color
+/// @param x X coordinate
+/// @param y Y coordinate
+void SetVertexColor(RGBu8* rgb, ushort x, ushort y)
+{
+    int offset = GetLineGlimmerOffset(x - 256, y - 120);
+    offset = GetClampedDifference(offset, _CyclingTimer);
+
+    byte calculated = -(byte)offset + 224;
+    rgb->R = calculated;
+    rgb->G = calculated;
+    rgb->B = -(byte)offset + 128;
+}
+
+/// @brief Draws a golden line on the screen. This can be seen in menus, and some text boxes.
+/// @param X1 Left X coordinate.
+/// @param Y1 Left Y coordinate.
+/// @param X2 Right X coordinate.
+/// @param Y2 Right Y coordinate.
+void DrawLine(ushort X1,ushort Y1,ushort X2,ushort Y2)
+{   
+    LINE_G2* primitive = (LINE_G2*)_PrimitiveList;
+
+    // Create a LINE_G2. Note, should create a real method for this.
+    primitive->Tag.len = 4;
+    primitive->Tag.addr = 0;
+    primitive->Tag.code = 0x50;
+
+    primitive->x0 = X1;
+    primitive->y0 = Y1;
+    primitive->x1 = X2;
+    primitive->y1 = Y2;
+
+    SetVertexColor((RGBu8*)&primitive->Tag.r0, X1, Y1);
+    SetVertexColor((RGBu8*)&primitive->r1, X2, Y2);
+
+    AddPrimitiveToList((P_TAG *)primitive);
+    _PrimitiveList = primitive + 1;
+}
+
+
+
+
+
+
+
+
+
+
 
 /// @brief Draws a blinking text arrow facing left or right.
 /// @param position Position to draw on the screen.
@@ -135,7 +186,9 @@ void DrawTextbox(int xBound1,int xBound2,int yBound1,int yBound2)
 {
   Poly4FPadded* ptr_prim = (Poly4FPadded*)_ptr_primitivesArray;          
 
-  PrimitiveAlphaHack(_ptr_primitivesArray,1,0,0x40,0);      // Trasparent black background hack
+  SetDrawMode((DR_MODE*)_ptr_primitivesArray, 1, 0, 0x40, 0);
+    
+
   AddPrimitiveToList((int)ptr_prim);
   ptr_prim->tag = 0x5000000;
   ptr_prim->code = POLY4F_TRANSPARENT;

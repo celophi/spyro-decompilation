@@ -5,6 +5,7 @@ typedef	unsigned char u_char;
 typedef	unsigned long u_long;
 typedef void (*CdlCB)(u_char,u_char *);
 
+typedef unsigned short ushort;
 
 
 typedef int                     bool;

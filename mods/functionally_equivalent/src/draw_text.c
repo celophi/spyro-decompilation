@@ -62,7 +62,7 @@ void SetTextAreaFormatAndColor(byte color) {
 
 /// @brief Grows the global text area list and copies the Point3D to it. TextArea grows backwards.
 /// @param point 
-void GrowTextArea(Vector3D* position) {
+void GrowTextArea(Vec3u32* position) {
     _ptr_hudMobys = _ptr_hudMobys - 1;
     memset(_ptr_hudMobys, 0, sizeof(Moby));
     CopyVector3D(&_ptr_hudMobys->position, position);
@@ -82,7 +82,7 @@ void GrowTextArea(Vector3D* position) {
 /// @param spacing Spacing away from major characters to start drawing minor ones.
 /// @param color Color of the text
 /// @return 
-Moby* DrawVaryingText(char* text, Vector3D* leadingDimensions, Vector3D* followingDimensions, byte spacing, byte color) {
+Moby* DrawVaryingText(char* text, Vec3u32* leadingDimensions, Vec3u32* followingDimensions, byte spacing, byte color) {
     bool bVar1;
     int horizontalAdjustment;
     unsigned int currentCharacter;
@@ -227,7 +227,7 @@ void TranslateCharacter(char* text) {
 /// @param spacing Horizontal space between each character. 
 /// @param color Color of the text.
 /// @return Pointer to the list of Mobys to draw.
-Moby* DrawCapitalText(char* text, Vector3D* position, int spacing, byte color) 
+Moby* DrawCapitalText(char* text, Vec3u32* position, int spacing, byte color) 
 {
     while (*text != 0) 
     {
@@ -294,8 +294,8 @@ void CopyHudToShaded() {
   * @see DrawDemoText()
 */
 void DrawDemoText() {
-  Vector3D capitalTextInfo = { .X = 199, .Y = 200, .Z = 4352 };
-  Vector3D lowercaseTextInfo = { .X = 16, .Y = 1, .Z = 5120 };
+  Vec3u32 capitalTextInfo = { .X = 199, .Y = 200, .Z = 4352 };
+  Vec3u32 lowercaseTextInfo = { .X = 16, .Y = 1, .Z = 5120 };
   const byte spacing = 18;
   const char color = 2;
   const int sinArrayIncrement = 12;

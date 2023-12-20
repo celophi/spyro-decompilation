@@ -10,7 +10,7 @@
 /// @param destination Resulting vector.
 /// @param first First vector as part of the sum.
 /// @param second Second vector as part of the sum.
-void AddVector3D(Vector3D* destination, Vector3D* first, Vector3D* second) 
+void AddVector3D(Vec3u32* destination, Vec3u32* first, Vec3u32* second) 
 {
     destination->X = first->X + second->X;
     destination->Y = first->Y + second->Y;
@@ -20,9 +20,9 @@ void AddVector3D(Vector3D* destination, Vector3D* first, Vector3D* second)
 /// @brief Copies the source vector to the destination vector.
 /// @param destination Destination vector to get copied to.
 /// @param source Source vector to copy from.
-void CopyVector3D(Vector3D* destination, Vector3D* source) 
+void CopyVector3D(Vec3u32* destination, Vec3u32* source) 
 {
-    memcpy(destination, source, sizeof(Vector3D));
+    memcpy(destination, source, sizeof(Vec3u32));
 }
 
 /**

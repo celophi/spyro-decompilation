@@ -2,7 +2,7 @@ CdControl = 0x80063C48;
 CdRead = 0x8006606C;
 CdInit = 0x8006397C;
 CdReadCallback = 0x8006623C;
-
+SetDrawMode = 0x80060670;
 
 
 
@@ -18,11 +18,9 @@ srand = 0x8006275c;
 
 Maybe_ArrayCopy = 0x80016958;
 
-DrawLine = 0x8001844c;
-DrawPrimitive_ = 0x800168dc;
 DrawDemoText_ = 0x80018908;
 FillScreenColor = 0x800190d4;
-PrimitiveAlphaHack = 0x80060670;
+
 
 PlaySoundEffect = 0x80055a78;
 PlayMusicTrack = 0x800567f4;

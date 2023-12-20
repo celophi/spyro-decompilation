@@ -37,4 +37,18 @@ typedef struct
     short y1;
 } LINE_G2;
 
+/// @brief Flat Quadrangle
+typedef struct 
+{
+	P_TAG Tag;
+	short x0;
+    short y0;
+	short x1;
+    short y1;
+	short x2;
+    short y2;
+	short x3;
+    short y3;
+} POLY_F4;
+
 extern void SetDrawMode(DR_MODE *p, int dfe, int dtd, int tpage, RECT *tw);

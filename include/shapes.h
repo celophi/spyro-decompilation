@@ -18,8 +18,8 @@ typedef struct
 
 typedef struct
 {
-    PrimU0 *Head;
-    PrimU0 *Tail;
+    P_TAG *Head;
+    P_TAG *Tail;
 } PrimitiveLinkedList;
 
 

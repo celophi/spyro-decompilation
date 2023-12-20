@@ -20,8 +20,7 @@ int GetClampedDifference(int value, int timer);
 /// @brief Adds a primitive to a linked list.
 /// @param primitive Primitive to draw
 /// @note Original Address: 0x800168dc
-void AddPrimitiveToList(PrimU0 *primitive);
-
+void AddPrimitiveToList(P_TAG *primitive);
 
 /// @brief Draws a blinking text arrow facing left or right.
 /// @param position Position to draw on the screen.

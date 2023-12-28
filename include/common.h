@@ -550,4 +550,15 @@ extern int _musicLevelTrack;  //0x0x800774b0
 extern int* _maybe_ptr_levelTextureRelated; //0x800785f0
 
 extern byte _cdStatus; //0x80074e44
+
+
+
+extern int _InitializeMemoryCards_u0;
+extern int _InitializeMemoryCards_u1;
+
+
+
+
+
+
 /** @} */ // end of labeled_global_variables

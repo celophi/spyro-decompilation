@@ -1,13 +1,19 @@
 NTSC, header, 0x80200000, 0x0, src/*.c, mod_code.bin
 
+NTSC, exe, 0x800122a8, 0x0, asm/InitializeDisplay.s
+NTSC, exe, 0x80012460, 0x0, asm/InitializeMemoryCards.s
+NTSC, exe, 0x800133e0, 0x0, asm/WA4S3_MakeAbsoluteAddresses.s
 NTSC, exe, 0x800163e4, 0x0, asm/CdReadSectors.s
 NTSC, exe, 0x80016490, 0x0, asm/CdReadCallbackFunc.s
+NTSC, exe, 0x80016784, 0x0, asm/CreateOrderingTable.s
 NTSC, exe, 0x800169ac, 0x0, asm/GetLineGlimmerOffset.s
 NTSC, exe, 0x80016c58, 0x0, asm/sin_scaled.s
 NTSC, exe, 0x80016fd0, 0x0, asm/matrix_transpose_hook.s
 NTSC, exe, 0x800168DC, 0x0, asm/AddPrimitiveToList.s
 NTSC, exe, 0x80016914, 0x0, asm/memset.s
 NTSC, exe, 0x80016958, 0x0, asm/memcpy.s
+NTSC, exe, 0x800171fc, 0x0, asm/GetVectorLength.s
+NTSC, exe, 0x800175b8, 0x0, asm/ScaleVector.s
 NTSC, exe, 0x80017908, 0x0, asm/GetClampedDifference.s
 NTSC, exe, 0x80017e98, 0x0, asm/convert_32_to_16_rgba.s
 NTSC, exe, 0x80017f24, 0x0, asm/apply_image_fading.s

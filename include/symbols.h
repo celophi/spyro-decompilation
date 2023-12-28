@@ -30,14 +30,17 @@ extern int _CdReadSectors_U1;
 /// @brief 800776c8
 extern int _CdReadSectors_U2;
 
-extern byte _GlimmerArray;
+extern byte _GlimmerArray[68];
 
 /// @brief Pointer to linked list of primitives to be drawn every frame.
 /// @note Address: 0x8007581c
-extern PrimitiveLinkedList* _PrimitiveLinkedList;
+extern PrimitiveLinkedList2* _PrimitiveLinkedList;
 
 /// @brief 800757b0
 extern void* _PrimitiveList;
 
 /// @brief 800770f4
 extern int _CyclingTimer;
+
+/// @brief 80074b84
+extern short _SquareRootLookupTable[192];

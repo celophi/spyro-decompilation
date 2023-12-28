@@ -20,7 +20,7 @@ typedef struct
 {
     P_TAG *Head;
     P_TAG *Tail;
-} PrimitiveLinkedList;
+} PrimitiveLinkedList2;
 
 
 //~~~~~~~~~
@@ -257,3 +257,17 @@ typedef struct Poly4FPadded      //! FOR IN GAME
     struct Vec2_u16 point4Pos;
 
 } Poly4FPadded;
+
+/// @brief Structure defining the beginning of a list of primitives and where it ends.
+typedef struct
+{
+    /// @brief Final primitive in the list.
+    P_TAG *Tail;
+
+    /// @brief Beginning primitive in the list.
+    P_TAG *Head;
+} PrimitiveLinkedList;
+
+extern PrimitiveLinkedList2* _PrimitiveLinkedList;
+extern byte _DataSectionStart;
+extern PrimitiveLinkedList* _PrimitiveStagingStart;

@@ -1,5 +1,10 @@
+_DataSectionStart = 0x8006bbe0;
 _CdReading = 0x800756e0;
+_PrimitiveLinkedList = 0x8007581c;
+_PrimitiveStagingStart = 0x80075820;
 _LoadingTimer = 0x8007588c;
+_InitializeMemoryCards_u0 = 0x80075b4c;
+_InitializeMemoryCards_u1 = 0x80075b90;
 _CdReadCallback_U0 = 0x80076bb8;
 _CdlLOC = 0x80076b98;
 _CdReadSectorsParameter = 0x80076b94;
@@ -8,9 +13,12 @@ _CdReadSectors_U0 = 0x800774b4;
 _CdReadSectors_U1 = 0x800776c4;
 _CdReadSectors_U2 = 0x800776c8;
 _GlimmerArray = 0x8006d908;
-_PrimitiveLinkedList = 0x8007581c;
 _PrimitiveList = 0x800757b0;
 _CyclingTimer = 0x800770f4;
+_SquareRootLookupTable = 0x80074b84;
+_GfxEnvA = 0x80076ee0;
+_GfxEnvB = 0x80076f64;
+
 
 
 

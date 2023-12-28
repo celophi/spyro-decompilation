@@ -4,39 +4,41 @@
 #include <shapes.h>
 #include <memory.h>
 #include <symbols.h>
+#include <PSYQ/LIBGPU.h>
 
 /// @brief Calculates an offset for applying a shine/glimmer to a drawn line.
 /// @param x Position of the X component of a vertex.
 /// @param y Position of the Y component of a vertex.
 /// @return Offset for applying glimmer.
 /// @note Original Address: 0x800169ac
-int GetLineGlimmerOffset(const short X, const short Y)
+int GetLineGlimmerOffset(int x, int y)
 {
     // Get the absolute values of both X and Y.
-    const short absX = X < 0 ? -X : X;
-    const short absY = Y < 0 ? -Y : Y;
+    int absX = x < 0 ? -x : x;
+    int absY = y < 0 ? -y : y;
 
     // If ABS(X) > ABS(Y) then swap the index and divisor.
-    const short index = absX > absY ? absY : absX;
-    short divisor = absX > absY ? absX : absY;
+    int numerator = absX > absY ? absY : absX;
+    int divisor = absX > absY ? absX : absY;
 
     // Make sure divisor is not zero to avoid division by zero.
     divisor = divisor == 0 ? 1 : divisor;
 
-    uint result = (uint)(&_GlimmerArray)[(index << 6) / divisor];
+    int idx = (numerator << 6) / divisor;
+    uint result = (uint) _GlimmerArray[idx];
 
     // Determine an offset multiplier based on the sign value of both X and Y.
-    int multiplier = (Y < 0)
-        ? ((X < 0) ? 2 : 3)
-        : ((X < 0) ? 1 : 0);
+    int multiplier = (x < 0)
+        ? ((y < 0) ? 2 : 1)
+        : ((y < 0) ? 3 : 0);
 
     // Determine the result from the glimmer array needs to be inverted.
-    bool invert = absX >= absY;
-    
-    // Handle a specific case when both X and Y values are negative.
-    if (X < 0 && Y < 0)
+    bool invert = absX < absY;
+
+    // Handle a specific case when only one of either X and Y values are negative.
+    if ((x < 0 && y >= 0) || (x >= 0 && y < 0))
     {
-        invert = absX < absY;
+        invert = absX >=  absY;
     }
 
     // When inverted, the multiplier also gets adjusted forward.
@@ -46,11 +48,10 @@ int GetLineGlimmerOffset(const short X, const short Y)
         result *= -1;
     }
 
-    // Adjust the result by a calculated offset.
     int offset = multiplier * 64;
-
     return offset + result;
 }
+
 
 /// @brief Calculates the 8-bit difference between the supplied value and a timer, then clamps between 0 and 127.
 /// @param value Supplied value.
@@ -70,7 +71,7 @@ int GetClampedDifference(int value, int timer)
 /// @note Original Address: 0x800168dc
 void AddPrimitiveToList(P_TAG *primitive)
 {
-    PrimitiveLinkedList *list = _PrimitiveLinkedList;
+    PrimitiveLinkedList2 *list = _PrimitiveLinkedList;
     P_TAG *head = _PrimitiveLinkedList->Head;
     _PrimitiveLinkedList->Head = primitive;
 
@@ -198,4 +199,78 @@ void DrawTextArrow(Vec3u32 *position, uint timer, int leftOrRight)
         _ptr_hudMobys->requiredHUD1 = 0x7F;
         _ptr_hudMobys->requiredHUD2 = 0xFF;
     }
+}
+
+/// @brief Creates an ordering table by linking all primitives within a section of memory.
+/// @param count Number of links(?) double pointers that exist.
+/// @return ordering table
+P_TAG * CreateOrderingTable(int count)
+{
+    // Starting from the end of the memory block, iterate backwards until finding the first non-null entry.
+    PrimitiveLinkedList* cursor = _PrimitiveStagingStart + count;
+
+    // Find the first entry, starting from the end, that is not null.
+    P_TAG* entry = NULL;
+    while (!entry && cursor != _PrimitiveStagingStart)
+    {
+        cursor--;
+        entry = cursor->Tail;
+    }
+
+    // If the entire OT was iterated over without finding a non-null entry, reset.
+    if (cursor == _PrimitiveStagingStart)
+    {
+        // Make a copy of the head and tail of the list.
+        P_TAG* currentHead = _PrimitiveLinkedList->Head;
+        P_TAG* currentTail = _PrimitiveLinkedList->Tail;
+
+        // Reset the head.
+        _PrimitiveLinkedList->Head = NULL;
+
+        // If the current head isn't reset, then reset the tail, and the previous head (before reset) needs to point to the data section start.
+        if (currentHead) 
+        {
+            _PrimitiveLinkedList->Tail = NULL;
+            currentHead->addr = (u_long)&_DataSectionStart;
+            return currentTail;
+        }
+
+        return (P_TAG *)&_DataSectionStart;
+    }
+
+    // The head of the first linked list is the start of the ordering table.
+    P_TAG* orderingTable = cursor->Head;
+
+    // Link all of the primitives to each other iteratively.
+    while (cursor != _PrimitiveStagingStart)
+    {
+        cursor--;
+        
+        if (cursor->Head) 
+        {
+            // link the tail of the previous list to this newly found list's head.
+            entry->addr = (u_long)cursor->Head;
+
+            // The newly found list now becomes the list to be linked with on the next iteration.
+            entry = cursor->Tail;
+        }
+    }
+
+    // Reset the staging area.
+    memset(_PrimitiveStagingStart, 0, count * sizeof(PrimitiveLinkedList));
+
+    // If the OT->Tail is not reset
+    if (_PrimitiveLinkedList->Tail) 
+    {
+        entry->addr = (u_long)_PrimitiveLinkedList->Tail;
+        
+        // Reset the OT.
+        _PrimitiveLinkedList->Tail = NULL;
+        _PrimitiveLinkedList->Head = NULL;
+        _PrimitiveLinkedList->Head->addr = (u_long)&_DataSectionStart;
+        return orderingTable;
+    }
+
+    entry->addr = (u_long)&_DataSectionStart;
+    return orderingTable;
 }

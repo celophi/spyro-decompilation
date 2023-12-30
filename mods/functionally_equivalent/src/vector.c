@@ -79,14 +79,69 @@ void ScaleVector(Vec3u32* vector, int denominator, int numerator)
     vector->Z = RT3 >> 12;
 }
 
+/// @brief Sets all dimensions of a vector to zero.
+/// @param vector Input vector.
+void ClearVector(Vec3u32* vector)
+{
+    vector->X = 0;
+    vector->Y = 0;
+    vector->Z = 0;
+}
 
+/// @brief Scales a vector down by a power of 2.
+/// @param vector Input vector.
+/// @param power Exponential value to scale down by.
+void ScaleVectorDown(Vec3u32* vector, uint power)
+{
+    // Clamp exponential decrease.
+    power &= 31;
 
+    vector->X >>= power;
+    vector->Y >>= power;
+    vector->Z >>= power;
+}
 
+/// @brief Scales a vector up by a power of 2.
+/// @param vector Input vector.
+/// @param power Exponential value to scale down by.
+void ScaleVectorUp(Vec3u32* vector, uint power)
+{
+    // Clamp exponential increase.
+    power &= 31;
 
+    vector->X <<= power;
+    vector->Y <<= power;
+    vector->Z <<= power;
+}
 
+/// @brief Scales a vector by a fraction where the denominator is an exponent of the number '2'.
+/// @note UNTESTED - Still need to understand the condition in game where this is used.
+/// @param vector Input vector.
+/// @param numerator Top number of the fraction.
+/// @param denominator Bottom number of the fraction which is an exponent of the number '2'.
+void ScaleVectorByExponent(Vec3u32* vector, uint numerator, uint denominator)
+{
+    gte_ldlvl(vector);
+    gte_ldMAC1(0);
+    gte_ldMAC2(0);
+    gte_ldMAC3(0);
+    gte_ldIR0(numerator);
+    gte_gpl0();
 
+    int x;
+    int y;
+    int z;
 
+    read_mt(x, y, z);
 
+    // Clamp denominator to integer size.
+    denominator &= 31;
+
+    // Apply the denominator while keeping the sign of the value.
+    vector->X = (x < 0) ? -(-x >> denominator) : x >> denominator;
+    vector->Y = (y < 0) ? -(-y >> denominator) : y >> denominator;
+    vector->Z = (z < 0) ? -(-z >> denominator) : z >> denominator;
+}
 
 
 /** @ingroup reveresed_functions

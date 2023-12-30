@@ -156,9 +156,8 @@ void Convert32To16RGBA(uint *source, int size)
     }
 }
 
-
-
 /// @brief Prepares an array for sound track files.
+/// @note Original Address: 0x8001256c
 /// @return Value that doesn't seem to be used.
 int PrepareSoundFiles()
 {
@@ -174,3 +173,4 @@ int PrepareSoundFiles()
     _CdUnknownFlags = 64;
     return 1;
 }
+

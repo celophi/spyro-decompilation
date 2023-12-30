@@ -6,12 +6,12 @@
 #include <symbols.h>
 #include <PSYQ/LIBGPU.h>
 
-/// @brief Calculates an offset for applying a shine/glimmer to a drawn line.
+/// @brief Calculates the arctan of a vector to get the estimated angle. The returned value is a number where 64 = 90 degrees, and 256 = 360 degrees.
 /// @param x Position of the X component of a vertex.
 /// @param y Position of the Y component of a vertex.
-/// @return Offset for applying glimmer.
+/// @return Angle based on a number aligned with 64 = 90 degrees.
 /// @note Original Address: 0x800169ac
-int GetLineGlimmerOffset(int x, int y)
+int GetAngle(int x, int y)
 {
     // Get the absolute values of both X and Y.
     int absX = x < 0 ? -x : x;
@@ -25,7 +25,7 @@ int GetLineGlimmerOffset(int x, int y)
     divisor = divisor == 0 ? 1 : divisor;
 
     int idx = (numerator << 6) / divisor;
-    uint result = (uint) _GlimmerArray[idx];
+    uint result = (uint) _AngleArray[idx];
 
     // Determine an offset multiplier based on the sign value of both X and Y.
     int multiplier = (x < 0)
@@ -90,7 +90,7 @@ void AddPrimitiveToList(P_TAG *primitive)
 /// @param y Y coordinate
 void SetVertexColor(RGBu8* rgb, ushort x, ushort y)
 {
-    int offset = GetLineGlimmerOffset(x - 256, y - 120);
+    int offset = GetAngle(x - 256, y - 120);
     offset = GetClampedDifference(offset, _CyclingTimer);
 
     byte calculated = -(byte)offset + 224;
@@ -203,6 +203,7 @@ void DrawTextArrow(Vec3u32 *position, uint timer, int leftOrRight)
 
 /// @brief Creates an ordering table by linking all primitives within a section of memory.
 /// @param count Number of links(?) double pointers that exist.
+/// @note Original Address: 0x80016784 
 /// @return ordering table
 P_TAG * CreateOrderingTable(int count)
 {
@@ -273,4 +274,29 @@ P_TAG * CreateOrderingTable(int count)
 
     entry->addr = (u_long)&_DataSectionStart;
     return orderingTable;
+}
+
+/// @brief Adds a primitive to the end of the staging area.
+/// @param primitive Primitive to add to the tail.
+/// @param offset Offset from the beginning of the staging area to find the current tail.
+void StagePrimitive(P_TAG* primitive, int offset)
+{
+    // Calculate the end of the staging area.
+    PrimitiveLinkedList* end = _PrimitiveStagingStart + offset;
+
+    // Get a reference to the last primitive.
+    P_TAG* tail = end->Tail;
+
+    // Link the last primitive to the input argument.
+    end->Tail = primitive;
+
+    // If the old tail is not null, attach head using the address of the P_TAG.
+    if (tail != NULL)
+    {
+        tail->addr = (u_long)primitive;
+        return;
+    }
+
+    // Link the last primitive head to be the input argument.
+    end->Head = primitive;
 }

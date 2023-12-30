@@ -51,5 +51,3 @@ int CdPosToInt(CdlLOC * p);
 int CdSync_(int mode, unsigned char * result);
 
 void read_cb(unsigned char status, unsigned char *result);
-
-extern int _musicSectors;

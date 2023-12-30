@@ -2,10 +2,6 @@
 #include <custom_types.h>
 #include <moby.h>
 
-/** @ingroup reveresed_functions
- *  @{
- */
-
 /**
  * @brief Returns the current completion percentage.
  * @details Returns the current completion percentage based on your gems, dragons, and eggs. (Except for when you are above 12000 gems.)
@@ -73,36 +69,40 @@ int SinScaled(uint param_1)
 */
 void ApplyImageFading(uint *source, uint *destination, int contrast)
 {
-  while( true ) {
-    uint instruction = *source++;
+    while( true ) 
+    {
+        uint instruction = *source++;
 
-    // If the instruction is invalid, then finish decompressing.
-    if ((int)instruction < 0) {
-      break;
+        // If the instruction is invalid, then finish decompressing.
+        if ((int)instruction < 0) 
+        {
+            break;
+        }
+
+        // The portion of the instruction on the right side is an offset into the destination memory to start writing to. Maybe some decompression.
+        destination = (uint *)((int)destination + ((instruction << 0x0F) >> 0x0D));
+
+        // The number of RGBA pixels this decompressed segment should take.
+        uint size = instruction >> 0x11;
+        uint *end = destination + size;
+
+        while (destination != end) 
+        {
+            uint data = *source++;
+            byte *pixel = (byte*)&data;
+
+            // Apply fading to each byte of the RGBA pixel, but clamp at zero.
+            // This seems to result in less instructions, but is slower.
+            for (uint i = 0; i < sizeof(RGBA_u8); i++) 
+            {
+                int applied = (int)pixel[i] + contrast;
+                pixel[i] = applied > 0 ? applied : 0;
+            }
+
+            // Save the modified pixel into the destination buffer.
+            *destination++ = *(uint*)pixel;
+        }
     }
-
-    // The portion of the instruction on the right side is an offset into the destination memory to start writing to. Maybe some decompression.
-    destination = (uint *)((int)destination + ((instruction << 0x0F) >> 0x0D));
-
-    // The number of RGBA pixels this decompressed segment should take.
-    uint size = instruction >> 0x11;
-    uint *end = destination + size;
-
-    while (destination != end) {
-      uint data = *source++;
-      byte *pixel = (byte*)&data;
-
-      // Apply fading to each byte of the RGBA pixel, but clamp at zero.
-      // This seems to result in less instructions, but is slower.
-      for (uint i = 0; i < sizeof(RGBA_u8); i++) {
-        int applied = (int)pixel[i] + contrast;
-        pixel[i] = applied > 0 ? applied : 0;
-      }
-
-      // Save the modified pixel into the destination buffer.
-      *destination++ = *(uint*)pixel;
-    }
-  }
 }
 
 /**
@@ -119,41 +119,58 @@ void ApplyImageFading(uint *source, uint *destination, int contrast)
 */
 void Convert32To16RGBA(uint *source, int size)
 {
-  // RGB masks
-  const int blueMask = 0x1F;
-  const int redMask = 0x7C00;
-  const int greenMask = 0x3E0;
+    // RGB masks
+    const int blueMask = 0x1F;
+    const int redMask = 0x7C00;
+    const int greenMask = 0x3E0;
 
-  uint blue;
-  uint green;
-  uint red;
-  uint remainder;
-  
-  byte *end = (byte *)((int)source + size);
-  byte *cursor = (byte *)source;
-  
-  while (cursor != end)
-  {
-    // Each color is 5 bits RGB555.
-    blue = *source & blueMask;
-    green = *source & greenMask;
-    red = *source & redMask;
+    uint blue;
+    uint green;
+    uint red;
+    uint remainder;
 
-    // Originally, I thought this is alpha, but it seems too large.
-    remainder = *source >> 0x10;
+    byte *end = (byte *)((int)source + size);
+    byte *cursor = (byte *)source;
 
-    // Convert the RGB portions to fit into 16 bits.
-    *cursor++ = (char)(blue * 4 + (green >> 4) + (green >> 5) + (red >> 10) >> 3);
+    while (cursor != end)
+    {
+        // Each color is 5 bits RGB555.
+        blue = *source & blueMask;
+        green = *source & greenMask;
+        red = *source & redMask;
 
-    // Perform the conversion for the second half.
-    blue = remainder & blueMask;
-    green = remainder & greenMask;
-    red = remainder & redMask;
+        // Originally, I thought this is alpha, but it seems too large.
+        remainder = *source >> 0x10;
 
-    *cursor++ = (char)(blue * 4 + (green >> 4) + (green >> 5) + (red >> 10) >> 3);
+        // Convert the RGB portions to fit into 16 bits.
+        *cursor++ = (char)(blue * 4 + (green >> 4) + (green >> 5) + (red >> 10) >> 3);
 
-    source++;
-  }
+        // Perform the conversion for the second half.
+        blue = remainder & blueMask;
+        green = remainder & greenMask;
+        red = remainder & redMask;
+
+        *cursor++ = (char)(blue * 4 + (green >> 4) + (green >> 5) + (red >> 10) >> 3);
+
+        source++;
+    }
 }
 
-/** @} */ // end of reveresed_functions
+/// @brief Prepares an array for sound track files.
+/// @note Original Address: 0x8001256c
+/// @return Value that doesn't seem to be used.
+int PrepareSoundFiles()
+{
+    for (int i = 0; i < 6; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            _SoundFiles[i].Files[j].Sector = _SoundtrackFileSectors[i];
+            _SoundFiles[i].Files[j].U1 = _SoundtrackFileSectors[i] + _SoundtrackU0[i].U0[j];
+        }
+    }
+
+    _CdUnknownFlags = 64;
+    return 1;
+}
+

@@ -557,8 +557,20 @@ extern int _InitializeMemoryCards_u0;
 extern int _InitializeMemoryCards_u1;
 
 
+typedef struct {
+    int U0[8];
+} SoundFileU0;
 
+typedef struct {
+    int Sector;
+    int U1;
+} SoundFileLocation;
 
+typedef struct {
+    SoundFileLocation Files[8];
+} SoundFiles;
 
-
-/** @} */ // end of labeled_global_variables
+extern int _CdUnknownFlags;
+extern SoundFiles _SoundFiles[6];
+extern SoundFileU0 _SoundtrackU0[6];
+extern int _SoundtrackFileSectors[6];

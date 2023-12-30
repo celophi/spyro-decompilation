@@ -5,11 +5,11 @@
 #include <shapes.h>
 
 
-/// @brief Calculates an offset for applying a shine/glimmer to a drawn line.
+/// @brief Returns the arctan of a vector.
 /// @param x Position of the X component of a vertex.
 /// @param y Position of the Y component of a vertex.
 /// @return 
-int GetLineGlimmerOffset(const short X, const short Y);
+int GetAngle(const short X, const short Y);
 
 /// @brief Calculates the 8-bit difference between the supplied value and a timer, then clamps between 0 and 127.
 /// @param value Supplied value.

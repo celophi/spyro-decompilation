@@ -30,7 +30,7 @@ extern int _CdReadSectors_U1;
 /// @brief 800776c8
 extern int _CdReadSectors_U2;
 
-extern byte _GlimmerArray[68];
+extern byte _AngleArray[68];
 
 /// @brief Pointer to linked list of primitives to be drawn every frame.
 /// @note Address: 0x8007581c

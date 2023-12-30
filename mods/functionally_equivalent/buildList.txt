@@ -6,7 +6,9 @@ NTSC, exe, 0x800133e0, 0x0, asm/WA4S3_MakeAbsoluteAddresses.s
 NTSC, exe, 0x800163e4, 0x0, asm/CdReadSectors.s
 NTSC, exe, 0x80016490, 0x0, asm/CdReadCallbackFunc.s
 NTSC, exe, 0x80016784, 0x0, asm/CreateOrderingTable.s
-NTSC, exe, 0x800169ac, 0x0, asm/GetLineGlimmerOffset.s
+NTSC, exe, 0x800168a0, 0x0, asm/StagePrimitive.s
+NTSC, exe, 0x80016930, 0x0, asm/Memset4.s
+NTSC, exe, 0x800169ac, 0x0, asm/GetAngle.s
 NTSC, exe, 0x80016c58, 0x0, asm/sin_scaled.s
 NTSC, exe, 0x80016fd0, 0x0, asm/matrix_transpose_hook.s
 NTSC, exe, 0x800168DC, 0x0, asm/AddPrimitiveToList.s

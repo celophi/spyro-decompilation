@@ -69,29 +69,27 @@ byte CdStatus(void)
   return _cdStatus;
 }
 
-
 void PlayMusicTrackA()
 {
     if ((_CdUnknownFlags & 0x10U) == 0) 
+    {
+        if ((((_MusicFlags != 0) || (_CdUnknownCommand != 0)) && (_MusicFlags != 4)) && (_MusicFlags != 2)) 
         {
-            if ((((_MusicFlags != 0) || (_CdUnknownCommand != 0)) && (_MusicFlags != 4)) && (_MusicFlags != 2)) 
-            {
-                _MusicFlags = 2;
-            }
+            _MusicFlags = 2;
         }
-        else if (_SpuCommonAttr.cd.volume.left == 0) 
-        {
-            _CdUnknownFlags = 0x40;
-        } 
-        else 
-        {
-            _VolumeChange = -(int) _SpuCommonAttr.cd.volume.left >> 3;
-            _CdUnknownCommand = 9;
-            _InitializeSoundU3 = 0;
-            _CdUnknownFlags = 0x200;
-        }
+    }
+    else if (_SpuCommonAttr.cd.volume.left == 0) 
+    {
+        _CdUnknownFlags = 0x40;
+    } 
+    else 
+    {
+        _VolumeChange = -(int) _SpuCommonAttr.cd.volume.left >> 3;
+        _CdUnknownCommand = 9;
+        _InitializeSoundU3 = 0;
+        _CdUnknownFlags = 0x200;
+    }
 }
-
 
  //brief Plays/Continues a music track \n Address: 0x800567f4
  //details param_1 is the track to play. param_2 is the flags/mode. For param_2, 1 is to start at the beginning of the track, 8 is continue where it left off assuming it was saved.
@@ -99,7 +97,7 @@ void PlayMusicTrackA()
 void PlayMusicTrack(int track, int flags)
 {
     char cVar1;
-    int musicPlaying;
+    int musicPlaying = 0;
     u_char mode;
     CdlLOC cdLoc;
     CdlFILTER filter;
@@ -109,45 +107,21 @@ void PlayMusicTrack(int track, int flags)
         return;
     }
 
-    if (flags == 2) 
+    if (flags == 2 || flags == 4) 
     {
         PlayMusicTrackA();
+        return;
     }
-    else 
+    
+    cVar1 = (char) track;
+    if (flags == 1 || flags == 8)
     {
-        cVar1 = (char) track;
-        if (flags < 3) 
+        if (((_CdUnknownFlags & 0x40U) == 0) || (_InitializeSoundU4 == 0)) 
         {
-            if (flags != 1) 
+            musicPlaying = flags;
+
+            if (_MusicFlags != 0)
             {
-                return;
-            }
-
-            if (((_CdUnknownFlags & 0x40U) == 0) || (_InitializeSoundU4 == 0)) 
-            {
-                musicPlaying = 1;
-
-                if (_MusicFlags != 0)
-                {
-                    //goto PlayMusicTrack_B;
-
-                    if (_MusicFlags == musicPlaying) 
-                    {
-                        return;
-                    }
-
-                    _MusicFlags = musicPlaying;
-                    return;
-                    //goto PlayMusicTrack_B;
-                }
-
-                musicPlaying = 1;
-
-                if (_CdUnknownCommand == 0) 
-                {
-                    return;
-                }
-
                 if (_MusicFlags == musicPlaying) 
                 {
                     return;
@@ -157,95 +131,47 @@ void PlayMusicTrack(int track, int flags)
                 return;
             }
 
-            mode = 0xc8;
-            CdControlB(CdlSetmode, & mode, (u_char * ) 0);
-            filter.file = 1;
-            musicPlaying = track;
-
-            if (track < 0) 
-            {
-                musicPlaying = track + 7;
-            }
-
-            filter.chan = cVar1 + (char)(musicPlaying >> 3) * -8;
-            CdControlB(CdlSetfilter, & filter.file, (u_char * ) 0);
-            CdIntToPos(_SoundFiles[0].Files[track].Sector, & cdLoc);
-            musicPlaying = CdControlB(CdlReadS, & cdLoc.minute, (u_char * ) 0);
-        } 
-        else 
-        {
-            if (flags == 4)
-            {
-                PlayMusicTrackA();
-            }
-            
-            if (flags != 8) 
+            if (_CdUnknownCommand == 0) 
             {
                 return;
             }
 
-            if (((_CdUnknownFlags & 0x40U) == 0) || (_InitializeSoundU4 == 0)) 
+            if (_MusicFlags == musicPlaying) 
             {
-                musicPlaying = 8;
-
-                if (_MusicFlags != 0)
-                {
-                    //goto PlayMusicTrack_B;
-                    if (_MusicFlags == musicPlaying) 
-                    {
-                        return;
-                    }
-
-                    _MusicFlags = musicPlaying;
-                    return;
-
-                    //goto PlayMusicTrack_B;
-                }
-
-                musicPlaying = 8;
-
-                //goto joined_r0x80056af8;
-                if (_CdUnknownCommand == 0) 
-                {
-                    return;
-                }
-
-                if (_MusicFlags == musicPlaying) 
-                {
-                    return;
-                }
-
-                _MusicFlags = musicPlaying;
                 return;
-
-                //goto joined_r0x80056af8;
             }
 
-            mode = 0xc8;
-            CdControlB(CdlSetmode, & mode, (u_char * ) 0);
-            filter.file = 1;
-
-            if (track < 0) 
-            {
-                track = track + 7;
-            }
-
-            filter.chan = cVar1 + (char)(track >> 3) * -8;
-            CdControlB(CdlSetfilter, & filter.file, (u_char * ) 0);
-            CdIntToPos(_MusicSectorNumberA, & cdLoc);
-            musicPlaying = CdControlB(CdlReadS, & cdLoc.minute, (u_char * ) 0);
+            _MusicFlags = musicPlaying;
+            return;
         }
 
-        _MusicFlags = flags;
+        mode = 0xc8;
+        CdControlB(CdlSetmode, &mode, NULL);
+        filter.file = 1;
+        musicPlaying = track;
 
-        if (musicPlaying != 0) 
+        if (track < 0) 
         {
-            _CdUnknownCommand = 0;
-            _MusicFlags = 0;
-            _CdUnknownFlags = 0x10;
-            _VolumeChange = _InitializeSoundU2 - _SpuCommonAttr.cd.volume.left >> 3;
-            _InitializeSoundU3 = _InitializeSoundU2;
+            musicPlaying = track + 7;
         }
+        
+        filter.chan = cVar1 + (char)(musicPlaying >> 3) * -8;
+        CdControlB(CdlSetfilter, & filter.file, NULL);
+
+        int sector = flags == 1 ? _SoundFiles[0].Files[track].Sector : _MusicSectorNumberA;
+
+        CdIntToPos(sector, & cdLoc);
+        musicPlaying = CdControlB(CdlReadS, & cdLoc.minute, NULL);
     }
-    return;
+    
+    _MusicFlags = flags;
+
+    if (musicPlaying != 0) 
+    {
+        _CdUnknownCommand = 0;
+        _MusicFlags = 0;
+        _CdUnknownFlags = 0x10;
+        _VolumeChange = _InitializeSoundU2 - _SpuCommonAttr.cd.volume.left >> 3;
+        _InitializeSoundU3 = _InitializeSoundU2;
+    }
 }

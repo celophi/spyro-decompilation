@@ -10,8 +10,8 @@ _CdlLOC = 0x80076b98;
 _CdReadSectorsParameter = 0x80076b94;
 _CdReadBuffer = 0x80076b9c;
 _CdReadSectors_U0 = 0x800774b4;
-_CdReadSectors_U1 = 0x800776c4;
-_CdReadSectors_U2 = 0x800776c8;
+_CdUnknownCommand = 0x800776c4;
+_MusicFlags = 0x800776c8;
 _AngleArray = 0x8006d908;
 _PrimitiveList = 0x800757b0;
 _CyclingTimer = 0x800770f4;
@@ -22,6 +22,12 @@ _CdUnknownFlags = 0x800774b4;
 _SoundFiles = 0x800774b8;
 _SoundtrackU0 = 0x8006eedc;
 _SoundtrackFileSectors = 0x8006f200;
+_SpuCommonAttr = 0x80075f08;
+_VolumeChange = 0x80076230;
+_InitializeSoundU3 = 0x800761d8;
+_InitializeSoundU4 = 0x80075748;
+_MusicSectorNumberA = 0x800776b8;
+_InitializeSoundU2 = 0x80076224;
 
 
 

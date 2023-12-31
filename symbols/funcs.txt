@@ -43,7 +43,6 @@ FillScreenColor = 0x800190d4;
 
 
 PlaySoundEffect = 0x80055a78;
-PlayMusicTrack = 0x800567f4;
 
 RenderAllObjects = 0x80019698;
 RenderNormalMobys = 0x8001f798;

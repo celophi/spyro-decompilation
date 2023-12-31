@@ -69,109 +69,90 @@ byte CdStatus(void)
   return _cdStatus;
 }
 
-void PlayMusicTrackA()
-{
-    if ((_CdUnknownFlags & 0x10U) == 0) 
-    {
-        if ((((_MusicFlags != 0) || (_CdUnknownCommand != 0)) && (_MusicFlags != 4)) && (_MusicFlags != 2)) 
-        {
-            _MusicFlags = 2;
-        }
-    }
-    else if (_SpuCommonAttr.cd.volume.left == 0) 
-    {
-        _CdUnknownFlags = 0x40;
-    } 
-    else 
-    {
-        _VolumeChange = -(int) _SpuCommonAttr.cd.volume.left >> 3;
-        _CdUnknownCommand = 9;
-        _InitializeSoundU3 = 0;
-        _CdUnknownFlags = 0x200;
-    }
-}
-
- //brief Plays/Continues a music track \n Address: 0x800567f4
- //details param_1 is the track to play. param_2 is the flags/mode. For param_2, 1 is to start at the beginning of the track, 8 is continue where it left off assuming it was saved.
-
+/// @brief Plays music from soundtrack files.
+/// @param track Track of music to play.
+/// @param flags Certain flags that control how playback happens.
 void PlayMusicTrack(int track, int flags)
 {
-    char cVar1;
-    int musicPlaying = 0;
-    u_char mode;
-    CdlLOC cdLoc;
-    CdlFILTER filter;
-
+    // Must be unset in order to play music.
     if ((_CdUnknownFlags & 0x80U) != 0) 
     {
         return;
     }
 
-    if (flags == 2 || flags == 4) 
-    {
-        PlayMusicTrackA();
-        return;
-    }
-    
-    cVar1 = (char) track;
+    // starting new track or continuing?
     if (flags == 1 || flags == 8)
     {
         if (((_CdUnknownFlags & 0x40U) == 0) || (_InitializeSoundU4 == 0)) 
         {
-            musicPlaying = flags;
-
-            if (_MusicFlags != 0)
-            {
-                if (_MusicFlags == musicPlaying) 
-                {
-                    return;
-                }
-                
-                _MusicFlags = musicPlaying;
+            if (_MusicFlags == 0 && _CdUnknownCommand == 0)
+            {   
                 return;
             }
 
-            if (_CdUnknownCommand == 0) 
-            {
-                return;
-            }
-
-            if (_MusicFlags == musicPlaying) 
-            {
-                return;
-            }
-
-            _MusicFlags = musicPlaying;
+            _MusicFlags = flags;
             return;
         }
 
-        mode = 0xc8;
+        u_char mode = CdlModeSF | CdlModeRT | CdlModeSpeed;
         CdControlB(CdlSetmode, &mode, NULL);
-        filter.file = 1;
-        musicPlaying = track;
+
+        int channelValue = track;
 
         if (track < 0) 
         {
-            musicPlaying = track + 7;
+            channelValue = track + 7;
         }
         
-        filter.chan = cVar1 + (char)(musicPlaying >> 3) * -8;
-        CdControlB(CdlSetfilter, & filter.file, NULL);
+        CdlFILTER filter;
+        filter.file = 1;
+        filter.chan = (char) track + (char)(channelValue >> 3) * -8;
+        CdControlB(CdlSetfilter, (u_char *)&filter, NULL);
 
         int sector = flags == 1 ? _SoundFiles[0].Files[track].Sector : _MusicSectorNumberA;
 
-        CdIntToPos(sector, & cdLoc);
-        musicPlaying = CdControlB(CdlReadS, & cdLoc.minute, NULL);
-    }
-    
-    _MusicFlags = flags;
+        CdlLOC cdLoc;
+        CdIntToPos(sector, &cdLoc);
+        CdControlB(CdlReadS, (u_char *)&cdLoc, NULL);
 
-    if (musicPlaying != 0) 
-    {
         _CdUnknownCommand = 0;
         _MusicFlags = 0;
         _CdUnknownFlags = 0x10;
+
+        // _InitializeSoundU2 usually is 0x5000
         _VolumeChange = _InitializeSoundU2 - _SpuCommonAttr.cd.volume.left >> 3;
         _InitializeSoundU3 = _InitializeSoundU2;
+
+        return;
     }
+
+    // pause? seems like turning the volume all the way down also pauses.
+    if (flags == 2 || flags == 4) 
+    {
+        // bitfield 0x10 is set during play/continue, so maybe this is making sure it is in that state.
+        if ((_CdUnknownFlags & 0x10U) == 0) 
+        {
+            if ((((_MusicFlags != 0) || (_CdUnknownCommand != 0)) && (_MusicFlags != 4)) && (_MusicFlags != 2)) 
+            {
+                _MusicFlags = 2;
+            }
+
+            return;
+        }
+        
+        if (_SpuCommonAttr.cd.volume.left == 0) 
+        {
+            _CdUnknownFlags = 0x40;
+            return;
+        } 
+        
+        _VolumeChange = -(int) _SpuCommonAttr.cd.volume.left >> 3;
+        _CdUnknownCommand = CdlPause;
+        _InitializeSoundU3 = 0;
+        _CdUnknownFlags = 0x200;
+
+        return;
+    }
+
+    _MusicFlags = flags;
 }

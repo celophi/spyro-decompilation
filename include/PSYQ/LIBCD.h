@@ -65,8 +65,14 @@ enum CdPrimitive
 /// @brief CD-ROM Mode (used int CdlSetmode)
 enum CdMode
 {
-    // 0: normal speed	1: double speed
+    /// @brief Double speed
     CdlModeSpeed = 0x80,
+
+    /// @brief Turn on ADPCM
+    CdlModeRT = 0x40,
+    
+    /// @brief Turn on channel
+    CdlModeSF = 0x08,
 };
 
 enum CdInterrupt 

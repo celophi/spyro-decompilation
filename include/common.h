@@ -281,22 +281,10 @@ void UpdateMobyCollision(int param_1, unsigned int param_2);                    
 
 int PlaySoundEffect(int soundEffectID, int ptrToMoby, int playbackMode, char *param_4);
 
-/**
- * @brief Plays/Continues a music track \n Address: 0x800567f4
- * @details param_1 is the track to play. param_2 is the flags/mode. For param_2, 1 is to start at the beginning of the track, 8 is continue where it left off assuming it was saved.
 
- * @param int point1X - The X position of the first point of the line
- * @param int point1Y - The Y position of the first point of the line
- * @param int point2X - The X position of the second point of the line
- * @param int point2Y - The Y position of the second point of the line
-*/
-void PlayMusicTrack(int track_number, int flags);
-
-int LoadImageOrTexture(RECT *rect, int *p);
 
 int DrawSync(int mode);
 
-void Maybe_ResetHudTimers(void);
 /** @} */ // end of labeled_functions
 
 
@@ -369,7 +357,7 @@ extern int _wobbleAndOpacityTimer;
  * @brief Main gamestate. Gamestate values are stored in the GameState enums. \n Address: 0x800757D8 
  * @see GameState
  */ 
-extern int _gameState;
+extern int _GameState;
 
 /**
  * @brief Value coorsponding the the current button(s) being held. \n Address: 0x80077380 
@@ -531,11 +519,11 @@ extern int* _ptr_arrayGraphicsRelatedPointers; //0x8007581c   //? Ptr the the ar
 
 extern char* _ptr_particleLinkedList; //0x80075738           //? This is a pointer to the next available particle slot.
 
-extern char _hudChestState;  //0x80077FA8
-extern char _hudDragonState; //0x80077FA9
-extern char _hudLivesState;  //0x80077FAA
-extern char _hudEggsState;   //0x80077FAB
-extern char _hudAnimationState;   //0x80077FAC
+extern char _HudChestState;  //0x80077FA8
+extern char _HudDragonState; //0x80077FA9
+extern char _HudLivesState;  //0x80077FAA
+extern char _HudEggsState;   //0x80077FAB
+extern char _HudAnimationState;   //0x80077FAC
 
 extern int _hudElementsSpinTimer; //0x80077fe4
 extern int _unk_spinRelated;    //0x8006cc78
@@ -545,9 +533,10 @@ extern char* _localSoundEffects; //0x800761D4
  * @brief The music track that is associated with the level you're currently in. \n Address: 0x80075828 
  * @details This variable is used to play the correct music track for the level you're in
  */ 
-extern int _musicLevelTrack;  //0x0x800774b0
+extern int _MusicFile;  //0x0x800774b0
 
-extern int* _maybe_ptr_levelTextureRelated; //0x800785f0
+/// @brief 0x800785f0
+extern u_long* _ExitInventoryMenuU0;
 
 extern byte _cdStatus; //0x80074e44
 
@@ -574,3 +563,21 @@ extern int _CdUnknownFlags;
 extern SoundFiles _SoundFiles[6];
 extern SoundFileU0 _SoundtrackU0[6];
 extern int _SoundtrackFileSectors[6];
+
+/// @brief 0x800770c8
+extern int _TimerA;
+
+/// @brief 0x800770cc
+extern int _TimerB;
+
+/// @brief 0x800770d0
+extern int _TimerC;
+
+/// @brief 0x800770d4
+extern int _TimerD;
+
+/// @brief 0x800770d8
+extern int _TimerE;
+
+/// @brief 0x800770dc
+extern int _TimerF;

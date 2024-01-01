@@ -34,6 +34,7 @@ NTSC, exe, 0x80017700, 0x0, asm/CopyVector3D.s
 NTSC, exe, 0x80017758, 0x0, asm/AddVector3D.s
 NTSC, exe, 0x8002bb20, 0x0, asm/calculate_completion_percentage.s
 NTSC, exe, 0x8002c7bc, 0x0, asm/exit_inventory_menu.s
+NTSC, exe, 0x80058c7c, 0x0, asm/ResetHudTimers.s
 NTSC, exe, 0x80063a8c, 0x0, asm/cd_status.s
 NTSC, exe, 0x8008013c, 0x0, asm/gem_home_in_hook.s
 
@@ -42,3 +43,4 @@ NTSC, exe, 0x8008013c, 0x0, asm/gem_home_in_hook.s
 
 // testing
 NTSC, exe, 0x8001256c, 0x0, asm/PrepareSoundFiles.s
+NTSC, exe, 0x800567f4, 0x0, asm/PlayMusicTrack.s

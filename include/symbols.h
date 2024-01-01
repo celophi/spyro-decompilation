@@ -1,6 +1,7 @@
 #pragma once
 
 #include <PSYQ/LIBCD.h>
+#include <PSYQ_cd.h>
 #include "shapes.h"
 
 /// @brief This is the pause/inventory menu timer. It is only running in those menus. \n Address: 0x8007588c
@@ -25,10 +26,10 @@ extern u_long* _CdReadBuffer;
 extern int _CdReadSectors_U0;
 
 /// @brief 800776c4
-extern int _CdReadSectors_U1;
+extern int _CdUnknownCommand;
 
 /// @brief 800776c8
-extern int _CdReadSectors_U2;
+extern int _MusicFlags;
 
 extern byte _AngleArray[68];
 
@@ -44,3 +45,21 @@ extern int _CyclingTimer;
 
 /// @brief 80074b84
 extern short _SquareRootLookupTable[192];
+
+/// @brief 0x80075f08
+extern SpuCommonAttr _SpuCommonAttr;
+
+/// @brief 0x80076230
+extern int _VolumeChange;
+
+/// @brief 0x800761d8
+extern int _InitializeSoundU3;
+
+/// @brief 0x80075748
+extern int _InitializeSoundU4;
+
+/// @brief 0x800776b8
+extern int _MusicSectorNumberA;
+
+/// @brief 0x80076224
+extern int _InitializeSoundU2;

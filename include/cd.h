@@ -13,3 +13,5 @@ void CdReadSectors();
 
 
 byte CdStatus(void);
+
+void PlayMusicTrack(int track,int flags);

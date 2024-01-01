@@ -132,3 +132,9 @@ extern int ClearImage(RECT *rect, u_char r, u_char g, u_char b);
 /// @param mode 
 /// @return 
 extern int DrawSync(int mode);
+
+/// @brief Transfer data to a frame buffer.
+/// @param recp Pointer to destination rectangular area.
+/// @param p Pointer to main memory address of source of transmission.
+/// @return Position of this command in the libgpu command queue.
+extern int LoadImage(RECT *recp, u_long *p);

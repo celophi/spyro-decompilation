@@ -1,5 +1,7 @@
 #pragma once
 
+typedef unsigned short u_short;
+
 /// @brief Time-code based CD-ROM disc position.
 typedef struct 
 {
@@ -8,6 +10,32 @@ typedef struct
     u_char sector;
     u_char track;
 } CdlLOC;
+
+typedef struct {
+    u_char file;
+    u_char chan;
+    u_short pad;
+} CdlFILTER;
+
+typedef struct {
+    short left;
+    short right;
+} SpuVolume;
+
+typedef struct {
+    SpuVolume volume;
+    long reverb;
+    long mix;
+} SpuExtAttr;
+
+typedef struct {
+    unsigned long mask;
+    SpuVolume mvol;
+    SpuVolume mvolmode;
+    SpuVolume mvolx;
+    SpuExtAttr cd;
+    SpuExtAttr ext;
+} SpuCommonAttr;
 
 enum CdPrimitive 
 {
@@ -37,8 +65,14 @@ enum CdPrimitive
 /// @brief CD-ROM Mode (used int CdlSetmode)
 enum CdMode
 {
-    // 0: normal speed	1: double speed
+    /// @brief Double speed
     CdlModeSpeed = 0x80,
+
+    /// @brief Turn on ADPCM
+    CdlModeRT = 0x40,
+    
+    /// @brief Turn on channel
+    CdlModeSF = 0x08,
 };
 
 enum CdInterrupt 
@@ -65,5 +99,5 @@ enum CdInterrupt
 extern int CdInit();
 extern CdlCB CdReadCallback(CdlCB func);
 extern int CdSync(int mode, u_char *result);
-extern int CdControl(u_char com, u_char *param, u_char *result);
+extern int CdControlB(u_char com, u_char *param, u_char *result);
 extern int CdRead(int sectors, u_long *buf, int mode);

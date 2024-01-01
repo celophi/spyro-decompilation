@@ -15,7 +15,7 @@ InitCARD = 0x80068958;
 StartCARD = 0x800689b0;
 
 
-
+OriginalScaleVector = 0x800175b8;
 
 
 

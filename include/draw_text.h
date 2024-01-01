@@ -61,4 +61,3 @@ void DrawDemoText();
  * Amount of instructions: Same Amount (https://decomp.me/scratch/rbY0g) \n 
 */
 void CopyHudToShaded();
-

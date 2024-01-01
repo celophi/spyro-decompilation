@@ -145,3 +145,6 @@ void AddVector3D(Vec3u32* destination, Vec3u32* first, Vec3u32* second);
 /// @param destination Destination vector to get copied to.
 /// @param source Source vector to copy from.
 void CopyVector3D(Vec3u32* destination, Vec3u32* source);
+
+void ScaleVector(Vec3u32* vector, int denominator, int numerator);
+extern void OriginalScaleVector(Vec3u32* vector, int denominator, int numerator);

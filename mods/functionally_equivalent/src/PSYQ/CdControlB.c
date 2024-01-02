@@ -11,10 +11,29 @@ int CdControlB(u_char com, u_char *param, u_char *result)
 {
     if (IsMocked)
     {
-        
         History[InvocationCount].com = com;
-        History[InvocationCount].param = param;
         History[InvocationCount].result = result;
+
+        if (com == CdlSetfilter)
+        {
+            CdlFILTER *filter = (CdlFILTER*)param;
+            History[InvocationCount].chan = filter->chan;
+            History[InvocationCount].file = filter->file;
+            //History[InvocationCount].pad = filter->pad;
+        }
+        else if (com == CdlReadS)
+        {
+            CdlLOC *loc = (CdlLOC*)param;
+            History[InvocationCount].track = loc->track;
+            History[InvocationCount].minute = loc->minute;
+            History[InvocationCount].second = loc->second;
+            History[InvocationCount].sector = loc->sector;
+        }
+        else if (com == CdlSetmode)
+        {
+            History[InvocationCount].param = *(u_char*)param;
+        }
+
         InvocationCount++;
     }
     else

@@ -51,8 +51,8 @@ void BackupStartingState()
 {
     // Backup the program state before calling the decomp function
     memCopy(ram_4mb, ram, ramSize);
-    memCopy(scratchpadBackup_4mb, scratchpad, scratchpadSize);
-    gte_saveContext(gteBackup_4mb);
+    //memCopy(scratchpadBackup_4mb, scratchpad, scratchpadSize);
+    //gte_saveContext(gteBackup_4mb);
 }
 
 void BackupNewFunctionState()

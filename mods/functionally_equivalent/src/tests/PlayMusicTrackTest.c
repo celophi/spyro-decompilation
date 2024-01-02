@@ -7,6 +7,7 @@
 #include <tests/framework/TestHarness.h>
 #include <cd.h>
 #include <PSYQ/CdControlB.h>
+#include <symbols.h>
 
 /// @brief Function signature of the system under test.
 typedef void (*func)(int track, int flags);
@@ -26,12 +27,70 @@ CdControlBArgument OriginalHistory[1000];
 
 typedef struct {
     int MusicFlags;
-
+    int CdUnknownCommand;
+    int CdUnknownFlags;
+    int VolumeChange;
+    int InitializeSoundU3;
 } State;
+
+State GlobalState;
 
 void Backup()
 {
+    BackupStartingState();
+    GlobalState.MusicFlags = _MusicFlags;
+    GlobalState.CdUnknownCommand = _CdUnknownCommand;
+    GlobalState.CdUnknownFlags = _CdUnknownFlags;
+    GlobalState.VolumeChange = _VolumeChange;
+    GlobalState.InitializeSoundU3 = _InitializeSoundU3;
+}
 
+int Compare(CdControlBArgument* actual, CdControlBArgument* expected)
+{
+    return IsMemoryEquivalent(actual, expected, sizeof(CdControlBArgument));
+
+    /*
+    if (actual->com != expected->com)
+    {
+        return 0;
+    }
+
+    if (actual->result != expected->result) 
+    {
+        return 0;
+    }
+
+    if (actual->com == CdlSetmode)
+    {
+        if (*(u_char*)(actual->param) != *(u_char*)(expected->param))
+        {
+            return 0;
+        }
+    }
+
+    if (actual->com == CdlSetfilter)
+    {
+        CdlFILTER* actualFilter = (CdlFILTER*)actual->param;
+        CdlFILTER* expectedFilter = (CdlFILTER*)expected->param;
+
+        if (!IsMemoryEquivalent(actualFilter, expectedFilter, sizeof(CdlFILTER)))
+        {
+            return 0;
+        }
+    }
+
+    if (actual->com == CdlReadS)
+    {
+        CdlLOC* actualLoc = (CdlLOC*)actual->param;
+        CdlLOC* expectedLoc = (CdlLOC*)expected->param;
+
+        if (!IsMemoryEquivalent(actualLoc, expectedLoc, sizeof(CdlLOC)))
+        {
+            return 0;
+        }
+    } */
+
+//    return 1;
 }
 
 /// @brief Test assertion code that runs in place of the original function address.
@@ -40,6 +99,8 @@ void Backup()
 /// @param flags 
 void Tester(int track, int flags)
 {
+    BackupStartingState();
+
     func originalFunctionRef = (func) GetOriginalFunction();
 
     MockCdControlB();
@@ -51,14 +112,21 @@ void Tester(int track, int flags)
         DecompiledHistory[i] = *(CdControlBArgument*)GetCdControlBInvocation(i);
     }
 
+    LoadStartingState();
+
     MockCdControlB();
     originalFunctionRef(track, flags);
 
     count = GetCdControlBInvocationCount();
+    for (int i = 0; i < count; i++)
+    {
+        OriginalHistory[i] = *(CdControlBArgument*)GetCdControlBInvocation(i);
+    }
+
     int result = 1;
     for (int i = 0; i < count; i++)
     {
-        if (!IsMemoryEquivalent(&DecompiledHistory[i], GetCdControlBInvocation(i), sizeof(CdControlBArgument)))
+        if (!Compare(&DecompiledHistory[i], &OriginalHistory[i]))
         {
             result = 0;
         }

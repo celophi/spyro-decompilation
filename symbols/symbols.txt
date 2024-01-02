@@ -28,8 +28,20 @@ _InitializeSoundU3 = 0x800761d8;
 _InitializeSoundU4 = 0x80075748;
 _MusicSectorNumberA = 0x800776b8;
 _InitializeSoundU2 = 0x80076224;
-
-
+_TimerA = 0x800770c8;
+_TimerB = 0x800770cc;
+_TimerC = 0x800770d0;
+_TimerD = 0x800770d4;
+_TimerE = 0x800770d8;
+_TimerF = 0x800770dc;
+_ExitInventoryMenuU0 = 0x800785f0;
+_GameState = 0x800757D8;
+_HudDragonState = 0x80077FA9;
+_HudChestState = 0x80077FA8;
+_HudLivesState = 0x80077FAA;
+_HudEggsState = 0x80077FAB;
+_HudAnimationState = 0x80077FAC;
+_MusicFile = 0x800774b0;
 
 
 
@@ -38,7 +50,7 @@ _currentButtonsPressed = 0x80077378;
 _secondController = 0x80078E50;
 _leftAnalogStick = 0x800773D2;
 _rightAnalogStick = 0x800773D0;
-_gameState = 0x800757D8;
+
 _levelID = 0x800758B4;
 _portalToExitFromInHW = 0x800758AC;
 
@@ -124,20 +136,20 @@ _ptr_primitivesArray = 0x800757b0;
 _ptr_arrayGraphicsRelatedPointers = 0x8007581c;
 _ptrTextUnk = 0x800720f4;
 
-_maybe_ptr_levelTextureRelated = 0x800785f0;
 
 
-_musicLevelTrack = 0x800774b0;
+
+
 
 _cdStatus = 0x80074e44;
 
 _hudElementsSpinTimer = 0x80077fe4;
 
-_hudChestState = 0x80077FA8;
-_hudDragonState = 0x80077FA9;
-_hudLivesState = 0x80077FAA;
-_hudEggsState = 0x80077FAB;
-_hudAnimationState = 0x80077FAC;
+
+
+
+
+
 
 _hudChestKeyframe = 0x80077FAD;
 _localSoundEffects = 0x800761D4;

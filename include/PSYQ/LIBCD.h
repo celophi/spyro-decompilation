@@ -2,8 +2,6 @@
 
 #include <SYS/TYPES.h>
 
-typedef void (*CdlCB)(const u_char, const u_char *);
-
 /// @brief Time-code based CD-ROM disc position.
 typedef struct 
 {

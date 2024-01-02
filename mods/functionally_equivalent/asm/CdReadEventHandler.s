@@ -1,3 +1,3 @@
 .set noreorder
-j CdReadCallbackFunc   
+j CdReadEventHandler   
 nop                 

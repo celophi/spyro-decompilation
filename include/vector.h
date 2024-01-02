@@ -111,6 +111,41 @@ typedef struct MATRIX3BY3
 
 }MATRIX3BY3;
 
+/**
+ * @brief Scales a vector by a ratio.
+ * @details For example, the vector (0, 1511, -686) scaled by denominator 1659 and numerator 1024 results in (1024/1659) * 1511 = 932 and (1024/1659) * -686 = -424.
+ * @note 
+ *     - Address: 0x800175b8
+ *     - Hook: ScaleVector.s
+ *     - Test: ScaleVectorTest.c
+ * @param vector Input vector to be scaled.
+ * @param denominator Bottom half of the ratio.
+ * @param numerator Top half of the ratio.
+ * @return Scaled vector.
+ */
+void ScaleVector(Vec3u32* vector, int denominator, int numerator);
+
+/**
+ * @brief Calculates the length of a 2D or 3D vector using an adaptation of Newton's iteration using a lookup table.
+ * @details Please refer to:
+ *      - https://github.com/python/cpython/blob/main/Modules/mathmodule.c
+ *      - https://stackoverflow.com/questions/65986056/is-there-a-non-looping-unsigned-32-bit-integer-square-root-function-c
+ *      - https://stackoverflow.com/questions/15390807/integer-square-root-in-python
+ * @note 
+ *     - Address: 0x800171fc
+ *     - Hook: GetVectorLength.s
+ *     - Test: GetVectorLengthTest.c
+ * @param vector Input vector to calculate length.
+ * @param includeZ When true, indicates that the vector is 3D and the 'Z' coordinate should be included.
+ * @return Length of the vector.
+*/
+uint GetVectorLength(const Vec3u32 *vector, const int includeZ);
+
+
+
+
+
+
 
 //~~~~~~~~~
 //In Game Functions
@@ -145,3 +180,4 @@ void AddVector3D(Vec3u32* destination, Vec3u32* first, Vec3u32* second);
 /// @param destination Destination vector to get copied to.
 /// @param source Source vector to copy from.
 void CopyVector3D(Vec3u32* destination, Vec3u32* source);
+

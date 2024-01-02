@@ -5,14 +5,55 @@
 
 #include <PSYQ/LIBGTE.h>
 
-/// @brief Calculates the length of a 2D or 3D vector using an adaptation of Newton's iteration using a lookup table.
-/// @details Please refer to: https://github.com/python/cpython/blob/main/Modules/mathmodule.c \n
-/// https://stackoverflow.com/questions/65986056/is-there-a-non-looping-unsigned-32-bit-integer-square-root-function-c \n
-/// https://stackoverflow.com/questions/15390807/integer-square-root-in-python
-/// @param vector 3D or 2D vector.
-/// @param includeZComponent When supplying a 3D vector, this should be set to 1.
-/// @return Length of the vector.
-uint GetVectorLength(Vec3u32 *vector, int includeZComponent)
+/**
+ * @brief Scales a vector by a ratio.
+ * @details For example, the vector (0, 1511, -686) scaled by denominator 1659 and numerator 1024
+ * results in (1024/1659) * 1511 = 932 and (1024/1659) * -686 = -424.
+ * @note 
+ *     - Address: 0x800175b8
+ *     - Hook: ScaleVector.s
+ *     - Test: ScaleVectorTest.c
+ * @param vector Input vector to be scaled.
+ * @param denominator Bottom half of the ratio.
+ * @param numerator Top half of the ratio.
+ * @return Scaled vector.
+ */
+void ScaleVector(Vec3u32* vector, int denominator, int numerator)
+{
+    int ratio = (numerator << 12) / denominator;
+
+    gte_ldlvl(vector);
+    gte_ldMAC1(0);
+    gte_ldMAC2(0);
+    gte_ldMAC3(0);
+    gte_ldIR0(ratio);
+    gte_gpl0();
+
+    int RT1;
+    int RT2;
+    int RT3;
+    read_mt(RT1,RT2,RT3);
+
+    vector->X = RT1 >> 12;
+    vector->Y = RT2 >> 12;
+    vector->Z = RT3 >> 12;
+}
+
+/**
+ * @brief Calculates the length of a 2D or 3D vector using an adaptation of Newton's iteration using a lookup table.
+ * @details Please refer to:
+ *      - https://github.com/python/cpython/blob/main/Modules/mathmodule.c
+ *      - https://stackoverflow.com/questions/65986056/is-there-a-non-looping-unsigned-32-bit-integer-square-root-function-c
+ *      - https://stackoverflow.com/questions/15390807/integer-square-root-in-python
+ * @note 
+ *     - Address: 0x800171fc
+ *     - Hook: GetVectorLength.s
+ *     - Test: GetVectorLengthTest.c
+ * @param vector Input vector to calculate length.
+ * @param includeZ When true, indicates that the vector is 3D and the 'Z' coordinate should be included.
+ * @return Length of the vector.
+*/
+uint GetVectorLength(const Vec3u32 *vector, const int includeZ)
 {
     int RT1;
     int RT2;
@@ -22,7 +63,7 @@ uint GetVectorLength(Vec3u32 *vector, int includeZComponent)
     gte_ldIR2(vector->Y);
 
     // If calculating a 3D vector, include the Z coordinate.
-    int zComponent = includeZComponent ? vector->Z : 0;
+    int zComponent = includeZ ? vector->Z : 0;
     gte_ldIR3(zComponent);
 
     // Calculate the square and get the sum.     
@@ -52,31 +93,6 @@ uint GetVectorLength(Vec3u32 *vector, int includeZComponent)
     }
 
     return result >> 12;
-}
-
-/// @brief Scales a vector by a ratio.
-/// @param vector Input vector
-/// @param denominator Bottom half of a ratio.
-/// @param numerator Top half of a ratio.
-void ScaleVector(Vec3u32* vector, int denominator, int numerator)
-{
-    int ratio = (numerator << 12) / denominator;
-
-    gte_ldlvl(vector);
-    gte_ldMAC1(0);
-    gte_ldMAC2(0);
-    gte_ldMAC3(0);
-    gte_ldIR0(ratio);
-    gte_gpl0();
-
-    int RT1;
-    int RT2;
-    int RT3;
-    read_mt(RT1,RT2,RT3);
-
-    vector->X = RT1 >> 12;
-    vector->Y = RT2 >> 12;
-    vector->Z = RT3 >> 12;
 }
 
 /// @brief Sets all dimensions of a vector to zero.

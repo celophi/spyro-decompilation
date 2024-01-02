@@ -15,12 +15,12 @@ InitCARD = 0x80068958;
 StartCARD = 0x800689b0;
 
 
-OriginalScaleVector = 0x800175b8;
 
 
-
-
-
+OG_Initialize = 0x8005b988;
+OG_ScaleVector = 0x800175b8;
+OG_GetVectorLength = 0x800171fc;
+OG_CdReadEventHandler = 0x80016490;
 
 
 

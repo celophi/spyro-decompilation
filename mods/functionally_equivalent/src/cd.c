@@ -3,11 +3,16 @@
 #include <PSYQ/LIBCD.h>
 #include <PSYQ/LIBGPU.h>
 
-/// @brief Callback to execute after reading from the CD-ROM.
-/// @param status Result of the CD read operation.
-/// @param result Unused
-/// @note Original Address: 0x80016490
-void CdReadCallbackFunc(u_char status, u_char* result) 
+/**
+ * @brief Callback to execute after reading from the CD-ROM.
+ * @param status Result of the CD read operation.
+ * @param result Unused in this function.
+ * @note
+ *      - Address: 0x80016490
+ *      - Hook: CdReadEventHandler.s
+ *      - Test: CdReadEventHandlerTest.c
+*/
+void CdReadEventHandler(const u_char status, const u_char* result) 
 {
     if (status == CdlComplete)
     {
@@ -31,7 +36,7 @@ void CdReadSectors()
     }
 
     CdInit();
-    CdReadCallback(CdReadCallbackFunc);
+    CdReadCallback(CdReadEventHandler);
 
     _CdReadSectors_U0 = 64;
     _CdUnknownCommand = 0;

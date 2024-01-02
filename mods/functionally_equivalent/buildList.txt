@@ -43,6 +43,7 @@ NTSC, exe, 0x8008013c, 0x0, asm/gem_home_in_hook.s
 NTSC, exe, 0x8001256c, 0x0, asm/PrepareSoundFiles.s
 NTSC, exe, 0x800567f4, 0x0, asm/PlayMusicTrack.s
 
+
 // Uncomment the following in order to run test code.
 //NTSC, header, 0x80200000, 0x0, src/*.c src/tests/framework/*.c src/tests/CdReadEventHandlerTest.c, mod_code.bin
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/ScaleVectorTest.s

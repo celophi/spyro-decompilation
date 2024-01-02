@@ -281,7 +281,6 @@ void UpdateMobyCollision(int param_1, unsigned int param_2);                    
 
 int PlaySoundEffect(int soundEffectID, int ptrToMoby, int playbackMode, char *param_4);
 
-int LoadImageOrTexture(RECT *rect, int *p);
 
 int DrawSync(int mode);
 

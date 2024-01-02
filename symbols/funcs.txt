@@ -16,7 +16,6 @@ StartCARD = 0x800689b0;
 LoadImage = 0x8005fa28;
 
 
-
 OG_Initialize = 0x8005b988;
 OG_ScaleVector = 0x800175b8;
 OG_GetVectorLength = 0x800171fc;

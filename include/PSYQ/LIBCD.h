@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SYS/TYPES.h>
+#include <PSYQ/CdControlB.h>
 
 typedef void (*CdlCB)(const u_char, const u_char *);
 
@@ -101,5 +102,7 @@ enum CdInterrupt
 extern int CdInit();
 extern CdlCB CdReadCallback(CdlCB func);
 extern int CdSync(int mode, u_char *result);
-extern int CdControlB(u_char com, u_char *param, u_char *result);
+
 extern int CdRead(int sectors, u_long *buf, int mode);
+
+int CdControlB(u_char com, u_char *param, u_char *result);

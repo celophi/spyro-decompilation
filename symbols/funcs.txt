@@ -20,8 +20,9 @@ OG_Initialize = 0x8005b988;
 OG_ScaleVector = 0x800175b8;
 OG_GetVectorLength = 0x800171fc;
 OG_CdReadEventHandler = 0x80016490;
+OG_PlayMusicTrack = 0x800567f4;
 
-
+OG_CdControlB = 0x80063EAC;
 
 
 
@@ -86,7 +87,7 @@ ApplyImageFading_ = 0x80017f24;
 
 CdSync = 0x80063BD8;
 
-CdControlB = 0x80063EAC;
+
 CdDataCallback = 0x80064050;
 CdIntToPos = 0x80064094;
 CdPosToInt = 0x80064198;

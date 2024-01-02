@@ -10,7 +10,7 @@
  * @note
  *      - Address: 0x80016490
  *      - Hook: CdReadEventHandler.s
- *      - Test: CdReadEventHandlerTest.c
+ *      - Test: CdReadEventHandlerTest.c (Work In Progress)
 */
 void CdReadEventHandler(const u_char status, const u_char* result) 
 {

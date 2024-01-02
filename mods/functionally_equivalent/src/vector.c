@@ -95,6 +95,92 @@ uint GetVectorLength(const Vec3u32 *vector, const int includeZ)
     return result >> 12;
 }
 
+/**
+ * @brief Calculates the arctan of a vector to get the estimated angle.
+ * @details The returned value is a number where 64 = 90 degrees, and 256 = 360 degrees.
+ * @note
+ *     - Address: 0x800169ac
+ *     - Hook: GetAngle.s
+ *     - Test: GetAngleTest.c
+ * @param x Position of the X component of a vertex.
+ * @param y Position of the Y component of a vertex.
+ * @return Angle based on a number aligned with 64 = 90 degrees.
+*/
+int GetAngle(const int x, const int y)
+{
+    // Get the absolute values of both X and Y.
+    int absX = x < 0 ? -x : x;
+    int absY = y < 0 ? -y : y;
+
+    // If ABS(X) > ABS(Y) then swap the index and divisor.
+    int numerator = absX > absY ? absY : absX;
+    int divisor = absX > absY ? absX : absY;
+
+    // Make sure divisor is not zero to avoid division by zero.
+    divisor = divisor == 0 ? 1 : divisor;
+
+    int idx = (numerator << 6) / divisor;
+    uint result = (uint) _AngleArray[idx];
+
+    // Determine an offset multiplier based on the sign value of both X and Y.
+    int multiplier = (x < 0)
+        ? ((y < 0) ? 2 : 1)
+        : ((y < 0) ? 3 : 0);
+
+    // Determine the result from the glimmer array needs to be inverted.
+    bool invert = absX < absY;
+
+    // Handle a specific case when only one of either X and Y values are negative.
+    if ((x < 0 && y >= 0) || (x >= 0 && y < 0))
+    {
+        invert = absX >=  absY;
+    }
+
+    // When inverted, the multiplier also gets adjusted forward.
+    if (invert) 
+    {
+        multiplier++;
+        result *= -1;
+    }
+
+    int offset = multiplier * 64;
+    return offset + result;
+}
+
+/**
+ * @brief Rotates a vector by a matrix.
+ * @note
+ *      - Address: 0x80017048
+ *      - Hook: RotateVectorByMatrix.s
+ *      - Test: RotateVectorByMatrixTest.c
+ * @param matrix Rotational matrix to apply to the vector.
+ * @param input Vector to apply the rotation to.
+ * @param output Resulting vector after rotation is applied.
+*/
+void RotateVectorByMatrix(const RotationMatrix* matrix, Vec3u32* input, Vec3u32* output)
+{
+    gte_ldR11R12(matrix->R11R12);
+    gte_ldR13R21(matrix->R13R21);
+    gte_ldR22R23(matrix->R22R23);
+    gte_ldR31R32(matrix->R31R32);
+    gte_ldR33(matrix->R33);
+
+    gte_ldIR3(input->X);
+    gte_ldIR1(-input->Y);
+    gte_ldIR2(-input->Z);
+    
+    gte_rtir();
+
+    int x;
+    int y;
+    int z;
+    read_mt(y, z, x);
+    
+    output->X = x;
+    output->Y = -y;
+    output->Z = -z;
+}
+
 /// @brief Sets all dimensions of a vector to zero.
 /// @param vector Input vector.
 void ClearVector(Vec3u32* vector)

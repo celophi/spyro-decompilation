@@ -1,25 +1,26 @@
 #include <tests/framework/TestHarness.h>
 #include <vector.h>
+#include <common.h>
 
 /// @brief Function signature of the system under test.
 typedef void (*func)(Vec3u32* vector, int denominator, int numerator);
 
 /// @brief Address of the new function to invoke.
-func decompiledFunction = (func) &ScaleVector;
+static func decompiledFunction = (func) &ScaleVector;
 
 /// @brief Address of the original function to invoke.
 extern int OG_ScaleVector;
-func originalFunction = (func) &OG_ScaleVector;
+static func originalFunction = (func) &OG_ScaleVector;
 
-unsigned int hits = 0;
-unsigned int total = 0;
+static unsigned int hits = 0;
+static unsigned int total = 0;
 
 /// @brief Test assertion code that runs in place of the original function address.
 /// @note The arguments to this should be exactly the same as the new and old functions.
 /// @param vector 
 /// @param denominator 
 /// @param numerator 
-void Tester(Vec3u32* vector, int denominator, int numerator)
+static void Tester(Vec3u32* vector, int denominator, int numerator)
 {
     EnterCriticalSection();
     func originalFunctionRef = (func) GetOriginalFunction();
@@ -47,5 +48,5 @@ void Tester(Vec3u32* vector, int denominator, int numerator)
 /// @brief Hook installation entry point.
 void InstallScaleVectorTest()
 {
-    InstallHook((void*)&Tester, (void*)originalFunction);
+    InstallHook((void*)&Tester, (void*)originalFunction, 0);
 }

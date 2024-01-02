@@ -11,20 +11,20 @@
 typedef void (*func)(const u_char status, const u_char* result);
 
 /// @brief Address of the new function to invoke.
-func decompiledFunction = (func) &CdReadEventHandler;
+static func decompiledFunction = (func) &CdReadEventHandler;
 
 /// @brief Address of the original function to invoke.
 extern int OG_CdReadEventHandler;
-func originalFunction = (func) &OG_CdReadEventHandler;
+static func originalFunction = (func) &OG_CdReadEventHandler;
 
-unsigned int hits = 0;
-unsigned int total = 0;
+static unsigned int hits = 0;
+static unsigned int total = 0;
 
 /// @brief Test assertion code that runs in place of the original function address.
 /// @note The arguments to this should be exactly the same as the new and old functions.
 /// @param status 
 /// @param result 
-void Tester(const u_char status, const u_char* result)
+static void Tester(const u_char status, const u_char* result)
 {
     EnterCriticalSection();
     func originalFunctionRef = (func) GetOriginalFunction();
@@ -52,5 +52,5 @@ void Tester(const u_char status, const u_char* result)
 /// @brief Hook installation entry point.
 void InstallCdReadEventHandlerTest()
 {
-    InstallHook((void*)&Tester, (void*)originalFunction);
+    InstallHook((void*)&Tester, (void*)originalFunction, 0);
 }

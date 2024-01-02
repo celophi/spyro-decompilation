@@ -6,53 +6,6 @@
 #include <symbols.h>
 #include <PSYQ/LIBGPU.h>
 
-/// @brief Calculates the arctan of a vector to get the estimated angle. The returned value is a number where 64 = 90 degrees, and 256 = 360 degrees.
-/// @param x Position of the X component of a vertex.
-/// @param y Position of the Y component of a vertex.
-/// @return Angle based on a number aligned with 64 = 90 degrees.
-/// @note Original Address: 0x800169ac
-int GetAngle(int x, int y)
-{
-    // Get the absolute values of both X and Y.
-    int absX = x < 0 ? -x : x;
-    int absY = y < 0 ? -y : y;
-
-    // If ABS(X) > ABS(Y) then swap the index and divisor.
-    int numerator = absX > absY ? absY : absX;
-    int divisor = absX > absY ? absX : absY;
-
-    // Make sure divisor is not zero to avoid division by zero.
-    divisor = divisor == 0 ? 1 : divisor;
-
-    int idx = (numerator << 6) / divisor;
-    uint result = (uint) _AngleArray[idx];
-
-    // Determine an offset multiplier based on the sign value of both X and Y.
-    int multiplier = (x < 0)
-        ? ((y < 0) ? 2 : 1)
-        : ((y < 0) ? 3 : 0);
-
-    // Determine the result from the glimmer array needs to be inverted.
-    bool invert = absX < absY;
-
-    // Handle a specific case when only one of either X and Y values are negative.
-    if ((x < 0 && y >= 0) || (x >= 0 && y < 0))
-    {
-        invert = absX >=  absY;
-    }
-
-    // When inverted, the multiplier also gets adjusted forward.
-    if (invert) 
-    {
-        multiplier++;
-        result *= -1;
-    }
-
-    int offset = multiplier * 64;
-    return offset + result;
-}
-
-
 /// @brief Calculates the 8-bit difference between the supplied value and a timer, then clamps between 0 and 127.
 /// @param value Supplied value.
 /// @param timer In most cases, the value of a cyclical timer in the game.

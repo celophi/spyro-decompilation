@@ -23,7 +23,7 @@ const unsigned int gteSize = 64;
 /// @brief Address of where to run the tester installation code.
 extern unsigned int OG_Initialize;
 unsigned int * hookAddress = &OG_Initialize;
-unsigned int instructions[4];
+unsigned int instructions[100];
 
 void memCopy(unsigned int * dest, unsigned int * src, unsigned int size)
 {
@@ -116,13 +116,23 @@ void* GetOriginalFunction()
     return &instructions[0];
 }
 
-void InstallHook(void *tester, void* oldFunc)
+/// @brief Creates the installation hook to run the test code.
+/// @param tester 
+/// @param oldFunc 
+/// @param extraNops When specified other than '0', creates additional NOP instructions. This is to handle certain functions that have branches at the beginning.
+void InstallHook(void *tester, void* oldFunc, int extraNops)
 {
     unsigned int * oldFuncAddr = (unsigned int *) oldFunc;
     instructions[0] = oldFuncAddr[0];
     instructions[1] = oldFuncAddr[1];
-    instructions[2] = J(&oldFuncAddr[2]);
-    instructions[3] = NOP;
+    
+    for (int i = 0; i < extraNops; i++)
+    {
+        instructions[i + 2] = oldFuncAddr[i + 2];
+    }
+
+    instructions[extraNops + 2] = J(&oldFuncAddr[extraNops + 2]);
+    instructions[extraNops + 3] = NOP;
 
     oldFuncAddr[0] = J(tester);
     oldFuncAddr[1] = NOP;

@@ -39,4 +39,4 @@ void BackupOldFunctionState();
 int IsMemoryEquivalent(void* destination, void* source, unsigned int size);
 int IsStateEquivalent();
 void* GetOriginalFunction();
-void InstallHook(void *tester, void* oldFunc);
+void InstallHook(void *tester, void* oldFunc, int extraNops);

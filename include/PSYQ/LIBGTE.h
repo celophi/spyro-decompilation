@@ -7,6 +7,12 @@
 #define gte_ldMAC3(r0) __asm__ volatile("mtc2   %0, $27" : : "r"(r0))
 #define gte_ldLZCS(r0) __asm__ volatile("mtc2   %0, $30" : : "r"(r0))
 
+#define gte_ldR11R12(r0) __asm__ volatile("ctc2 %0, $0" : : "r"(r0))
+#define gte_ldR13R21(r0) __asm__ volatile("ctc2 %0, $1" : : "r"(r0))
+#define gte_ldR22R23(r0) __asm__ volatile("ctc2 %0, $2" : : "r"(r0))
+#define gte_ldR31R32(r0) __asm__ volatile("ctc2 %0, $3" : : "r"(r0))
+#define gte_ldR33(r0) __asm__ volatile("ctc2 %0, $4" : : "r"(r0))
+
 #define	gte_ldIR0( r0 )	gte_lddp( r0 )
 
 #define read_mt(r0, r1, r2) __asm__ volatile( \
@@ -40,4 +46,9 @@
         "nop;"        \
         "nop;"        \
         "cop2 0x01A0003E")
-        
+
+#define gte_rtir()    \
+    __asm__ volatile( \
+        "nop;"        \
+        "nop;"        \
+        "cop2 0x049E012;")

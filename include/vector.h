@@ -111,6 +111,17 @@ typedef struct MATRIX3BY3
 
 }MATRIX3BY3;
 
+/// @brief Matrix where each value in the structure may hold two coefficients.
+/// @details The bits 0-15 align to one value, and 16-31 the other.
+typedef struct 
+{
+    int R11R12;
+    int R13R21;
+    int R22R23;
+    int R31R32;
+    int R33;
+} RotationMatrix;
+
 /**
  * @brief Scales a vector by a ratio.
  * @details For example, the vector (0, 1511, -686) scaled by denominator 1659 and numerator 1024 results in (1024/1659) * 1511 = 932 and (1024/1659) * -686 = -424.
@@ -139,13 +150,32 @@ void ScaleVector(Vec3u32* vector, int denominator, int numerator);
  * @param includeZ When true, indicates that the vector is 3D and the 'Z' coordinate should be included.
  * @return Length of the vector.
 */
-uint GetVectorLength(const Vec3u32 *vector, const int includeZ);
+uint GetVectorLength(const Vec3u32* vector, const int includeZ);
 
+/**
+ * @brief Calculates the arctan of a vector to get the estimated angle.
+ * @details The returned value is a number where 64 = 90 degrees, and 256 = 360 degrees.
+ * @note
+ *     - Address: 0x800169ac
+ *     - Hook: GetAngle.s
+ *     - Test: GetAngleTest.c
+ * @param x Position of the X component of a vertex.
+ * @param y Position of the Y component of a vertex.
+ * @return Angle based on a number aligned with 64 = 90 degrees.
+*/
+int GetAngle(const int x, const int y);
 
-
-
-
-
+/**
+ * @brief Rotates a vector by a matrix.
+ * @note
+ *      - Address: 0x80017048
+ *      - Hook: RotateVectorByMatrix.s
+ *      - Test: RotateVectorByMatrixTest.c
+ * @param matrix Rotational matrix to apply to the vector.
+ * @param input Vector to apply the rotation to.
+ * @param output Resulting vector after rotation is applied.
+*/
+void RotateVectorByMatrix(const RotationMatrix* matrix, Vec3u32* input, Vec3u32* output);
 
 //~~~~~~~~~
 //In Game Functions

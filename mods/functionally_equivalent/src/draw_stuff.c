@@ -5,23 +5,32 @@
 #include <memory.h>
 #include <symbols.h>
 #include <PSYQ/LIBGPU.h>
+#include <vector.h>
+#include <draw_stuff.h>
 
-/// @brief Calculates the 8-bit difference between the supplied value and a timer, then clamps between 0 and 127.
-/// @param value Supplied value.
-/// @param timer In most cases, the value of a cyclical timer in the game.
-/// @return Calculated value.
-int GetClampedDifference(int value, int timer)
+/**
+ * @brief Constructs a new POLY_FT4 with the correct P_TAG information.
+ */ 
+static POLY_FT4* CreatePOLY_FT4() 
 {
-    // Keep only the lower 8 bits.
-    byte result = (byte)(value - timer);
+    POLY_FT4* poly = _PrimitiveList;
 
-    // Clamp the result between 0 and 127.
-    return (result >= 128) ? (256 - result) : result;
+    poly->tag.code = 0x2C;
+    poly->tag.len = 9;
+    poly->tag.addr = 0;
+
+    return poly;
 }
 
-/// @brief Adds a primitive to a linked list.
-/// @param primitive Primitive to draw
-/// @note Original Address: 0x800168dc
+/**
+ * @brief Adds a primitive to a linked list.
+ * @details Seems to be a staging area that gets turned into an ordering table later.
+ * @note
+ *      - Address: 0x800168dc
+ *      - Hook: AddPrimitiveToList.s
+ *      - Test: AddPrimitiveToListTest.c
+ * @param primitive Reference to a primitive to stage.
+*/
 void AddPrimitiveToList(P_TAG *primitive)
 {
     PrimitiveLinkedList2 *list = _PrimitiveLinkedList;
@@ -36,6 +45,94 @@ void AddPrimitiveToList(P_TAG *primitive)
 
     list->Tail = primitive;
 }
+
+/**
+ * @brief Draws an ellipsoid/ovoid on the HUD.
+ * @details Used for drawing the life orbs and the eggs.
+ * @note
+ *      - Address: 0x8001919c
+ *      - Hook: DrawHudOval.s
+ *      - Test: DrawHudOvalTest.c
+ * @param vg Unknown. Something with vertices.
+ * @param parameter Unknown. Something to do with textures.
+ * @param rgb Colors to set on the primitive.
+*/
+void DrawHudOval(const HudLifeRelated_U0* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb)
+{
+    POLY_FT4* polyFT4 = CreatePOLY_FT4();
+
+    if (rgb) 
+    {
+        polyFT4->tag.r0 = (u_char)rgb->R;
+        polyFT4->tag.g0 = (u_char)rgb->G;
+        polyFT4->tag.b0 = (u_char)rgb->B;
+    }
+    else 
+    {
+        polyFT4->tag.b0 = 128;
+        polyFT4->tag.r0 = 128;
+        polyFT4->tag.g0 = 128;
+    }
+
+    // Set vertices
+    polyFT4->x0 = (vg->V1).X;
+    polyFT4->y0 = (vg->V1).Y;
+
+    polyFT4->x1 = (vg->V1).X + (vg->V2).X;
+    polyFT4->y1 = (vg->V1).Y;
+
+    polyFT4->x2 = (vg->V1).X;
+    polyFT4->y2 = (vg->V1).Y + (vg->V2).Y;
+    
+    polyFT4->x3 = (vg->V1).X + (vg->V2).X;
+    polyFT4->y3 = (vg->V1).Y + (vg->V2).Y;
+
+    // Set texture coordinates.
+    polyFT4->u0 = parameter->U1[0].u0;
+    polyFT4->v0 = parameter->U1[0].v0;
+
+    /**
+     * The line below is removed because it gets overwritten immediately. 
+     * I'm not sure if this is a mistake or not, but it seems like the right code might have been:
+     * 
+     * polyFT4->u1 = parameter->U1[0].u2;
+     * polyFT4->u3 = polyFT4->u0 + *(char *)&(vg->V2).X;
+     * 
+     * However, this results in some diamond shape instead of a circle.
+    */
+
+    //polyFT4->u1 = parameter->U1[0].u2;
+
+    polyFT4->u1 = polyFT4->u0 + *(char *)&(vg->V2).X;
+    polyFT4->v1 = parameter->U1[0].v2;
+
+    polyFT4->u2 = polyFT4->u0;
+    polyFT4->v2 = polyFT4->v0 + *(char *)&(vg->V2).Y;
+
+    polyFT4->u3 = polyFT4->u1;
+    polyFT4->v3 = polyFT4->v0 + *(char *)&(vg->V2).Y;
+
+    polyFT4->clut = parameter->U1[0].clut;
+    polyFT4->tpage = parameter->U1[0].tpage;
+
+    AddPrimitiveToList((P_TAG *)polyFT4);
+    _PrimitiveList = polyFT4 + 1;
+}
+
+/// @brief Calculates the 8-bit difference between the supplied value and a timer, then clamps between 0 and 127.
+/// @param value Supplied value.
+/// @param timer In most cases, the value of a cyclical timer in the game.
+/// @return Calculated value.
+int GetClampedDifference(int value, int timer)
+{
+    // Keep only the lower 8 bits.
+    byte result = (byte)(value - timer);
+
+    // Clamp the result between 0 and 127.
+    return (result >= 128) ? (256 - result) : result;
+}
+
+
 
 /// @brief Sets the color of a vertex calculating a difference in contrast based on the position.
 /// @param rgb Reference to a pixel to color

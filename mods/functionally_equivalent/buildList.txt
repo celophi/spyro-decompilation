@@ -1,5 +1,5 @@
-//NTSC, header, 0x80200000, 0x0, src/*.c, mod_code.bin
-//
+NTSC, header, 0x80200000, 0x0, src/*.c src/tests/framework/*.c src/tests/*.c, mod_code.bin
+
 //NTSC, exe, 0x800122a8, 0x0, asm/InitializeDisplay.s
 //NTSC, exe, 0x80012460, 0x0, asm/InitializeMemoryCards.s
 //NTSC, exe, 0x800133e0, 0x0, asm/WA4S3_MakeAbsoluteAddresses.s
@@ -11,12 +11,12 @@
 //NTSC, exe, 0x800169ac, 0x0, asm/GetAngle.s
 //NTSC, exe, 0x80016c58, 0x0, asm/sin_scaled.s
 //NTSC, exe, 0x80016fd0, 0x0, asm/matrix_transpose_hook.s
-//NTSC, exe, 0x800168DC, 0x0, asm/AddPrimitiveToList.s
+//NTSC, exe, OG_AddPrimitiveToList, 0x0, asm/AddPrimitiveToList.s
 //NTSC, exe, 0x80016914, 0x0, asm/memset.s
 //NTSC, exe, 0x80016958, 0x0, asm/memcpy.s
 //NTSC, exe, 0x800171fc, 0x0, asm/GetVectorLength.s
 //NTSC, exe, 0x800175b8, 0x0, asm/ScaleVector.s
-////NTSC, exe, 0x80017614, 0x0, asm/ScaleVectorByExponent.s
+//NTSC, exe, 0x80017614, 0x0, asm/ScaleVectorByExponent.s
 //NTSC, exe, 0x80017908, 0x0, asm/GetClampedDifference.s
 //NTSC, exe, 0x800176a0, 0x0, asm/ScaleVectorUp.s
 //NTSC, exe, 0x800176c8, 0x0, asm/ScaleVectorDown.s
@@ -38,17 +38,19 @@
 //NTSC, exe, 0x80063a8c, 0x0, asm/cd_status.s
 //NTSC, exe, 0x8008013c, 0x0, asm/gem_home_in_hook.s
 //NTSC, exe, OG_RotateVectorByMatrix, 0x0, asm/RotateVectorByMatrix.s
-//
-//
-//// work in progress
+//NTSC, exe, OG_DrawHudOval, 0x0, asm/DrawHudOval.s
+
+
+// work in progress
 //NTSC, exe, 0x8001256c, 0x0, asm/PrepareSoundFiles.s
 //NTSC, exe, 0x800567f4, 0x0, asm/PlayMusicTrack.s
 
 
 // Uncomment the following in order to run test code.
-NTSC, header, 0x80200000, 0x0, src/*.c src/tests/framework/*.c src/tests/*.c, mod_code.bin
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/ScaleVectorTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/GetVectorLengthTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/CdReadEventHandlerTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/GetAngleTest.s
-NTSC, exe, OG_Initialize, 0x0, asm/tests/RotateVectorByMatrixTest.s
+//NTSC, exe, OG_Initialize, 0x0, asm/tests/RotateVectorByMatrixTest.s
+//NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawHudOvalTest.s
+NTSC, exe, OG_Initialize, 0x0, asm/tests/AddPrimitiveToListTest.s

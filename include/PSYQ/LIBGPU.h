@@ -52,6 +52,30 @@ typedef struct
 } POLY_F4;
 
 typedef struct {
+    P_TAG tag;
+    short x0;
+    short y0;
+    u_char u0;
+    u_char v0;
+    u_short	clut;
+    short x1;
+    short y1;
+    u_char u1;
+    u_char v1;
+    u_short	tpage;
+    short x2;
+    short y2;
+    u_char u2;
+    u_char v2;
+    u_short	pad1;
+    short x3;
+    short y3;
+    u_char u3;
+    u_char v3;
+    u_short	pad2;
+} POLY_FT4;
+
+typedef struct {
 	u_long	tag;
 	u_long	code[15];
 } DR_ENV;

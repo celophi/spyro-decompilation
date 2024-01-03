@@ -22,6 +22,8 @@ OG_GetVectorLength = 0x800171fc;
 OG_CdReadEventHandler = 0x80016490;
 OG_GetAngle = 0x800169ac;
 OG_RotateVectorByMatrix = 0x80017048;
+OG_DrawHudOval = 0x8001919c;
+OG_AddPrimitiveToList = 0x800168dc;
 
 
 

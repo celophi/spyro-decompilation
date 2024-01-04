@@ -3,6 +3,7 @@
 #include <PSYQ/LIBCD.h>
 #include <PSYQ_cd.h>
 #include "shapes.h"
+#include <hud.h>
 
 /// @brief This is the pause/inventory menu timer. It is only running in those menus. \n Address: 0x8007588c
 extern int _LoadingTimer;
@@ -63,3 +64,51 @@ extern int _MusicSectorNumberA;
 
 /// @brief 0x80076224
 extern int _InitializeSoundU2;
+
+/// @brief 0x80075690
+extern int _DisplayHudRelated_U1;
+
+/// @brief 0x800720f4
+extern int _DSM_U2;
+
+/// @brief 0x800720f8
+extern int _DisplayHudRelated_U0;
+
+/// @brief 0x80077fec
+extern PauseMenuState _PauseMenuState;
+
+/// @brief 0x80077fc8
+extern int _HudLevelTreasure;
+
+/// @brief 0x80077fd8
+extern int _DisplayHudRelated_U4;
+
+/// @brief 0x80077fe8
+extern int _HudChestHeadSpinTimer;
+
+/// @brief 0x8007850c
+extern TextureRelatedUnk _HudUnk1;
+
+/// @brief 0x8007840c
+extern short _LifeOrbVertices;
+
+/// @brief 0x80077fd4
+extern int _HudEggs;
+
+/// @brief 0x80077fe0
+extern int _HudLifeOrbs;
+
+/// @brief 0x8006cbf8
+extern ushort _SinArray[256];
+
+/// @brief 0x8007846c
+extern HudLifeRelated_U0 _HudUnk0;
+
+/// @brief 0x80075710
+extern NewMoby* _MobyList;
+
+/// @brief 0x800755b4
+extern char* _TreatureObtainedRatio;
+
+/// @brief 0x80077fb4
+extern int _DisplayHudRelated_U2;

@@ -50,5 +50,5 @@ static void Tester(P_TAG *primitive)
 /// @brief Hook installation entry point.
 void InstallAddPrimitiveToListTest()
 {
-    InstallHook((void*)&Tester, (void*)originalFunction, 1);
+    InstallHook((void*)&Tester, (void*)originalFunction, 0);
 }

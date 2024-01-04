@@ -1,27 +1,24 @@
 #include <tests/framework/TestHarness.h>
-#include <draw_stuff.h>
 #include <common.h>
 #include <symbols.h>
+#include <hud.h>
 
 /// @brief Function signature of the system under test.
-typedef void (*func)(const HudLifeRelated_U0* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb);
+typedef void (*func)();
 
 /// @brief Address of the new function to invoke.
-static func decompiledFunction = (func) &DrawHudOval;
+static func decompiledFunction = (func) &DisplayHudRelated;
 
 /// @brief Address of the original function to invoke.
-extern int OG_DrawHudOval;
-static func originalFunction = (func) &OG_DrawHudOval;
+extern int OG_DisplayHudRelated;
+static func originalFunction = (func) &OG_DisplayHudRelated;
 
 static unsigned int hits = 0;
 static unsigned int total = 0;
 
 /// @brief Test assertion code that runs in place of the original function address.
 /// @note The arguments to this should be exactly the same as the new and old functions.
-/// @param vg 
-/// @param parameter 
-/// @param rgb
-static void Tester(const HudLifeRelated_U0* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb)
+static void Tester()
 {
     EnterCriticalSection();
     func originalFunctionRef = (func) GetOriginalFunction();
@@ -29,12 +26,12 @@ static void Tester(const HudLifeRelated_U0* vg, const TextureRelatedUnk* paramet
     BackupStartingState();
 
     // Invoke both old and new functions.
-    decompiledFunction(vg, parameter, rgb);
+    decompiledFunction();
 
     BackupNewFunctionState();
     LoadStartingState();
 
-    originalFunctionRef(vg, parameter, rgb);
+    originalFunctionRef();
     
     // Assert equivalency.
     total++;
@@ -44,13 +41,13 @@ static void Tester(const HudLifeRelated_U0* vg, const TextureRelatedUnk* paramet
     }
 
     // Record results.
-    printf("DrawHudLifeOrb Test Result: %d/%d\n", hits, total);
+    printf("DisplayHudRelated Test Result: %d/%d\n", hits, total);
     
     LeaveCriticalSection();
 }
 
 /// @brief Hook installation entry point.
-void InstallDrawHudLifeOrbTest()
+void InstallDisplayHudRelatedTest()
 {
     InstallHook((void*)&Tester, (void*)originalFunction, 0);
 }

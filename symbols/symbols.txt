@@ -42,6 +42,23 @@ _HudLivesState = 0x80077FAA;
 _HudEggsState = 0x80077FAB;
 _HudAnimationState = 0x80077FAC;
 _MusicFile = 0x800774b0;
+_DisplayHudRelated_U1 = 0x80075690;
+_DSM_U2 = 0x800720f4;
+_DisplayHudRelated_U0 = 0x800720f8;
+_HudLevelTreasure = 0x80077fc8;
+_DisplayHudRelated_U4 = 0x80077fd8;
+_HudChestHeadSpinTimer = 0x80077fe8;
+_HudUnk1 = 0x8007850c;
+_LifeOrbVertices = 0x8007840c;
+_HudEggs = 0x80077fd4;
+_SinArray = 0x8006cbf8;
+_HudLifeOrbs = 0x80077fe0;
+_HudUnk0 = 0x8007846c;
+_MobyList = 0x80075710;
+_TreatureObtainedRatio = 0x800755b4;
+_DisplayHudRelated_U2 = 0x80077fb4;
+_PauseMenuState = 0x80077fec;
+
 
 
 

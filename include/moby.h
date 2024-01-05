@@ -218,6 +218,31 @@ typedef struct Moby
 
 }Moby;
 
+typedef struct 
+{
+    byte field0_0x0[8];
+    int U0;
+    Vec3u32 Position;
+    byte field3_0x18[28];
+    short U1;
+    short Type;
+    byte field6_0x38[9];
+    byte U8;
+    byte field8_0x42[2];
+    byte U5;
+    byte U6;
+    byte Rotation;
+    byte field12_0x47[2];
+    byte U4;
+    byte field14_0x4a;
+    byte U7;
+    byte field16_0x4c[3];
+    byte Color;
+    byte U3;
+    byte field19_0x51[7];
+} NewMoby;
+_Static_assert(sizeof(NewMoby) == 88);
+
 //* ~~~ Functions ~~~
 
 extern Moby* _ptrTextUnk; //0x800720f4                        //? Not too sure.

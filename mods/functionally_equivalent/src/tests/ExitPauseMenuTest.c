@@ -1,27 +1,28 @@
+/**
+ * In order to run this test, you will need to mock the behavior of the PlayMusicTrack function for now.
+ * CD interrupts cause the testing functionality to not work as intended. 
+*/
 #include <tests/framework/TestHarness.h>
-#include <draw_stuff.h>
 #include <common.h>
 #include <symbols.h>
+#include <menus.h>
 
 /// @brief Function signature of the system under test.
-typedef void (*func)(const HudOvalVertex* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb);
+typedef void (*func)(int resumeMusic);
 
 /// @brief Address of the new function to invoke.
-static func decompiledFunction = (func) &DrawHudOval;
+static func decompiledFunction = (func) &ExitPauseMenu;
 
 /// @brief Address of the original function to invoke.
-extern int OG_DrawHudOval;
-static func originalFunction = (func) &OG_DrawHudOval;
+extern int OG_ExitPauseMenu;
+static func originalFunction = (func) &OG_ExitPauseMenu;
 
 static unsigned int hits = 0;
 static unsigned int total = 0;
 
 /// @brief Test assertion code that runs in place of the original function address.
 /// @note The arguments to this should be exactly the same as the new and old functions.
-/// @param vg 
-/// @param parameter 
-/// @param rgb
-static void Tester(const HudOvalVertex* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb)
+static void Tester(int resumeMusic)
 {
     EnterCriticalSection();
     func originalFunctionRef = (func) GetOriginalFunction();
@@ -29,12 +30,12 @@ static void Tester(const HudOvalVertex* vg, const TextureRelatedUnk* parameter, 
     BackupStartingState();
 
     // Invoke both old and new functions.
-    decompiledFunction(vg, parameter, rgb);
+    decompiledFunction(resumeMusic);
 
     BackupNewFunctionState();
     LoadStartingState();
 
-    originalFunctionRef(vg, parameter, rgb);
+    originalFunctionRef(resumeMusic);
     
     // Assert equivalency.
     total++;
@@ -44,13 +45,13 @@ static void Tester(const HudOvalVertex* vg, const TextureRelatedUnk* parameter, 
     }
 
     // Record results.
-    printf("DrawHudOval Test Result: %d/%d\n", hits, total);
+    printf("ExitPauseMenu Test Result: %d/%d\n", hits, total);
     
     LeaveCriticalSection();
 }
 
 /// @brief Hook installation entry point.
-void InstallDrawHudOvalTest()
+void InstallExitPauseMenuTest()
 {
     InstallHook((void*)&Tester, (void*)originalFunction, 0);
 }

@@ -24,8 +24,9 @@ OG_GetAngle = 0x800169ac;
 OG_RotateVectorByMatrix = 0x80017048;
 OG_DrawHudOval = 0x8001919c;
 OG_AddPrimitiveToList = 0x800168dc;
-
-
+OG_DrawHudMobys = 0x80019300;
+OG_DrawCapitalText = 0x80017fe4;
+OG_ExitPauseMenu = 0x8002c534;
 
 
 

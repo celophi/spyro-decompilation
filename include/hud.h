@@ -2,12 +2,34 @@
 
 #include <vector.h>
 #include <moby.h>
+#include <custom_types.h>
+
+/// @brief Indicates the animation state of Moby objects on the HUD.
+typedef byte HudAnimation;
+enum
+{
+    /// @brief Moby is not visible and not displayed.
+    Hidden = 0,
+
+    /// @brief Moby is coming into view moving downward.
+    DownTransition = 1,
+
+    /// @brief Moby has stopped moving down and is now rotating.
+    Rotating = 2,
+
+    /// @brief Moby is moving upward out of display.
+    UpTransition = 3,
+
+    /// @brief Specific state that displays the treasure once 100% completion is reached in the level.
+    AllCollectiblesObtained = 4,
+};
+_Static_assert(sizeof(HudAnimation) == 1);
 
 typedef struct 
 {
     Vec2u16 V1;
     Vec2u16 V2;
-} HudLifeRelated_U0;
+} HudOvalVertex;
 
 typedef struct
 {
@@ -49,6 +71,6 @@ typedef struct
  * @param parameter Unknown. Something to do with textures.
  * @param rgb Colors to set on the primitive.
 */
-void DrawHudOval(const HudLifeRelated_U0* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb);
+void DrawHudOval(const HudOvalVertex* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb);
 
 void DisplayHudRelated();

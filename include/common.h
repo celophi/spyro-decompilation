@@ -518,7 +518,7 @@ extern int* _ptr_arrayGraphicsRelatedPointers; //0x8007581c   //? Ptr the the ar
 
 extern char* _ptr_particleLinkedList; //0x80075738           //? This is a pointer to the next available particle slot.
 
-extern char _HudChestState;  //0x80077FA8
+
 extern char _HudDragonState; //0x80077FA9
 extern char _HudLivesState;  //0x80077FAA
 extern char _HudEggsState;   //0x80077FAB

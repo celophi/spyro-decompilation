@@ -30,7 +30,7 @@ static POLY_FT4* CreatePOLY_FT4()
  * @param parameter Unknown. Something to do with textures.
  * @param rgb Colors to set on the primitive.
 */
-void DrawHudOval(const HudLifeRelated_U0* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb)
+void DrawHudOval(const HudOvalVertex* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb)
 {
     POLY_FT4* polyFT4 = CreatePOLY_FT4();
 
@@ -94,103 +94,116 @@ void DrawHudOval(const HudLifeRelated_U0* vg, const TextureRelatedUnk* parameter
 
 
 void DisplayHudRelated()
-
 {
-  NewMoby **ppNVar1;
-  uint count2;
-  int counter;
-  int *mobyRef;
-  RGBu32 rgb;
-  Vec3u32 position;
-  HudLifeRelated_U0 *hud0;
-  NewMoby *mobyPtr;
-  
-  if (_DisplayHudRelated_U1 == 0) {
-    mobyRef = &_DSM_U2;
-    if (_DSM_U2 != 0) {
-      ppNVar1 = (NewMoby **)&_DisplayHudRelated_U0;
-      do {
-        mobyRef = (int *)ppNVar1;
-        ppNVar1 = (NewMoby **)mobyRef + 1;
-      } while ((NewMoby *)*mobyRef != (NewMoby *)0x0);
-    }
-    if (_HudChestState != 0) {
-      count2 = (uint)(_HudChestState == 4) * 4;
-      if (count2 < 5) {
-        mobyPtr = _PauseMenuState.Mobys + (uint)(_HudChestState == 4) * 4;
-        do {
-          *mobyRef = (int)mobyPtr;
-          mobyRef = (int *)((NewMoby **)mobyRef + 1);
-          count2 = count2 + 1;
-          mobyPtr = mobyPtr + 1;
-        } while ((int)count2 < 5);
-      }
-      if (_HudChestState == 4) {
-        sprintf((char *)&rgb,_TreatureObtainedRatio,_HudLevelTreasure,_HudLevelTreasure);
-        mobyPtr = _MobyList;
-        position.X = 0x5a;
-        position.Y = 0x24;
-        position.Z = 0xb40;
-        DrawCapitalText(&rgb,&position,28,11);
-        mobyPtr = mobyPtr + -1;
-        counter = 0;
-        if ((int)_MobyList <= (int)mobyPtr) {
-          do {
-            count2 = _DisplayHudRelated_U2 * 4 + counter;
-            counter = counter + 0xc;
-            mobyPtr->Rotation = (byte)(_SinArray[(count2 & 0xff) + 0x40] >> 7);
-            *mobyRef = (int)mobyPtr;
-            mobyPtr = mobyPtr + -1;
-            mobyRef = (int *)((NewMoby **)mobyRef + 1);
-          } while ((int)_MobyList <= (int)mobyPtr);
+    NewMoby** mobyRef;
+    
+    if (!_IsInFlyingLevel) 
+    {
+        mobyRef = (NewMoby **)&_DSM_U2;
+    
+        if (_DSM_U2 != 0) 
+        {
+            NewMoby **pRef = &_DisplayHudRelated_U0;
+
+            while (*mobyRef)
+            {
+                mobyRef = pRef;
+                pRef = mobyRef + 1;
+            }
         }
-      }
+
+        if (_HudChestState != Hidden) 
+        {
+            NewMoby* mobyPtr = _PauseMenuState.Mobys;
+            
+            // Displays the chest icon and treature / treasure text in upper left.
+            if (_HudChestState == AllCollectiblesObtained) 
+            {
+                mobyPtr +=4;
+                *mobyRef++ = mobyPtr++;
+
+                char treatureObtainedText;
+                sprintf(&treatureObtainedText, &_TreatureObtainedRatio, _HudLevelTreasure, _HudLevelTreasure);
+
+                NewMoby* reference = _MobyList;
+
+                Vec3u32 position = {.X = 90, .Y = 36, .Z = 2880 };
+                DrawCapitalText(&treatureObtainedText, &position, 28, 11);
+
+                reference--;
+                int sinStep = 0;
+
+                while (reference >= _MobyList)
+                {
+                    uint sinIndex = _HudChestTransitionTimer * 4 + sinStep;
+                    sinStep += 12;
+
+                    reference->Rotation = (byte)(_SinArray[(sinIndex & 0xFF) + 64] >> 7);
+                    *mobyRef++ = reference--;
+                }
+            }
+            else 
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    *mobyRef++ = mobyPtr++;
+                }
+            }
+        }
+
+        NewMoby* mobyPtr2 = _PauseMenuState.Mobys + 5;
+
+        if (_HudDragonState != 0) 
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                *mobyRef++ = mobyPtr2++;
+            }
+        }
+
+        if (_HudLivesState != 0) 
+        {
+            mobyPtr2 = _PauseMenuState.Mobys + 8;
+
+            for (int i = 0; i < 3; i++)
+            {
+                *mobyRef++ = mobyPtr2++;
+            }
+        }
+
+        if ((_HudAnimationState != 0) && (_DisplayHudRelated_U4 == 1)) 
+        {
+            *mobyRef = _PauseMenuState.Mobys + 11;
+            mobyRef++;
+        }
+
+        *mobyRef = 0;
     }
-    mobyPtr = _PauseMenuState.Mobys + 5;
-    if (_HudDragonState != 0) {
-      counter = 0;
-      do {
-        *mobyRef = (int)mobyPtr;
-        mobyRef = (int *)((NewMoby **)mobyRef + 1);
-        counter = counter + 1;
-        mobyPtr = mobyPtr + 1;
-      } while (counter < 3);
+
+    // Draw all the life orbs on the HUD.
+    if (_HudLivesState != 0) 
+    {
+        HudOvalVertex *vertices = _HudLifeOrbVertices;
+        
+        for (int i = 0; i < _HudLifeOrbs; i++)
+        {
+            int color = ((int)((uint)_SinArray[(_CyclingTimer - (i << 8) / 20 & 0xFFU) + 64] << 16) >> 23) + 128;
+            RGBu32 rgb = { .R = color, .G = color, .B = color };
+            DrawHudOval(vertices, &_HudUnk1, &rgb);
+            vertices++;
+        }
     }
-    if (_HudLivesState != 0) {
-      counter = 0;
-      mobyPtr = _PauseMenuState.Mobys + 8;
-      do {
-        *mobyRef = (int)mobyPtr;
-        mobyRef = (int *)((NewMoby **)mobyRef + 1);
-        counter = counter + 1;
-        mobyPtr = mobyPtr + 1;
-      } while (counter < 3);
+
+    // Draw all the eggs on the HUD.
+    if (_HudEggsState != 0) 
+    {
+        HudOvalVertex *vertices = _HudEggVertices;
+
+        for (int i = 0; i < _HudEggs; i++)
+        {
+            DrawHudOval(vertices, (TextureRelatedUnk *)(_HudUnk1.U1 + (_HudChestHeadSpinTimer + i) % 9 + 1), NULL);
+            vertices++;
+        }
     }
-    if ((_HudAnimationState != 0) && (_DisplayHudRelated_U4 == 1)) {
-      *mobyRef = (int)(_PauseMenuState.Mobys + 0xb);
-      mobyRef = (int *)((NewMoby **)mobyRef + 1);
-    }
-    *mobyRef = 0;
-  }
-  if ((_HudLivesState != 0) && (counter = 0, 0 < _HudLifeOrbs)) {
-    hud0 = &_HudUnk0;
-    do {
-      rgb.R = ((int)((uint)_SinArray[(_CyclingTimer - (counter << 8) / 0x14 & 0xffU) + 0x40] << 0x10) >> 0x17) + 0x80;
-      rgb.G = rgb.R;
-      rgb.B = rgb.R;
-      DrawHudOval(hud0,&_HudUnk1,&rgb);
-      counter = counter + 1;
-      hud0 = hud0 + 1;
-    } while (counter < _HudLifeOrbs);
-  }
-  if ((_HudEggsState != 0) && (counter = 0, 0 < _HudEggs)) {
-    hud0 = (HudLifeRelated_U0 *)&_LifeOrbVertices;
-    do {
-      DrawHudOval(hud0,(TextureRelatedUnk *)(_HudUnk1.U1 + (_HudChestHeadSpinTimer + counter) % 9 + 1),(RGBu32 *)0x0);
-      counter = counter + 1;
-      hud0 = hud0 + 1;
-    } while (counter < _HudEggs);
-  }
-  return;
 }
 

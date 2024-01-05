@@ -4,7 +4,7 @@
 #include <symbols.h>
 
 /// @brief Function signature of the system under test.
-typedef void (*func)(const HudLifeRelated_U0* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb);
+typedef void (*func)(const HudOvalVertex* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb);
 
 /// @brief Address of the new function to invoke.
 static func decompiledFunction = (func) &DrawHudOval;
@@ -21,7 +21,7 @@ static unsigned int total = 0;
 /// @param vg 
 /// @param parameter 
 /// @param rgb
-static void Tester(const HudLifeRelated_U0* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb)
+static void Tester(const HudOvalVertex* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb)
 {
     EnterCriticalSection();
     func originalFunctionRef = (func) GetOriginalFunction();
@@ -44,13 +44,13 @@ static void Tester(const HudLifeRelated_U0* vg, const TextureRelatedUnk* paramet
     }
 
     // Record results.
-    printf("DrawHudLifeOrb Test Result: %d/%d\n", hits, total);
+    printf("DrawHudOval Test Result: %d/%d\n", hits, total);
     
     LeaveCriticalSection();
 }
 
 /// @brief Hook installation entry point.
-void InstallDrawHudLifeOrbTest()
+void InstallDrawHudOvalTest()
 {
     InstallHook((void*)&Tester, (void*)originalFunction, 0);
 }

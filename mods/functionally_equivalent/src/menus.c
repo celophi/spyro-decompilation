@@ -1,5 +1,6 @@
 #include <common.h>
 #include <cd.h>
+#include <symbols.h>
 
 /// @brief Resets some timers maybe?
 void ResetHudTimers()
@@ -25,7 +26,7 @@ void ExitInventoryMenu()
 
     ResetHudTimers();
 
-    _HudChestState = 0;
+    _HudChestState = Hidden;
     _HudDragonState = 0;
     _HudLivesState = 0;
     _HudEggsState = 0;

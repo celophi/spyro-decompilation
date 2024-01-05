@@ -65,14 +65,14 @@ extern int _MusicSectorNumberA;
 /// @brief 0x80076224
 extern int _InitializeSoundU2;
 
-/// @brief 0x80075690
-extern int _DisplayHudRelated_U1;
+/// @brief Set to '1' when Spyro is in a flying level; '0' otherwise.
+extern int _IsInFlyingLevel;
 
 /// @brief 0x800720f4
 extern int _DSM_U2;
 
 /// @brief 0x800720f8
-extern int _DisplayHudRelated_U0;
+extern NewMoby* _DisplayHudRelated_U0;
 
 /// @brief 0x80077fec
 extern PauseMenuState _PauseMenuState;
@@ -90,7 +90,7 @@ extern int _HudChestHeadSpinTimer;
 extern TextureRelatedUnk _HudUnk1;
 
 /// @brief 0x8007840c
-extern short _LifeOrbVertices;
+extern HudOvalVertex _HudEggVertices[12];
 
 /// @brief 0x80077fd4
 extern int _HudEggs;
@@ -102,13 +102,16 @@ extern int _HudLifeOrbs;
 extern ushort _SinArray[256];
 
 /// @brief 0x8007846c
-extern HudLifeRelated_U0 _HudUnk0;
+extern HudOvalVertex _HudLifeOrbVertices[20];
 
 /// @brief 0x80075710
 extern NewMoby* _MobyList;
 
 /// @brief 0x800755b4
-extern char* _TreatureObtainedRatio;
+extern char _TreatureObtainedRatio;
 
 /// @brief 0x80077fb4
-extern int _DisplayHudRelated_U2;
+extern int _HudChestTransitionTimer;
+
+/// @brief Indicates the current animation transition state for the chest icon on the HUD.
+extern HudAnimation _HudChestState;

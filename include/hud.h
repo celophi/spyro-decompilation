@@ -67,10 +67,20 @@ typedef struct
  *      - Address: 0x8001919c
  *      - Hook: DrawHudOval.s
  *      - Test: DrawHudOvalTest.c
+ *      - Test Status: Passing
  * @param vg Unknown. Something with vertices.
  * @param parameter Unknown. Something to do with textures.
  * @param rgb Colors to set on the primitive.
 */
 void DrawHudOval(const HudOvalVertex* vg, const TextureRelatedUnk* parameter, const RGBu32* rgb);
 
-void DisplayHudRelated();
+/**
+ * @brief Draws Mobys on the HUD.
+ * @details Mobys for the treasure, lives, life orbs, eggs, dragons, are drawn.
+ * @note
+ *      - Address: 0x80019300
+ *      - Hook: DrawHudMobys.s
+ *      - Test: DrawHudMobysTest.c
+ *      - Test Status: Passing
+*/
+void DrawHudMobys();

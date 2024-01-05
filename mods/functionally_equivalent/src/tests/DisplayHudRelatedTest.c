@@ -7,11 +7,11 @@
 typedef void (*func)();
 
 /// @brief Address of the new function to invoke.
-static func decompiledFunction = (func) &DisplayHudRelated;
+static func decompiledFunction = (func) &DrawHudMobys;
 
 /// @brief Address of the original function to invoke.
-extern int OG_DisplayHudRelated;
-static func originalFunction = (func) &OG_DisplayHudRelated;
+extern int OG_DrawHudMobys;
+static func originalFunction = (func) &OG_DrawHudMobys;
 
 static unsigned int hits = 0;
 static unsigned int total = 0;
@@ -57,13 +57,13 @@ ERROR_MODE:
     }
 
     // Record results.
-    printf("DisplayHudRelated Test Result: %d/%d\n", hits, total);
+    printf("DrawHudMobys Test Result: %d/%d\n", hits, total);
     
     LeaveCriticalSection();
 }
 
 /// @brief Hook installation entry point.
-void InstallDisplayHudRelatedTest()
+void InstallDrawHudMobysTest()
 {
     InstallHook((void*)&Tester, (void*)originalFunction, 0);
 }

@@ -69,7 +69,7 @@ extern int _InitializeSoundU2;
 extern int _IsInFlyingLevel;
 
 /// @brief 0x800720f4
-extern int _DSM_U2;
+extern NewMoby* _DSM_U2;
 
 /// @brief 0x800720f8
 extern NewMoby* _DisplayHudRelated_U0;

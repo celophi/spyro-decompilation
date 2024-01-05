@@ -10,6 +10,8 @@
 unsigned int * ram = (unsigned int *) 0x80010000;
 unsigned int * ram_4mb = (unsigned int *) 0x80410000;
 unsigned int * ram_6mb = (unsigned int *) 0x80610000;
+
+/// @brief The RAM size does not extend to the full 2MB because some space is reserved for the stack. In most games this is 0x800 bytes which can be found in main().
 const unsigned int ramSize = (0x1FF800 - 0x10000) / 4;
 unsigned int * scratchpad = (unsigned int *) 0x1F800000;
 unsigned int * scratchpadBackup_4mb = (unsigned int *) 0x80400000;

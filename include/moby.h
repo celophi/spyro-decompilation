@@ -241,6 +241,7 @@ typedef struct
     byte U3;
     byte field19_0x51[7];
 } NewMoby;
+_Static_assert(sizeof(NewMoby) == 88);
 
 //* ~~~ Functions ~~~
 

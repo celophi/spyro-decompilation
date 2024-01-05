@@ -26,6 +26,7 @@ static POLY_FT4* CreatePOLY_FT4()
  *      - Address: 0x8001919c
  *      - Hook: DrawHudOval.s
  *      - Test: DrawHudOvalTest.c
+ *      - Test Status: Passing
  * @param vg Unknown. Something with vertices.
  * @param parameter Unknown. Something to do with textures.
  * @param rgb Colors to set on the primitive.
@@ -92,16 +93,22 @@ void DrawHudOval(const HudOvalVertex* vg, const TextureRelatedUnk* parameter, co
     _PrimitiveList = polyFT4 + 1;
 }
 
-
-void DisplayHudRelated()
-{
-    NewMoby** mobyRef;
-    
+/**
+ * @brief Draws Mobys on the HUD.
+ * @details Mobys for the treasure, lives, life orbs, eggs, dragons, are drawn.
+ * @note
+ *      - Address: 0x80019300
+ *      - Hook: DrawHudMobys.s
+ *      - Test: DrawHudMobysTest.c
+ *      - Test Status: Passing
+*/
+void DrawHudMobys()
+{   
     if (!_IsInFlyingLevel) 
     {
-        mobyRef = (NewMoby **)&_DSM_U2;
+        NewMoby** mobyRef = &_DSM_U2;
     
-        if (_DSM_U2 != 0) 
+        if (_DSM_U2) 
         {
             NewMoby **pRef = &_DisplayHudRelated_U0;
 
@@ -112,42 +119,39 @@ void DisplayHudRelated()
             }
         }
 
-        if (_HudChestState != Hidden) 
-        {
-            NewMoby* mobyPtr = _PauseMenuState.Mobys;
+        NewMoby* mobyPtr = _PauseMenuState.Mobys;
             
-            // Displays the chest icon and treature / treasure text in upper left.
-            if (_HudChestState == AllCollectiblesObtained) 
+        // Displays the chest icon and treature / treasure text in upper left.
+        if (_HudChestState == AllCollectiblesObtained) 
+        {
+            mobyPtr +=4;
+            *mobyRef++ = mobyPtr++;
+
+            char treatureObtainedText;
+            sprintf(&treatureObtainedText, &_TreatureObtainedRatio, _HudLevelTreasure, _HudLevelTreasure);
+
+            NewMoby* reference = _MobyList;
+
+            Vec3u32 position = {.X = 90, .Y = 36, .Z = 2880 };
+            DrawCapitalText(&treatureObtainedText, &position, 28, 11);
+
+            reference--;
+            int sinStep = 0;
+
+            while (reference >= _MobyList)
             {
-                mobyPtr +=4;
-                *mobyRef++ = mobyPtr++;
+                uint sinIndex = _HudChestTransitionTimer * 4 + sinStep;
+                sinStep += 12;
 
-                char treatureObtainedText;
-                sprintf(&treatureObtainedText, &_TreatureObtainedRatio, _HudLevelTreasure, _HudLevelTreasure);
-
-                NewMoby* reference = _MobyList;
-
-                Vec3u32 position = {.X = 90, .Y = 36, .Z = 2880 };
-                DrawCapitalText(&treatureObtainedText, &position, 28, 11);
-
-                reference--;
-                int sinStep = 0;
-
-                while (reference >= _MobyList)
-                {
-                    uint sinIndex = _HudChestTransitionTimer * 4 + sinStep;
-                    sinStep += 12;
-
-                    reference->Rotation = (byte)(_SinArray[(sinIndex & 0xFF) + 64] >> 7);
-                    *mobyRef++ = reference--;
-                }
+                reference->Rotation = (byte)(_SinArray[(sinIndex & 0xFF) + 64] >> 7);
+                *mobyRef++ = reference--;
             }
-            else 
+        }
+        else if (_HudChestState != Hidden)
+        {
+            for (int i = 0; i < 5; i++)
             {
-                for (int i = 0; i < 5; i++)
-                {
-                    *mobyRef++ = mobyPtr++;
-                }
+                *mobyRef++ = mobyPtr++;
             }
         }
 
@@ -189,6 +193,7 @@ void DisplayHudRelated()
         {
             int color = ((int)((uint)_SinArray[(_CyclingTimer - (i << 8) / 20 & 0xFFU) + 64] << 16) >> 23) + 128;
             RGBu32 rgb = { .R = color, .G = color, .B = color };
+
             DrawHudOval(vertices, &_HudUnk1, &rgb);
             vertices++;
         }

@@ -26,7 +26,7 @@ OG_DrawHudOval = 0x8001919c;
 OG_AddPrimitiveToList = 0x800168dc;
 OG_DrawHudMobys = 0x80019300;
 OG_DrawCapitalText = 0x80017fe4;
-
+OG_ExitPauseMenu = 0x8002c534;
 
 
 

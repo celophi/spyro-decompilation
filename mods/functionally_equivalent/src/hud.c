@@ -175,7 +175,7 @@ void DrawHudMobys()
             }
         }
 
-        if ((_HudAnimationState != 0) && (_DisplayHudRelated_U4 == 1)) 
+        if ((_HudKeyState != Hidden) && (_DisplayHudRelated_U4 == 1)) 
         {
             *mobyRef = _PauseMenuState.Mobys + 11;
             mobyRef++;

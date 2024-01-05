@@ -40,6 +40,8 @@ NTSC, exe, 0x8008013c, 0x0, asm/gem_home_in_hook.s
 NTSC, exe, OG_RotateVectorByMatrix, 0x0, asm/RotateVectorByMatrix.s
 NTSC, exe, OG_DrawHudOval, 0x0, asm/DrawHudOval.s
 NTSC, exe, OG_DrawHudMobys, 0x0, asm/DrawHudMobys.s
+NTSC, exe, OG_ExitPauseMenu, 0x0, asm/ExitPauseMenu.s
+
 
 
 // work in progress

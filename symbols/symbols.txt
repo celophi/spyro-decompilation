@@ -34,13 +34,13 @@ _TimerC = 0x800770d0;
 _TimerD = 0x800770d4;
 _TimerE = 0x800770d8;
 _TimerF = 0x800770dc;
-_ExitInventoryMenuU0 = 0x800785f0;
+_FrameBufferStorage = 0x800785f0;
 _GameState = 0x800757D8;
 _HudDragonState = 0x80077FA9;
 _HudChestState = 0x80077FA8;
 _HudLivesState = 0x80077FAA;
 _HudEggsState = 0x80077FAB;
-_HudAnimationState = 0x80077FAC;
+_HudKeyState = 0x80077FAC;
 _MusicFile = 0x800774b0;
 _IsInFlyingLevel = 0x80075690;
 _DSM_U2 = 0x800720f4;
@@ -58,6 +58,11 @@ _MobyList = 0x80075710;
 _TreatureObtainedRatio = 0x800755b4;
 _HudChestTransitionTimer = 0x80077fb4;
 _PauseMenuState = 0x80077fec;
+_HudChestAnimationFrame = 0x80077fad;
+_HudDragonAnimationFrame = 0x80077fae;
+_HudLivesAnimationFrame = 0x80077faf;
+_HudEggsAnimationFrame = 0x80077fb0;
+_HudKeyAnimationFrame = 0x80077fb1;
 
 
 

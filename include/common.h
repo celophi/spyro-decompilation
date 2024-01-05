@@ -519,10 +519,10 @@ extern int* _ptr_arrayGraphicsRelatedPointers; //0x8007581c   //? Ptr the the ar
 extern char* _ptr_particleLinkedList; //0x80075738           //? This is a pointer to the next available particle slot.
 
 
-extern char _HudDragonState; //0x80077FA9
-extern char _HudLivesState;  //0x80077FAA
-extern char _HudEggsState;   //0x80077FAB
-extern char _HudAnimationState;   //0x80077FAC
+
+
+
+
 
 extern int _hudElementsSpinTimer; //0x80077fe4
 extern int _unk_spinRelated;    //0x8006cc78
@@ -534,8 +534,11 @@ extern char* _localSoundEffects; //0x800761D4
  */ 
 extern int _MusicFile;  //0x0x800774b0
 
-/// @brief 0x800785f0
-extern u_long* _ExitInventoryMenuU0;
+/**
+ * @brief Pointer to a section of memory that can be used for saving/loading frame buffer images.
+ * @note: Address: 0x800785f0
+*/
+extern u_long* _FrameBufferStorage;
 
 extern byte _cdStatus; //0x80074e44
 

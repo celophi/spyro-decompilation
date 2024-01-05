@@ -113,5 +113,62 @@ extern char _TreatureObtainedRatio;
 /// @brief 0x80077fb4
 extern int _HudChestTransitionTimer;
 
-/// @brief Indicates the current animation transition state for the chest icon on the HUD.
+/**
+ * @brief Animation transition state for the chest icon on the HUD.
+ * @note Address: 0x80077fa8
+*/
 extern HudAnimation _HudChestState;
+
+/**
+ * @brief Animation transition state for dragon count on the HUD.
+ * @note Address: 0x80077fa9
+*/
+extern HudAnimation _HudDragonState;
+
+/**
+ * @brief Animation transition state for life count on the HUD.
+ * @note Address: 0x80077faa
+*/
+extern HudAnimation _HudLivesState;
+
+/**
+ * @brief Animation transition state for egg count on the HUD.
+ * @note Address: 0x80077fab
+*/
+extern HudAnimation _HudEggsState;
+
+/**
+ * @brief Animation transition state for any keys found on the HUD.
+ * @note Address: 0x80077fac
+*/
+extern HudAnimation _HudKeyState;
+
+/**
+ * @brief Unknown
+ * @note Address: 0x80077fad
+*/
+extern byte _HudChestAnimationFrame;
+
+/**
+ * @brief Unknown
+ * @note Address: 0x80077fae
+*/
+extern byte _HudDragonAnimationFrame;
+
+/**
+ * @brief Unknown
+ * @note Address: 0x80077faf
+*/
+extern byte _HudLivesAnimationFrame;
+
+/**
+ * @brief Unknown
+ * @note Address: 0x80077fb0
+*/
+extern byte _HudEggsAnimationFrame;
+
+/**
+ * @brief Unknown
+ * @note Address: 0x80077fb1
+*/
+extern byte _HudKeyAnimationFrame;

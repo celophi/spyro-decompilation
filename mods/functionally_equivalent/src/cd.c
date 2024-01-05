@@ -2,6 +2,7 @@
 #include <symbols.h>
 #include <PSYQ/LIBCD.h>
 #include <PSYQ/LIBGPU.h>
+#include <cd.h>
 
 /**
  * @brief Callback to execute after reading from the CD-ROM.

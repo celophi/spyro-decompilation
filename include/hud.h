@@ -9,19 +9,19 @@ typedef byte HudAnimation;
 enum
 {
     /// @brief Moby is not visible and not displayed.
-    Hidden = 0,
+    HIDDEN = 0,
 
     /// @brief Moby is coming into view moving downward.
-    DownTransition = 1,
+    DOWN_TRANSITION = 1,
 
     /// @brief Moby has stopped moving down and is now rotating.
-    Rotating = 2,
+    ROTATING = 2,
 
     /// @brief Moby is moving upward out of display.
-    UpTransition = 3,
+    UP_TRANSITION = 3,
 
     /// @brief Specific state that displays the treasure once 100% completion is reached in the level.
-    AllCollectiblesObtained = 4,
+    ALL_COLLECTIBLES_OBTAINED = 4,
 };
 _Static_assert(sizeof(HudAnimation) == 1);
 

@@ -32,7 +32,6 @@ OG_ExitPauseMenu = 0x8002c534;
 
 
 
-
 printf = 0x8006279c;
 sprintf = 0x80062fd4;
 

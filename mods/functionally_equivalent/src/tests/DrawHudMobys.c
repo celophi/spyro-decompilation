@@ -16,8 +16,6 @@ static func originalFunction = (func) &OG_DrawHudMobys;
 static unsigned int hits = 0;
 static unsigned int total = 0;
 
-static int isError = 0;
-
 /// @brief Test assertion code that runs in place of the original function address.
 /// @note The arguments to this should be exactly the same as the new and old functions.
 static void Tester()
@@ -25,16 +23,7 @@ static void Tester()
     EnterCriticalSection();
     func originalFunctionRef = (func) GetOriginalFunction();
 
-ERROR_MODE:
-
-    if (isError != 0)
-    {
-        BackupNewFunctionState();
-        LoadStartingState();
-    }
-{
     BackupStartingState();
-}
 
     // Invoke both old and new functions.
     decompiledFunction();
@@ -49,11 +38,6 @@ ERROR_MODE:
     if (IsStateEquivalent())
     {
         hits++;
-    }
-    else 
-    {
-        isError = 1;
-        goto ERROR_MODE;
     }
 
     // Record results.

@@ -122,7 +122,7 @@ void DrawHudMobys()
         NewMoby* mobyPtr = _PauseMenuState.Mobys;
             
         // Displays the chest icon and treature / treasure text in upper left.
-        if (_HudChestState == AllCollectiblesObtained) 
+        if (_HudChestState == ALL_COLLECTIBLES_OBTAINED) 
         {
             mobyPtr +=4;
             *mobyRef++ = mobyPtr++;
@@ -147,7 +147,7 @@ void DrawHudMobys()
                 *mobyRef++ = reference--;
             }
         }
-        else if (_HudChestState != Hidden)
+        else if (_HudChestState != HIDDEN)
         {
             for (int i = 0; i < 5; i++)
             {
@@ -175,7 +175,7 @@ void DrawHudMobys()
             }
         }
 
-        if ((_HudKeyState != Hidden) && (_DisplayHudRelated_U4 == 1)) 
+        if ((_HudKeyState != HIDDEN) && (_DisplayHudRelated_U4 == 1)) 
         {
             *mobyRef = _PauseMenuState.Mobys + 11;
             mobyRef++;

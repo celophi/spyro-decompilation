@@ -14,7 +14,6 @@
 #define SCREEN_BOTTOM_EDGE 0xE8
 
 #define FPS 30
-
 #define WORLD_UNIT 4096
 #define GAME_UNIT 64
 
@@ -48,25 +47,27 @@ typedef enum Buttons
     R3_BUTTON = 0x0400
 }Buttons;
 
-typedef enum GameState
+typedef uint GameState;
+enum
 {
-    GAMESTATE_GAMEPLAY = 0,
-    GAMESTATE_LOADING = 0x1,
-    GAMESTATE_PAUSED = 0x2,
-    GAMESTATE_INVENTORY = 0x3,
-    GAMESTATE_DEATH = 0x4,
-    GAMESTATE_GAME_OVER = 0x5,
-    GAMESTATE_BETA_DRAGON_TEXTBOX_MAYBE = 0x6,
-    GAMESTATE_FLIGHT_LEVEL_MENU = 0x7,
-    GAMESTATE_DRAGON_STATE = 0x8,
-    GAMESTATE_FLY_IN = 0x9,
-    GAMESTATE_EXITING_LEVEL = 0xA,
-    GAMESTATE_DRAGON_FAIRY_TEXTBOX = 0xB,
-    GAMESTATE_BALLOONIST = 0xC,
-    GAMESTATE_TITLE_SCREEN = 0xD,
-    GAMESTATE_CUTSCENE = 0xE,
-    GAMESTATE_CREDITS = 0xF
-}GameState;
+    GAMEPLAY = 0,
+    LOADING = 1,
+    PAUSED = 2,
+    INVENTORY = 3,
+    DEATH = 4,
+    GAME_OVER = 5,
+    BETA_DRAGON_TEXTBOX_MAYBE = 6,
+    FLIGHT_LEVEL_MENU = 7,
+    DRAGON_STATE = 8,
+    FLY_IN = 9,
+    EXITING_LEVEL = 10,
+    DRAGON_FAIRY_TEXTBOX = 11,
+    BALLOONIST = 12,
+    TITLE_SCREEN = 13,
+    CUTSCENE = 14,
+    CREDITS = 15
+};
+_Static_assert(sizeof(GameState) == 4);
 
 typedef enum SpyroHealthStates
 {
@@ -356,7 +357,7 @@ extern int _wobbleAndOpacityTimer;
  * @brief Main gamestate. Gamestate values are stored in the GameState enums. \n Address: 0x800757D8 
  * @see GameState
  */ 
-extern int _GameState;
+extern GameState _GameState;
 
 /**
  * @brief Value coorsponding the the current button(s) being held. \n Address: 0x80077380 

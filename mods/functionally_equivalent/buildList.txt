@@ -58,3 +58,4 @@ NTSC, exe, 0x800567f4, 0x0, asm/PlayMusicTrack.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawHudOvalTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/AddPrimitiveToListTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawHudMobysTest.s
+//NTSC, exe, OG_Initialize, 0x0, asm/tests/ExitPauseMenuTest.s

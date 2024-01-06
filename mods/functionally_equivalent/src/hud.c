@@ -4,6 +4,7 @@
 #include <hud.h>
 #include <draw_stuff.h>
 #include <draw_text.h>
+#include <text.h>
 
 /**
  * @brief Constructs a new POLY_FT4 with the correct P_TAG information.

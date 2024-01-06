@@ -232,7 +232,8 @@ typedef struct
     byte U5;
     byte U6;
     byte Rotation;
-    byte field12_0x47[2];
+    byte U13;
+    byte U14;
     byte U4;
     byte field14_0x4a;
     byte U7;

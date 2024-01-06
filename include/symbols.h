@@ -114,6 +114,12 @@ extern char _TreatureObtainedRatio;
 extern int _HudChestTransitionTimer;
 
 /**
+ * @brief Pointer to a list of Mobys that seem to be related to text.
+ * @note Address: 0x80075710
+*/
+extern NewMoby* _MobyList;
+
+/**
  * @brief Animation transition state for the chest icon on the HUD.
  * @note Address: 0x80077fa8
 */

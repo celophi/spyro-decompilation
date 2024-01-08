@@ -15,6 +15,13 @@ typedef struct
     ushort Y;
 } Vec2u16;
 
+typedef struct
+{
+    byte X;
+    byte Y;
+    byte Z;
+} Vec3u8;
+_Static_assert(sizeof(Vec3u8) == 3);
 
 //~~~~~~~
 //Structs

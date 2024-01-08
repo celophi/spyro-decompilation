@@ -5,8 +5,10 @@
 /// @param value Value to write
 /// @param size Number of bytes to write
 /// @note Without specifying another library, GCC will want to use this for actual 'memset' functionality. (Not just where referenced in modding)
-void memset(void* destination, byte value, uint size) {
-    for (uint i = 0; i < size; i++) {
+void memset(void* destination, byte value, uint size) 
+{
+    for (uint i = 0; i < size; i++) 
+    {
         ((byte*)(destination))[i] = value;
     }
 }
@@ -16,8 +18,10 @@ void memset(void* destination, byte value, uint size) {
 /// @param source Source to supply bytes to copy.
 /// @param size Number of bytes to copy.
 /// @note Without specifying another library, GCC will want to use this for actual 'memcpy' functionality. (Not just where referenced in modding)
-void memcpy(void *destination, void *source, uint size) {
-    for (uint i = 0; i < size; i++) {
+void memcpy(void *destination, void *source, uint size) 
+{
+    for (uint i = 0; i < size; i++) 
+    {
         ((byte*)(destination))[i] = ((byte*)(source))[i];
     }
 }

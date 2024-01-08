@@ -17,8 +17,6 @@
 /// @return Pointer to the list of mobys to draw.
 NewMoby* DrawCapitalText(char* text, Vec3u32* position, int spacing, byte color);
 
-
-
 /// @brief Draws a text string to the screen where the first letter of a word is capitalized and the following are lowercase.
 /// @note
 ///     - Address: 0x800181ac
@@ -32,3 +30,19 @@ NewMoby* DrawCapitalText(char* text, Vec3u32* position, int spacing, byte color)
 /// @param color Color to apply to each letter.
 /// @return Pointer to the text mobys.
 NewMoby* DrawVaryingText(char *text, Vec3u32 *capitalPosition, Vec3u32 *lowercasePosition, int spacing, byte color);
+
+/// @brief Copies generated moby structs to the end of a global list.
+/// @details Appears to be something that is called often when working with text.
+///     - Address: 0x80018880
+///     - Hook: CopyHudToShaded.s
+///     - Test: CopyHudToShadedTest.c
+///     - Test Status: Passing
+void CopyHudToShaded();
+
+/// @brief Draws the demo text on the screen.
+/// @note
+///     - Address: 0x80018908
+///     - Hook: DrawDemoText.s
+///     - Test: DrawDemoTextTest.c
+///     - Test Status: Passing
+void DrawDemoText();

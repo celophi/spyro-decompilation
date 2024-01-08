@@ -72,7 +72,7 @@ extern int _IsInFlyingLevel;
 extern NewMoby* _DSM_U2;
 
 /// @brief 0x800720f8
-extern NewMoby* _DisplayHudRelated_U0;
+extern NewMoby* _HudMobyListHead;
 
 /// @brief 0x80077fec
 extern PauseMenuState _PauseMenuState;
@@ -103,9 +103,6 @@ extern ushort _SinArray[256];
 
 /// @brief 0x8007846c
 extern HudOvalVertex _HudLifeOrbVertices[20];
-
-/// @brief 0x80075710
-extern NewMoby* _MobyList;
 
 /// @brief 0x800755b4
 extern char _TreatureObtainedRatio;
@@ -178,3 +175,12 @@ extern byte _HudEggsAnimationFrame;
  * @note Address: 0x80077fb1
 */
 extern byte _HudKeyAnimationFrame;
+
+
+/// @brief Timer that cylces according to FPS.
+/// @note Address: 0x800758c8
+extern int _LevelTimerFPS;
+
+/// @brief Unknown. Seems like some pointer to mobys.
+/// @note Address: 0x800756fc
+extern NewMoby* _HudMobyQueuePtr;

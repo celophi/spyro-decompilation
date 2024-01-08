@@ -22,11 +22,7 @@ void AddPrimitiveToList(P_TAG *primitive);
 /// @return Calculated value.
 int GetClampedDifference(int value, int timer);
 
-/// @brief Draws a blinking text arrow facing left or right.
-/// @param position Position to draw on the screen.
-/// @param timer Timer that counts every frame to be used for the pre-determined 16 frame intervals.
-/// @param leftOrRight Determines if the arrow points left or right.
-void DrawTextArrow(Vec3u32 *position, uint timer, int leftOrRight);
+
 
 /**
  * @brief Draws a black textbox with a gold border. You can specify the bounds

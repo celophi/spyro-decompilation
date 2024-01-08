@@ -143,7 +143,7 @@ void DrawHudMobys()
                 uint sinIndex = _HudChestTransitionTimer * 4 + sinStep;
                 sinStep += 12;
 
-                reference->Rotation = (byte)(_SinArray[(sinIndex & 0xFF) + 64] >> 7);
+                reference->Rotation.Z = (byte)(_SinArray[(sinIndex & 0xFF) + 64] >> 7);
                 *mobyRef++ = reference--;
             }
         }

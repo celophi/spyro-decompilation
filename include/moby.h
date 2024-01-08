@@ -1,6 +1,7 @@
 #pragma once
 
 #include <common.h>
+#include <vector.h>
 
 //~~~~~~~~~
 //Constants
@@ -218,6 +219,13 @@ typedef struct Moby
 
 }Moby;
 
+typedef short MobyType;
+enum
+{
+    NUMERIC_ONE = 261
+};
+_Static_assert(sizeof(MobyType) == 2);
+
 typedef struct 
 {
     byte field0_0x0[8];
@@ -225,13 +233,11 @@ typedef struct
     Vec3u32 Position;
     byte field3_0x18[28];
     short U1;
-    short Type;
+    MobyType Type;
     byte field6_0x38[9];
     byte U8;
     byte field8_0x42[2];
-    byte U5;
-    byte U6;
-    byte Rotation;
+    Vec3u8 Rotation;
     byte U13;
     byte U14;
     byte U4;

@@ -247,10 +247,39 @@ void DrawDemoText()
 
     while (_MobyList <= mobyPtr)
     {
-            mobyPtr->Rotation = (byte)(_SinArray[(_LevelTimerFPS * 4 + sinArrayIndex & 0xFFU) + 64] / 128);
+            mobyPtr->Rotation.Z = (byte)(_SinArray[(_LevelTimerFPS * 4 + sinArrayIndex & 0xFFU) + 64] / 128);
             sinArrayIndex += 12;
             mobyPtr--;
     }
 
     CopyHudToShaded();
+}
+
+/// @brief Draws a blinking text arrow facing left or right.
+/// @param position Position to draw on the screen.
+/// @param timer Timer that counts every frame to be used for the pre-determined 16 frame intervals.
+/// @param direction Determines if the arrow points left or right.
+void DrawTextArrow(Vec3u32* position, uint timer, DrawTextArrowDirection direction)
+{
+    // Alternate from being visible, and not every 16 frames
+    if ((timer & 31) >= 16)
+    {
+        return;
+    }
+
+    NewMoby* moby = CreateTextMoby();
+    
+    // Set Moby Type to the ascii number 1 for an arrow (clever)
+    moby->Type = NUMERIC_ONE;
+    CopyVector3D(&moby->Position, position);
+
+    if (direction < POINT_UP) 
+    {
+        moby->Rotation.X = 64;
+        moby->Rotation.Z = (byte)(direction * 128);
+    }
+
+    moby->Color = 11;
+    moby->U13 = 0x7F;
+    moby->U3 = 0xFF;
 }

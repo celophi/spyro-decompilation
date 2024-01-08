@@ -26,6 +26,7 @@ OG_GetVectorLength = 0x800171fc;
 OG_ScaleVector = 0x800175b8;
 OG_DrawCapitalText = 0x80017fe4;
 OG_DrawVaryingText = 0x800181ac;
+OG_DrawTextArrow = 0x80018534;
 OG_CopyHudToShaded = 0x80018880;
 OG_DrawDemoText = 0x80018908;
 OG_DrawHudOval = 0x8001919c;

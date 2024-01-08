@@ -4,6 +4,15 @@
 #include <vector.h>
 #include <moby.h>
 
+typedef int DrawTextArrowDirection;
+enum
+{
+    POINT_LEFT = 0,
+    POINT_RIGHT = 1,
+    POINT_UP = 2
+};
+_Static_assert(sizeof(DrawTextArrowDirection) == 4);
+
 /// @brief Draws text in all capitals.
 /// @note
 ///     - Address: 0x80017fe4
@@ -46,3 +55,10 @@ void CopyHudToShaded();
 ///     - Test: DrawDemoTextTest.c
 ///     - Test Status: Passing
 void DrawDemoText();
+
+
+/// @brief Draws a blinking text arrow facing left or right.
+/// @param position Position to draw on the screen.
+/// @param timer Timer that counts every frame to be used for the pre-determined 16 frame intervals.
+/// @param leftOrRight Determines if the arrow points left or right.
+void DrawTextArrow(Vec3u32* position, uint timer, DrawTextArrowDirection direction);

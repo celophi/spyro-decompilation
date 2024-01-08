@@ -130,39 +130,6 @@ void DrawTextbox(int xBound1,int xBound2,int yBound1,int yBound2)
     DrawLine(xBound1, yBound2, xBound1, yBound1);
 }
 
-/// @brief Draws a blinking text arrow facing left or right.
-/// @param position Position to draw on the screen.
-/// @param timer Timer that counts every frame to be used for the pre-determined 16 frame intervals.
-/// @param leftOrRight Determines if the arrow points left or right.
-void DrawTextArrow(Vec3u32 *position, uint timer, int leftOrRight)
-{
-    Vec3u32 *destination;
-
-    // Alternate from being visible, and not every 16 frames
-    if ((timer & 31) < 16) 
-    {
-        _ptr_hudMobys = _ptr_hudMobys - 1;
-
-        memset(_ptr_hudMobys, 0, sizeof(Moby));
-
-        destination = &_ptr_hudMobys->position;
-
-        // Set Moby Type to the ascii number 1 for an arrow (clever)
-        _ptr_hudMobys->type = 261;
-
-        CopyVector3D(destination, position);
-
-        if (leftOrRight < 2) 
-        {
-            _ptr_hudMobys->rotation.x = 64;
-            _ptr_hudMobys->rotation.z = (char)(leftOrRight << 7);
-        }
-
-        _ptr_hudMobys->color = 11;
-        _ptr_hudMobys->requiredHUD1 = 0x7F;
-        _ptr_hudMobys->requiredHUD2 = 0xFF;
-    }
-}
 
 /// @brief Creates an ordering table by linking all primitives within a section of memory.
 /// @param count Number of links(?) double pointers that exist.

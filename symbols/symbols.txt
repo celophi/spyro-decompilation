@@ -44,7 +44,7 @@ _HudKeyState = 0x80077FAC;
 _MusicFile = 0x800774b0;
 _IsInFlyingLevel = 0x80075690;
 _DSM_U2 = 0x800720f4;
-_DisplayHudRelated_U0 = 0x800720f8;
+_HudMobyListHead = 0x800720f8;
 _HudLevelTreasure = 0x80077fc8;
 _DisplayHudRelated_U4 = 0x80077fd8;
 _HudChestHeadSpinTimer = 0x80077fe8;
@@ -63,9 +63,8 @@ _HudDragonAnimationFrame = 0x80077fae;
 _HudLivesAnimationFrame = 0x80077faf;
 _HudEggsAnimationFrame = 0x80077fb0;
 _HudKeyAnimationFrame = 0x80077fb1;
-
-
-
+_LevelTimerFPS = 0x800758c8;
+_HudMobyQueuePtr = 0x800756fc;
 
 
 
@@ -154,7 +153,6 @@ _ptr_particleLinkedList = 0x80075738;
 
 _ptr_hudMobys = 0x80075710;
 _ptr_hudMobysQueue = 0x800756fc;
-_ptr_hudMobysHead = 0x800720f8;
 
 _ptr_primitivesArray = 0x800757b0;
 _ptr_arrayGraphicsRelatedPointers = 0x8007581c;

@@ -249,4 +249,3 @@ _Static_assert(sizeof(NewMoby) == 88);
 extern Moby* _ptrTextUnk; //0x800720f4                        //? Not too sure.
 extern Moby* _ptr_hudMobys; //0x80075710                      //? A pointer to a dynamic downwards growing array of moby structs to render that gets rendered to the hud every frame.
 extern Moby* _ptr_hudMobysQueue; //0x800756fc                 //? A pointer to a what seems to be a global queue of moby structs to process. _ptr_hudMobys are added to this.
-extern Moby* _ptr_hudMobysHead; //0x800720f8                  //? A pointer to the head of the HUD mobys queue.

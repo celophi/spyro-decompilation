@@ -194,3 +194,63 @@ NewMoby* DrawVaryingText(char *text, Vec3u32 *capitalPosition, Vec3u32 *lowercas
 
     return _MobyList;
 }
+
+/// @brief Copies generated moby structs to the end of a global list.
+/// @details Appears to be something that is called often when working with text.
+///     - Address: 0x80018880
+///     - Hook: CopyHudToShaded.s
+///     - Test: CopyHudToShadedTest.c
+///     - Test Status: Passing
+void CopyHudToShaded() 
+{
+    NewMoby **entry = &_HudMobyListHead;
+    NewMoby **ref = &_DSM_U2;
+
+    // Iterate to get to the end of the list.
+    while (*ref != 0) 
+    {
+        ref = entry;
+        entry = ref + 1;
+    }
+
+    // Append all of the new mobys
+    while (_MobyList != _HudMobyQueuePtr)
+    {
+        *ref = _MobyList;
+        _MobyList += 1;
+        ref += 1;
+    }
+
+    // Make sure to set the end of the list to zero for iteration to work on the next call to this function. 
+    *ref = 0;
+}
+
+/// @brief Draws the demo text on the screen.
+/// @note
+///     - Address: 0x80018908
+///     - Hook: DrawDemoText.s
+///     - Test: DrawDemoTextTest.c
+///     - Test Status: Passing
+void DrawDemoText()
+{
+    Vec3u32 capitalTextInfo = { .X = 199, .Y = 200, .Z = 4352 };
+    Vec3u32 lowercaseTextInfo = { .X = 16, .Y = 1, .Z = 5120 };
+
+    const byte spacing = 18;
+    const byte color = 2;
+    int sinArrayIndex = 0;
+
+    // Keep a pointer to the head of the list before drawing text to be used for applying rotation.
+    NewMoby *mobyPtr = _MobyList;
+    DrawVaryingText("DEMO MODE", &capitalTextInfo, &lowercaseTextInfo, spacing, color);
+    mobyPtr--;
+
+    while (_MobyList <= mobyPtr)
+    {
+            mobyPtr->Rotation = (byte)(_SinArray[(_LevelTimerFPS * 4 + sinArrayIndex & 0xFFU) + 64] / 128);
+            sinArrayIndex += 12;
+            mobyPtr--;
+    }
+
+    CopyHudToShaded();
+}

@@ -3,7 +3,6 @@
 #include <moby.h>
 #include <hud.h>
 #include <draw_stuff.h>
-#include <draw_text.h>
 #include <text.h>
 
 /**
@@ -111,7 +110,7 @@ void DrawHudMobys()
     
         if (_DSM_U2) 
         {
-            NewMoby **pRef = &_DisplayHudRelated_U0;
+            NewMoby **pRef = &_HudMobyListHead;
 
             while (*mobyRef)
             {

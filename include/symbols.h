@@ -176,7 +176,6 @@ extern byte _HudEggsAnimationFrame;
 */
 extern byte _HudKeyAnimationFrame;
 
-
 /// @brief Timer that cylces according to FPS.
 /// @note Address: 0x800758c8
 extern int _LevelTimerFPS;
@@ -184,3 +183,15 @@ extern int _LevelTimerFPS;
 /// @brief Unknown. Seems like some pointer to mobys.
 /// @note Address: 0x800756fc
 extern NewMoby* _HudMobyQueuePtr;
+
+/// @brief References names of dragons to be rescued.
+/// @note Address: 0x8006f694
+extern char* _DragonNames[80];
+
+/// @brief Unknown.
+/// @note Address: 0x80077080
+extern int _DragonRescued_U0;
+
+/// @brief Unknown.
+/// @note Address: 0x800770c0
+extern NewMoby* _RescuedDragonMoby;

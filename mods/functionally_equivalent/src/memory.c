@@ -25,3 +25,23 @@ void memcpy(void *destination, void *source, uint size)
         ((byte*)(destination))[i] = ((byte*)(source))[i];
     }
 }
+
+/// @brief Calculates the length of a string.
+/// @note
+///     - Address: 0x8006276c
+///     - Hook: GetStringLength.s
+///     - Test: GetStringLengthTest.c
+///     - Test Status: In Progress (Results in CPU stalling and pointing to an invalid address.)
+/// @param text String to get the length of.
+/// @return Length of the string.
+int GetStringLength(char* text)
+{
+    char* cursor = text;
+
+    while (*cursor)
+    {
+        cursor++;
+    }
+
+    return cursor - text;
+}

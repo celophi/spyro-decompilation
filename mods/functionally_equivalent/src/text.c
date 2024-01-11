@@ -256,6 +256,11 @@ void DrawDemoText()
 }
 
 /// @brief Draws a blinking text arrow facing left or right.
+/// @note
+///     - Address: 0x80018534
+///     - Hook: DrawTextArrow.s
+///     - Test: DrawTextArrowTest.c
+///     - Test Status: Passing
 /// @param position Position to draw on the screen.
 /// @param timer Timer that counts every frame to be used for the pre-determined 16 frame intervals.
 /// @param direction Determines if the arrow points left or right.
@@ -282,4 +287,41 @@ void DrawTextArrow(Vec3u32* position, uint timer, DrawTextArrowDirection directi
     moby->Color = 11;
     moby->U13 = 0x7F;
     moby->U3 = 0xFF;
+}
+
+
+
+
+void DrawDragonRescuedText()
+{
+    char *text;
+    Vec3u32 position;
+
+    text = _DragonNames[*(int *)(*(int *)_RescuedDragonMoby->field0_0x0 + 56)];
+    int textLength = GetStringLength(text);
+
+    NewMoby* moby = _MobyList;
+    position.X = (textLength + -1) * -13 + 176;
+    position.Y = 200;
+    position.Z = 4096;
+
+    DrawCapitalText("RESCUED", &position, 20, 2);
+
+    position.X = (textLength + -1) * -13 + 336;
+    position.Y = 200;
+    position.Z = 3072;
+    DrawCapitalText(text, &position, 26, 2);
+
+    moby--;
+    textLength = 0;
+
+    if (_MobyList <= moby) 
+    {
+        do 
+        {
+            (moby->Rotation).Z = (byte)(_SinArray[(_DragonRescued_U0 * 2 + textLength & 0xFFU) + 64] / 128);
+            moby--;
+            textLength += 12;
+        } while (_MobyList <= moby);
+    }
 }

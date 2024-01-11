@@ -65,6 +65,8 @@ _HudEggsAnimationFrame = 0x80077fb0;
 _HudKeyAnimationFrame = 0x80077fb1;
 _LevelTimerFPS = 0x800758c8;
 _HudMobyQueuePtr = 0x800756fc;
+_DragonRescued_U0 = 0x80077080;
+_RescuedDragonMoby = 0x800770c0;
 
 
 

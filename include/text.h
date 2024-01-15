@@ -67,3 +67,11 @@ void DrawDemoText();
 /// @param timer Timer that counts every frame to be used for the pre-determined 16 frame intervals.
 /// @param direction Determines if the arrow points left or right.
 void DrawTextArrow(Vec3u32* position, uint timer, DrawTextArrowDirection direction);
+
+/// @brief Draws text that appears when rescuing a dragon.
+/// @note
+///     - Address: 0x80018728
+///     - Hook: DrawDragonRescuedText.s
+///     - Test: DrawDragonRescuedTextTest.c
+///     - Test Status: Passing
+void DrawDragonRescuedText();

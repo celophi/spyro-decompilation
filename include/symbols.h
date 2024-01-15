@@ -194,4 +194,4 @@ extern int _DragonRescued_U0;
 
 /// @brief Unknown.
 /// @note Address: 0x800770c0
-extern NewMoby* _RescuedDragonMoby;
+extern NewMoby** _RescuedDragonMoby;

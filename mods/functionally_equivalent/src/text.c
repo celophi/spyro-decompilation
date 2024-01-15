@@ -289,39 +289,35 @@ void DrawTextArrow(Vec3u32* position, uint timer, DrawTextArrowDirection directi
     moby->U3 = 0xFF;
 }
 
-
-
-
+/// @brief Draws text that appears when rescuing a dragon.
+/// @note
+///     - Address: 0x80018728
+///     - Hook: DrawDragonRescuedText.s
+///     - Test: DrawDragonRescuedTextTest.c
+///     - Test Status: Passing
 void DrawDragonRescuedText()
 {
-    char *text;
-    Vec3u32 position;
-
-    text = _DragonNames[*(int *)(*(int *)_RescuedDragonMoby->field0_0x0 + 56)];
+    char* text =  _DragonNames[(*_RescuedDragonMoby)->DragonNameIndex];
     int textLength = GetStringLength(text);
+    int horizontalPos = (textLength - 1) * -13 + 176;
 
     NewMoby* moby = _MobyList;
-    position.X = (textLength + -1) * -13 + 176;
-    position.Y = 200;
-    position.Z = 4096;
 
+    Vec3u32 position = { .X = horizontalPos, .Y = 200, .Z = 4096 };
     DrawCapitalText("RESCUED", &position, 20, 2);
 
-    position.X = (textLength + -1) * -13 + 336;
+    position.X = horizontalPos + 160;
     position.Y = 200;
     position.Z = 3072;
     DrawCapitalText(text, &position, 26, 2);
 
     moby--;
-    textLength = 0;
+    int loop = 0;
 
-    if (_MobyList <= moby) 
+    while (_MobyList <= moby)
     {
-        do 
-        {
-            (moby->Rotation).Z = (byte)(_SinArray[(_DragonRescued_U0 * 2 + textLength & 0xFFU) + 64] / 128);
-            moby--;
-            textLength += 12;
-        } while (_MobyList <= moby);
+        (moby->Rotation).Z = (byte)(_SinArray[(_DragonRescued_U0 * 2 + loop & 0xFFU) + 64] / 128);
+        moby--;
+        loop += 12;
     }
 }

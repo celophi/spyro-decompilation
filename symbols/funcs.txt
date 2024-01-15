@@ -34,6 +34,7 @@ OG_DrawHudMobys = 0x80019300;
 OG_ExitPauseMenu = 0x8002c534;
 OG_Initialize = 0x8005b988;
 OG_GetStringLength = 0x8006276c;
+OG_DrawDragonRescuedText = 0x80018728;
 
 
 

@@ -1,53 +1,53 @@
 NTSC, header, 0x80200000, 0x0, src/*.c src/tests/framework/*.c src/tests/*.c, mod_code.bin
 
-NTSC, exe, 0x800122a8, 0x0, asm/InitializeDisplay.s
-NTSC, exe, 0x80012460, 0x0, asm/InitializeMemoryCards.s
-NTSC, exe, 0x800133e0, 0x0, asm/WA4S3_MakeAbsoluteAddresses.s
-NTSC, exe, 0x800163e4, 0x0, asm/CdReadSectors.s
-NTSC, exe, 0x80016490, 0x0, asm/CdReadEventHandler.s
-NTSC, exe, 0x80016784, 0x0, asm/CreateOrderingTable.s
-NTSC, exe, 0x800168a0, 0x0, asm/StagePrimitive.s
-NTSC, exe, 0x80016930, 0x0, asm/Memset4.s
-NTSC, exe, 0x800169ac, 0x0, asm/GetAngle.s
-NTSC, exe, 0x80016c58, 0x0, asm/sin_scaled.s
-NTSC, exe, 0x80016fd0, 0x0, asm/matrix_transpose_hook.s
-NTSC, exe, OG_AddPrimitiveToList, 0x0, asm/AddPrimitiveToList.s
-NTSC, exe, 0x80016914, 0x0, asm/memset.s
-NTSC, exe, 0x80016958, 0x0, asm/memcpy.s
-NTSC, exe, 0x800171fc, 0x0, asm/GetVectorLength.s
-NTSC, exe, 0x800175b8, 0x0, asm/ScaleVector.s
-NTSC, exe, 0x80017614, 0x0, asm/ScaleVectorByExponent.s
-NTSC, exe, 0x80017908, 0x0, asm/GetClampedDifference.s
-NTSC, exe, 0x800176a0, 0x0, asm/ScaleVectorUp.s
-NTSC, exe, 0x800176c8, 0x0, asm/ScaleVectorDown.s
-NTSC, exe, 0x800176f0, 0x0, asm/ClearVector.s
-NTSC, exe, 0x80017e98, 0x0, asm/convert_32_to_16_rgba.s
-NTSC, exe, 0x80017f24, 0x0, asm/apply_image_fading.s
-NTSC, exe, 0x80017fe4, 0x0, asm/DrawCapitalText.s
-NTSC, exe, 0x800181ac, 0x0, asm/DrawVaryingText.s
-NTSC, exe, 0x8001844c, 0x0, asm/DrawLine.s
-NTSC, exe, OG_DrawTextArrow, 0x0, asm/DrawTextArrow.s
-NTSC, exe, 0x8001860C, 0x0, asm/draw_textbox.s
-NTSC, exe, OG_CopyHudToShaded, 0x0, asm/CopyHudToShaded.s
-NTSC, exe, OG_DrawDemoText, 0x0, asm/draw_demo_text.s
-NTSC, exe, 0x80017700, 0x0, asm/CopyVector3D.s
-NTSC, exe, 0x80017758, 0x0, asm/AddVector3D.s
-NTSC, exe, 0x8002bb20, 0x0, asm/calculate_completion_percentage.s
-NTSC, exe, 0x8002c7bc, 0x0, asm/exit_inventory_menu.s
-NTSC, exe, 0x80058c7c, 0x0, asm/ResetHudTimers.s
-NTSC, exe, 0x80063a8c, 0x0, asm/cd_status.s
-NTSC, exe, 0x8008013c, 0x0, asm/gem_home_in_hook.s
-NTSC, exe, OG_RotateVectorByMatrix, 0x0, asm/RotateVectorByMatrix.s
-NTSC, exe, OG_DrawHudOval, 0x0, asm/DrawHudOval.s
-NTSC, exe, OG_DrawHudMobys, 0x0, asm/DrawHudMobys.s
-NTSC, exe, OG_ExitPauseMenu, 0x0, asm/ExitPauseMenu.s
-NTSC, exe, OG_GetStringLength, 0x0, asm/GetStringLength.s
-
-
-
-// work in progress
-NTSC, exe, 0x8001256c, 0x0, asm/PrepareSoundFiles.s
-NTSC, exe, 0x800567f4, 0x0, asm/PlayMusicTrack.s
+//NTSC, exe, 0x800122a8, 0x0, asm/InitializeDisplay.s
+//NTSC, exe, 0x80012460, 0x0, asm/InitializeMemoryCards.s
+//NTSC, exe, 0x800133e0, 0x0, asm/WA4S3_MakeAbsoluteAddresses.s
+//NTSC, exe, 0x800163e4, 0x0, asm/CdReadSectors.s
+//NTSC, exe, 0x80016490, 0x0, asm/CdReadEventHandler.s
+//NTSC, exe, 0x80016784, 0x0, asm/CreateOrderingTable.s
+//NTSC, exe, 0x800168a0, 0x0, asm/StagePrimitive.s
+//NTSC, exe, 0x80016930, 0x0, asm/Memset4.s
+//NTSC, exe, 0x800169ac, 0x0, asm/GetAngle.s
+//NTSC, exe, 0x80016c58, 0x0, asm/sin_scaled.s
+//NTSC, exe, 0x80016fd0, 0x0, asm/matrix_transpose_hook.s
+//NTSC, exe, OG_AddPrimitiveToList, 0x0, asm/AddPrimitiveToList.s
+//NTSC, exe, 0x80016914, 0x0, asm/memset.s
+//NTSC, exe, 0x80016958, 0x0, asm/memcpy.s
+//NTSC, exe, 0x800171fc, 0x0, asm/GetVectorLength.s
+//NTSC, exe, 0x800175b8, 0x0, asm/ScaleVector.s
+//NTSC, exe, 0x80017614, 0x0, asm/ScaleVectorByExponent.s
+//NTSC, exe, 0x80017908, 0x0, asm/GetClampedDifference.s
+//NTSC, exe, 0x800176a0, 0x0, asm/ScaleVectorUp.s
+//NTSC, exe, 0x800176c8, 0x0, asm/ScaleVectorDown.s
+//NTSC, exe, 0x800176f0, 0x0, asm/ClearVector.s
+//NTSC, exe, 0x80017e98, 0x0, asm/convert_32_to_16_rgba.s
+//NTSC, exe, 0x80017f24, 0x0, asm/apply_image_fading.s
+//NTSC, exe, 0x80017fe4, 0x0, asm/DrawCapitalText.s
+//NTSC, exe, 0x800181ac, 0x0, asm/DrawVaryingText.s
+//NTSC, exe, 0x8001844c, 0x0, asm/DrawLine.s
+//NTSC, exe, OG_DrawTextArrow, 0x0, asm/DrawTextArrow.s
+//NTSC, exe, 0x8001860C, 0x0, asm/draw_textbox.s
+//NTSC, exe, OG_CopyHudToShaded, 0x0, asm/CopyHudToShaded.s
+//NTSC, exe, OG_DrawDemoText, 0x0, asm/draw_demo_text.s
+//NTSC, exe, 0x80017700, 0x0, asm/CopyVector3D.s
+//NTSC, exe, 0x80017758, 0x0, asm/AddVector3D.s
+//NTSC, exe, 0x8002bb20, 0x0, asm/calculate_completion_percentage.s
+//NTSC, exe, 0x8002c7bc, 0x0, asm/exit_inventory_menu.s
+//NTSC, exe, 0x80058c7c, 0x0, asm/ResetHudTimers.s
+//NTSC, exe, 0x80063a8c, 0x0, asm/cd_status.s
+//NTSC, exe, 0x8008013c, 0x0, asm/gem_home_in_hook.s
+//NTSC, exe, OG_RotateVectorByMatrix, 0x0, asm/RotateVectorByMatrix.s
+//NTSC, exe, OG_DrawHudOval, 0x0, asm/DrawHudOval.s
+//NTSC, exe, OG_DrawHudMobys, 0x0, asm/DrawHudMobys.s
+//NTSC, exe, OG_ExitPauseMenu, 0x0, asm/ExitPauseMenu.s
+//NTSC, exe, OG_GetStringLength, 0x0, asm/GetStringLength.s
+//
+//
+//
+//// work in progress
+//NTSC, exe, 0x8001256c, 0x0, asm/PrepareSoundFiles.s
+//NTSC, exe, 0x800567f4, 0x0, asm/PlayMusicTrack.s
 
 
 // Uncomment the following in order to run test code.
@@ -66,3 +66,4 @@ NTSC, exe, 0x800567f4, 0x0, asm/PlayMusicTrack.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/CopyHudToShadedTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawTextArrowTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/GetStringLengthTest.s
+NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawDragonRescuedTextTest.s

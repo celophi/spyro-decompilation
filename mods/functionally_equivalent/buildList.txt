@@ -41,6 +41,7 @@ NTSC, header, 0x80200000, 0x0, src/*.c src/tests/framework/*.c src/tests/*.c, mo
 //NTSC, exe, OG_DrawHudOval, 0x0, asm/DrawHudOval.s
 //NTSC, exe, OG_DrawHudMobys, 0x0, asm/DrawHudMobys.s
 //NTSC, exe, OG_ExitPauseMenu, 0x0, asm/ExitPauseMenu.s
+//NTSC, exe, OG_GetStringLength, 0x0, asm/GetStringLength.s
 //
 //
 //
@@ -63,4 +64,6 @@ NTSC, header, 0x80200000, 0x0, src/*.c src/tests/framework/*.c src/tests/*.c, mo
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawVaryingTextTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawDemoTextTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/CopyHudToShadedTest.s
-NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawTextArrowTest.s
+//NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawTextArrowTest.s
+//NTSC, exe, OG_Initialize, 0x0, asm/tests/GetStringLengthTest.s
+NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawDragonRescuedTextTest.s

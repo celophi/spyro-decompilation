@@ -12,4 +12,6 @@ void memset(void* destination, byte value, unsigned int size);
 /// @param destination Destination to receive copied bytes.
 /// @param source Source to supply bytes to copy.
 /// @param size Number of DWORDs to copy.
-void memcpy(void *destination, void *source, int size);
+void memcpy(void* destination, void* source, int size);
+
+int GetStringLength(char* text);

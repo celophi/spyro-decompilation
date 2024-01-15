@@ -4,6 +4,7 @@
 #include <vector.h>
 #include <moby.h>
 
+/// @brief Determines the direction to draw a text arrow on the screen.
 typedef int DrawTextArrowDirection;
 enum
 {
@@ -56,9 +57,21 @@ void CopyHudToShaded();
 ///     - Test Status: Passing
 void DrawDemoText();
 
-
 /// @brief Draws a blinking text arrow facing left or right.
+/// @note
+///     - Address: 0x80018534
+///     - Hook: DrawTextArrow.s
+///     - Test: DrawTextArrowTest.c
+///     - Test Status: Passing
 /// @param position Position to draw on the screen.
 /// @param timer Timer that counts every frame to be used for the pre-determined 16 frame intervals.
-/// @param leftOrRight Determines if the arrow points left or right.
+/// @param direction Determines if the arrow points left or right.
 void DrawTextArrow(Vec3u32* position, uint timer, DrawTextArrowDirection direction);
+
+/// @brief Draws text that appears when rescuing a dragon.
+/// @note
+///     - Address: 0x80018728
+///     - Hook: DrawDragonRescuedText.s
+///     - Test: DrawDragonRescuedTextTest.c
+///     - Test Status: Passing
+void DrawDragonRescuedText();

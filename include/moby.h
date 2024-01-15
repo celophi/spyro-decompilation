@@ -234,7 +234,8 @@ typedef struct
     byte field3_0x18[28];
     short U1;
     MobyType Type;
-    byte field6_0x38[9];
+    int DragonNameIndex;
+    byte field6_0x38[5];
     byte U8;
     byte field8_0x42[2];
     Vec3u8 Rotation;

@@ -35,7 +35,7 @@ OG_ExitPauseMenu = 0x8002c534;
 OG_Initialize = 0x8005b988;
 OG_GetStringLength = 0x8006276c;
 OG_DrawDragonRescuedText = 0x80018728;
-
+OG_DrawSkybox = 0x8004eba8;
 
 
 

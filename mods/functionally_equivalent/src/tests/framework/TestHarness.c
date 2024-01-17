@@ -19,6 +19,7 @@ unsigned int * scratchpadBackup_6mb = (unsigned int *) 0x80600000;
 const unsigned int scratchpadSize = 0x400 / 4;
 unsigned int * gteBackup_4mb = (unsigned int *) 0x80408000;
 unsigned int * gteBackup_6mb = (unsigned int *) 0x80608000;
+unsigned int * gteBackup_6mb_old = (unsigned int *) 0x80609000;
 const unsigned int gteSize = 64;
 
 
@@ -75,7 +76,7 @@ void LoadStartingState()
 
 void BackupOldFunctionState()
 {
-    gte_saveContext(gteBackup_4mb);
+    gte_saveContext(gteBackup_6mb_old);
 }
 
 int IsMemoryEquivalent(void* destination, void* source, unsigned int size)
@@ -95,20 +96,20 @@ int IsMemoryEquivalent(void* destination, void* source, unsigned int size)
 
 int IsStateEquivalent()
 {
-    if (!isEqual(gteBackup_4mb, gteBackup_6mb, gteSize))
-    {
-        return 0;
-    }
-
-    if (!isEqual(scratchpad, scratchpadBackup_6mb, scratchpadSize))
-    {
-        return 0;
-    }
-
     if (!isEqual(ram, ram_6mb, ramSize))
     {
         return 0;
     }
+
+    if (!isEqual(gteBackup_6mb_old, gteBackup_6mb, gteSize))
+    {
+        return 0;
+    }
+/*
+    if (!isEqual(scratchpad, scratchpadBackup_6mb, scratchpadSize))
+    {
+        return 0;
+    }*/
 
     return 1;
 }

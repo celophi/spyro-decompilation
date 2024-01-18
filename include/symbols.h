@@ -212,6 +212,14 @@ extern byte _ScratchpadStart;
 /// @note Address: 0x80077dd8
 extern RegisterStorage _RegisterStorage;
 
+/// @brief Storage area for the MIPS stack pointer.
+/// @note Address: 0x80077dfc
+extern int _RegisterStorage_SP;
+
+/// @brief Storage area for the MIPS return address;
+/// @note Address: 0x80077e04
+extern int _RegisterStorage_RA;
+
 /// @brief Unknown storage area.
 /// @note Address: 0x8006fcf4
 extern int _UnknownStorageU0;

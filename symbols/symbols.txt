@@ -72,6 +72,9 @@ _DragonNames = 0x8006f694;
 _DrawSkyboxU3 = 0x800758b0;
 _DrawSkyboxU4 = 0x80075780;
 _RegisterStorage = 0x80077dd8;
+_RegisterStorage_SP = 0x80077dfc;
+_RegisterStorage_RA = 0x80077e04;
+
 _UnknownStorageU0 = 0x8006fcf4;
 _WA4S2_Table2Start = 0x80078a44;
 _WA4S2_Table2Count = 0x80078a40;

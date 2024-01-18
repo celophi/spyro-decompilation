@@ -1,5 +1,6 @@
 #include <tests/framework/TestHarness.h>
 #include <common.h>
+#include <symbols.h>
 #include <gte.h>
 
 // MIPS Instructions
@@ -22,6 +23,16 @@ unsigned int * gteBackup_6mb = (unsigned int *) 0x80608000;
 unsigned int * gteBackup_6mb_old = (unsigned int *) 0x80609000;
 const unsigned int gteSize = 64;
 
+/// @brief Specific addresses to exclude from tests.
+/// @details There are specific addresses which cannot be under test because of the nature of running the test code, decompiled code, and original code.
+///     * RAM sections that are used for extra register storage specifically the SP and RA fields.
+const void* exclusions[] = {
+    &_RegisterStorage_SP,
+    &_RegisterStorage_RA
+};
+
+/// @brief Length of the exclusions list.
+const int exclusionsLength = sizeof(exclusions) / sizeof(exclusions[0]);
 
 /// @brief Address of where to run the tester installation code.
 extern unsigned int OG_Initialize;
@@ -36,6 +47,22 @@ void memCopy(unsigned int * dest, unsigned int * src, unsigned int size)
     }
 }
 
+/// @brief Returns true if the address is excluded from equality checks.
+/// @param address Address of memory to verify if excluded.
+/// @return boolean indicating excluded or not.
+int isExcluded(unsigned int* address)
+{
+    for (int i = 0; i < exclusionsLength; i++)
+    {
+        if (exclusions[i] == (void*)address)
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 int isEqual(unsigned int * dest, unsigned int * src, unsigned int size)
 {
     int ret = 1;
@@ -43,8 +70,11 @@ int isEqual(unsigned int * dest, unsigned int * src, unsigned int size)
     {
         if (dest[i] != src[i])
         {
-            printf("Diff at %x\n", &dest[i]);
-            ret = 0;
+            if (isExcluded(&dest[i]) == 0)
+            {
+                printf("Diff at %x\n", &dest[i]);
+                ret = 0;
+            }
         }
     }
     return ret;
@@ -105,11 +135,11 @@ int IsStateEquivalent()
     {
         return 0;
     }
-/*
+
     if (!isEqual(scratchpad, scratchpadBackup_6mb, scratchpadSize))
     {
         return 0;
-    }*/
+    }
 
     return 1;
 }

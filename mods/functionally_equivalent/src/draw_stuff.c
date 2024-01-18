@@ -230,6 +230,13 @@ void StagePrimitive(P_TAG* primitive, int offset)
     end->Head = primitive;
 }
 
+uint Confused(int badGuy)
+{
+  uint scratch = 0;
+  doScratchCalc(badGuy, scratch);
+  return scratch;
+}
+
 
 void DrawSkybox(int option,RotationMatrix *cameraA,RotationMatrix *cameraB)
 
@@ -238,7 +245,6 @@ void DrawSkybox(int option,RotationMatrix *cameraA,RotationMatrix *cameraB)
   int ds03;
   int ds04;
   uint scratchData;
-  int ds06;
   P_TAG *ptagA;
   int ds08;
   uint ds09;
@@ -268,17 +274,12 @@ void DrawSkybox(int option,RotationMatrix *cameraA,RotationMatrix *cameraB)
   uint *ds32;
   int ds33;
   int ds34;
-  int ds35;
   byte *scratch;
   uint ds37;
   int ds38;
-  int ds39;
   P_TAG *ptagB;
   int *ds41;
-  int ds42;
   int *ds43;
-  byte ds44;
-  byte ds45;
   PrimitiveLinkedList *ds01;
   
   storeRegisters(&_RegisterStorage);
@@ -376,40 +377,51 @@ DrawSkybox_B:
             ds22 = SBu0 + 1;
 
             // STILL HAVE SCRATCHPAD PROBLEMS ON THIRD LARGE ITERATION.
+            
             do {
               gte_rtps_b();
-              scratchData = ds02 >> 0x15;
+
+              uint other = ds02 >> 0x15;
+
               ds09 = ds02 >> 10;
               ds10 = ds02 & 0x3ff;
               ds02 = ds22->U1;
-              gte_ldVZ0(scratchData + ds28);
-              gte_stSXY2(ds06);
+
+              gte_ldVZ0(other + ds28);
+
+              int badGuy = 0;
+              gte_stSXY2(badGuy);
               gte_ldVXY0((ds30 - (ds09 & 0x7ff)) + (ds34 - ds10) * 0x10000);
-                            
-                            
-              scratchData = ds06 * 32;
+                            /* compiler in decomp messes up here and creates the wrong kind of branches. */
+                            /*
+              scratchData = badGuy * 32;
 
               
-              /* compiler in decomp messes up here and creates the wrong kind of branches. */
-              if (ds06 < 0x10001) 
-              {
-                scratchData = scratchData + 1;
-              }
-
-              if (ds06 > 0x0FFFFFF) 
-              {
-                scratchData = scratchData + 2;
-              }
-
-              if (ds06 * 0x10000 < 1) 
-              {
-                scratchData = scratchData + 4;
-              }
               
-              if (ds06 * 0x10000 > 0x1FFFFFF)
+              int r = badGuy * 0x10000;
+
+              if (r < 1) 
               {
-                scratchData = scratchData + 8;
+                scratchData += 4;
               }
+
+              if (r > 0x01FFFFFF)
+              {
+                scratchData += 8;
+              }
+
+              if (badGuy < 0x10001) 
+              {
+                scratchData += 1;
+              }
+
+              if (badGuy > 0x0FFFFFF) 
+              {
+                scratchData += 2;
+              }
+              */
+              scratchData = Confused(badGuy);
+
 
               ds22 = (SkyboxU0 *)&ds22->U2;
               scratchEndFlags = scratchEndFlags & scratchData;
@@ -429,7 +441,6 @@ DrawSkybox_B:
 
             if (puVar1 == ds31 + (ds13 & 0x1fff) * 2)
             {
-              printf("DS41: %x\n", ds41);
               break;
             }
 

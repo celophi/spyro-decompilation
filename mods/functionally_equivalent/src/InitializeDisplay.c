@@ -1,10 +1,12 @@
 #include <PSYQ/LIBGPU.h>
-#include <PSYQ/LIBAPI.h>
 #include <graphics.h>
-#include <common.h>
 
 /// @brief Initializes the display and graphics environments.
-/// @note Original Address: 0x800122a8
+/// @note
+///     - Address: 0x800122a8
+///     - Hook: InitializeDisplay.s
+///     - Test: InitializeDisplayTest.c
+///     - Test Status: Broken (Problem with copying reserved memory?)
 void InitializeDisplay()
 {
     SetDispMask(0);
@@ -23,21 +25,15 @@ void InitializeDisplay()
     _GfxEnvB.DrawEnv.dtd = 1;
     _GfxEnvA.DrawEnv.ofs[1] = 0;
 
-    RECT rect = { .x = 0, .y = 0, .w = 512, .h = 512 };
+    RECT rect = 
+    { 
+        .x = 0, 
+        .y = 0, 
+        .w = 512, 
+        .h = 512 
+    };
 
     ClearImage(&rect, 0, 0, 0);
     DrawSync(0);
     SetDispMask(1);
-}
-
-/// @brief Initializes the memory cards.
-/// @note Original Address: 0x80012460
-void InitializeMemoryCards()
-{
-    _InitializeMemoryCards_u0 = 0;
-    _InitializeMemoryCards_u1 = 0;
-
-    InitCARD(0);
-    StartCARD();
-    _bu_init();
 }

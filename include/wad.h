@@ -1,6 +1,7 @@
 #pragma once
 
 #include <custom_types.h>
+#include <draw_stuff.h>
 
 // This is a structure starting at WAD Archive 3, Section 3.
 typedef struct {
@@ -34,7 +35,31 @@ typedef struct {
     int U16;
 } WA4S3_Metadata;
 
+typedef struct
+{
+    int offset;
+    int count;
+    int u1;
+} WA4S2;
+
+typedef struct
+{
+    byte U[256];
+    int X;
+} WA4S2_U0;
+
+typedef struct
+{
+    int u0;
+    RGBu8 RGB;
+    int Count;
+} WA4S2_T2;
+
 /// @brief Parses some WAD data and creates absolute addresses.
 /// @param section 
 /// @return 
 WA4S3_Head* WA4S3_MakeAbsoluteAddresses(WA4S3_Head* section);
+
+int* ReadWA4S2(WA4S2 *wa4s2, int option);
+
+extern void OG_WA4S2_Loop(WA4S2_U0 *param_1,int option);

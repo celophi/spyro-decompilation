@@ -9,18 +9,20 @@
 #define NOP 0x00000000
 
 unsigned int * ram = (unsigned int *) 0x80010000;
-unsigned int * ram_4mb = (unsigned int *) 0x80410000;
-unsigned int * ram_6mb = (unsigned int *) 0x80610000;
+unsigned int * initialRamState = (unsigned int *) 0x80410000;
+unsigned int * decompRamState = (unsigned int *) 0x80610000;
 
 /// @brief The RAM size does not extend to the full 2MB because some space is reserved for the stack. In most games this is 0x800 bytes which can be found in main().
 const unsigned int ramSize = (0x1FF800 - 0x10000) / 4;
+
 unsigned int * scratchpad = (unsigned int *) 0x1F800000;
-unsigned int * scratchpadBackup_4mb = (unsigned int *) 0x80400000;
-unsigned int * scratchpadBackup_6mb = (unsigned int *) 0x80600000;
+unsigned int * initialScratchpadState = (unsigned int *) 0x80400000;
+unsigned int * decompScratchpadState = (unsigned int *) 0x80600000;
 const unsigned int scratchpadSize = 0x400 / 4;
-unsigned int * gteBackup_4mb = (unsigned int *) 0x80408000;
-unsigned int * gteBackup_6mb = (unsigned int *) 0x80608000;
-unsigned int * gteBackup_6mb_old = (unsigned int *) 0x80609000;
+
+unsigned int * initialGteState = (unsigned int *) 0x80408000;
+unsigned int * decompGteState = (unsigned int *) 0x80608000;
+unsigned int * originalGteState = (unsigned int *) 0x80609000;
 const unsigned int gteSize = 64;
 
 /// @brief Specific addresses to exclude from tests.
@@ -83,30 +85,30 @@ int isEqual(unsigned int * dest, unsigned int * src, unsigned int size)
 void BackupStartingState()
 {
     // Backup the program state before calling the decomp function
-    memCopy(ram_4mb, ram, ramSize);
-    memCopy(scratchpadBackup_4mb, scratchpad, scratchpadSize);
-    gte_saveContext(gteBackup_4mb);
+    memCopy(initialRamState, ram, ramSize);
+    memCopy(initialScratchpadState, scratchpad, scratchpadSize);
+    gte_saveContext(initialGteState);
 }
 
 void BackupNewFunctionState()
 {
     // Backup result of decomp function
-    memCopy(ram_6mb, ram, ramSize);
-    memCopy(scratchpadBackup_6mb, scratchpad, scratchpadSize);
-    gte_saveContext(gteBackup_6mb);
+    memCopy(decompRamState, ram, ramSize);
+    memCopy(decompScratchpadState, scratchpad, scratchpadSize);
+    gte_saveContext(decompGteState);
 }
 
 void LoadStartingState()
 {
     // Load state
-    memCopy(ram, ram_4mb, ramSize);
-    memCopy(scratchpad, scratchpadBackup_4mb, scratchpadSize);
-    gte_loadContext(gteBackup_4mb);
+    memCopy(ram, initialRamState, ramSize);
+    memCopy(scratchpad, initialScratchpadState, scratchpadSize);
+    gte_loadContext(initialGteState);
 }
 
 void BackupOldFunctionState()
 {
-    gte_saveContext(gteBackup_6mb_old);
+    gte_saveContext(originalGteState);
 }
 
 int IsMemoryEquivalent(void* destination, void* source, unsigned int size)
@@ -126,17 +128,17 @@ int IsMemoryEquivalent(void* destination, void* source, unsigned int size)
 
 int IsStateEquivalent()
 {
-    if (!isEqual(ram, ram_6mb, ramSize))
+    if (!isEqual(ram, decompRamState, ramSize))
     {
         return 0;
     }
 
-    if (!isEqual(gteBackup_6mb_old, gteBackup_6mb, gteSize))
+    if (!isEqual(originalGteState, decompGteState, gteSize))
     {
         return 0;
     }
 
-    if (!isEqual(scratchpad, scratchpadBackup_6mb, scratchpadSize))
+    if (!isEqual(scratchpad, decompScratchpadState, scratchpadSize))
     {
         return 0;
     }

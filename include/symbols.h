@@ -5,6 +5,9 @@
 #include "shapes.h"
 #include <hud.h>
 
+extern int _InitializeMemoryCards_u0;
+extern int _InitializeMemoryCards_u1;
+
 /// @brief This is the pause/inventory menu timer. It is only running in those menus. \n Address: 0x8007588c
 extern int _LoadingTimer;
 
@@ -235,3 +238,79 @@ extern int _WA4S2_Table2Count;
 /// @brief WAD archive 4, Section 2, Unknown 7
 /// @note Address: 0x80078a4c
 extern int _WA4S2_U7;
+
+/// @brief WA4S2 Unknown.
+/// @note Address: 0x800785c8
+extern int _ReadWA4S2_Count;
+
+/// @brief WA4S2 Unknown.
+/// @note Address: 0x800785c0
+extern int* _ReadWA4S2_U1_Addr;
+
+/// @brief Unknown.
+/// @note Address: 0x800785c4
+extern int _ReadWA4S2_EndU;
+
+/// @brief Unknown.
+/// @note Address: 0x800785ac
+extern int _ReadWA4S2_counter;
+
+/// @brief Unknown.
+/// @note Address: 0x800785a8
+extern int* _ReadWA4S2_u4;
+
+/// @brief Unknown.
+/// @note Address: 0x800785b4
+extern int _ReadWA3S2_u5;
+
+/// @brief Unknown.
+/// @note Address: 0x800785b0
+extern int _ReadWA3S2_u6;
+
+/// @brief Unknown.
+/// @note Address: 0x8007778c
+extern int _ReadWA3S2_u7;
+
+/// @brief Unknown.
+/// @note Address: 0x80077788
+extern int _ReadWA3S2_u8;
+
+/// @brief Unknown.
+/// @note Address: 0x800785bc
+extern int _ReadWA3S2_u9;
+
+/// @brief Unknown.
+/// @note Address: 0x800785b8
+extern int _ReadWA3S2_u10;
+
+/// @brief Unknown.
+/// @note Address: 0x800785d4
+extern int* _ReadWA3S2_u11;
+
+/// @brief Color used for the drawing environment by default. This appears to be a tan colored yellow often.
+/// @note Address: 0x80077790
+extern RGBu8 _WadDrawEnvRgb;
+
+/// @brief Unknown.
+/// @note Address: 0x80077784
+extern int* _WA3S2_Table2Start;
+
+/// @brief Unknown.
+/// @note Address: 0x80077780
+extern int _WA3S2_Table2Count;
+
+/// @brief Unknown.
+/// @note Address: 0x800758bc
+extern int _ReadWA3S2_u14;
+
+/// @brief Unknown.
+/// @note Address: 0x80078640
+extern int _ReadWA3S2_u15;
+
+/// @brief Unknown.
+/// @note Address: 0x80076278
+extern int _ReadWA3S2_u16;
+
+/// @brief Unknown.
+/// @note Address: 0x80076234
+extern int _ReadWA3S2_u17;

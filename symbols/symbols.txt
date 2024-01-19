@@ -1,3 +1,4 @@
+_ScratchpadStart = 0x1f800000;
 _DataSectionStart = 0x8006bbe0;
 _CdReading = 0x800756e0;
 _PrimitiveLinkedList = 0x8007581c;
@@ -68,6 +69,16 @@ _HudMobyQueuePtr = 0x800756fc;
 _DragonRescued_U0 = 0x80077080;
 _RescuedDragonMoby = 0x800770c0;
 _DragonNames = 0x8006f694;
+_DrawSkyboxU3 = 0x800758b0;
+_DrawSkyboxU4 = 0x80075780;
+_RegisterStorage = 0x80077dd8;
+_RegisterStorage_SP = 0x80077dfc;
+_RegisterStorage_RA = 0x80077e04;
+
+_UnknownStorageU0 = 0x8006fcf4;
+_WA4S2_Table2Start = 0x80078a44;
+_WA4S2_Table2Count = 0x80078a40;
+_WA4S2_U7 = 0x80078a4c;
 
 
 

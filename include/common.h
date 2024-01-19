@@ -17,6 +17,24 @@
 #define WORLD_UNIT 4096
 #define GAME_UNIT 64
 
+
+typedef struct
+{
+    int S0;
+    int S1;
+    int S2;
+    int S3;
+    int S4;
+    int S5;
+    int S6;
+    int S7;
+    int GP;
+    int SP;
+    int FP;
+    int RA;
+} RegisterStorage;
+_Static_assert(sizeof(RegisterStorage) == 48);
+
 typedef enum Direction
 {
     LEFT,

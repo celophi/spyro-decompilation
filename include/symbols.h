@@ -195,3 +195,43 @@ extern int _DragonRescued_U0;
 /// @brief Unknown.
 /// @note Address: 0x800770c0
 extern NewMoby** _RescuedDragonMoby;
+
+/// @brief Unknown.
+/// @note Address: 0x800758b0
+extern int _DrawSkyboxU3;
+
+/// @brief Unknown.
+/// @note Address: 0x80075780
+extern int _DrawSkyboxU4;
+
+/// @brief Starting area in RAM for the PSX scratchpad.
+/// @note Address: 0x1f800000
+extern byte _ScratchpadStart;
+
+/// @brief Storage area for MIPS registers
+/// @note Address: 0x80077dd8
+extern RegisterStorage _RegisterStorage;
+
+/// @brief Storage area for the MIPS stack pointer.
+/// @note Address: 0x80077dfc
+extern int _RegisterStorage_SP;
+
+/// @brief Storage area for the MIPS return address;
+/// @note Address: 0x80077e04
+extern int _RegisterStorage_RA;
+
+/// @brief Unknown storage area.
+/// @note Address: 0x8006fcf4
+extern int _UnknownStorageU0;
+
+/// @brief WAD archive 4, Section 2 table 2 start
+/// @note Address: 0x80078a44
+extern int _WA4S2_Table2Start;
+
+/// @brief WAD archive 4, Section 2 table 2 count
+/// @note Address: 0x80078a40
+extern int _WA4S2_Table2Count;
+
+/// @brief WAD archive 4, Section 2, Unknown 7
+/// @note Address: 0x80078a4c
+extern int _WA4S2_U7;

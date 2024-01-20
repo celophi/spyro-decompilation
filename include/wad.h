@@ -51,8 +51,17 @@ typedef struct
 typedef struct
 {
     int u0;
-    RGBu8 RGB;
     int Count;
+    int TableStart;
+} WA4S2_T1;
+
+typedef struct
+{
+    int u0;
+    RGBu8 RGB;
+    byte Padding;
+    int Count;
+    int TableStart;
 } WA4S2_T2;
 
 /// @brief Parses some WAD data and creates absolute addresses.

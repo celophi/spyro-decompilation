@@ -249,7 +249,7 @@ extern int* _ReadWA4S2_U1_Addr;
 
 /// @brief Unknown.
 /// @note Address: 0x800785c4
-extern int _ReadWA4S2_EndU;
+extern int* _ReadWA4S2_EndU;
 
 /// @brief Unknown.
 /// @note Address: 0x800785ac
@@ -257,7 +257,7 @@ extern int _ReadWA4S2_counter;
 
 /// @brief Unknown.
 /// @note Address: 0x800785a8
-extern int* _ReadWA4S2_u4;
+extern int* _WA4S2_Table1;
 
 /// @brief Unknown.
 /// @note Address: 0x800785b4
@@ -293,11 +293,11 @@ extern RGBu8 _WadDrawEnvRgb;
 
 /// @brief Unknown.
 /// @note Address: 0x80077784
-extern int* _WA3S2_Table2Start;
+extern int* _WA4S2_Table2;
 
 /// @brief Unknown.
 /// @note Address: 0x80077780
-extern int _WA3S2_Table2Count;
+extern int _WA4S2_Table2Count;
 
 /// @brief Unknown.
 /// @note Address: 0x800758bc

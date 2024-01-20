@@ -321,10 +321,10 @@ void DrawSkybox(int option, RotationMatrix *cameraA, RotationMatrix *cameraB)
 
 
     int tableEnd;
-    if (option < 0) 
+    if (option < 0) //true
     {
         tableEnd = _WA4S2_Table2Start + _WA4S2_Table2Count * 4;
-        ds43 = (int *)ds14;
+        ds43 = (int *)ds14; // empty storage?
     }
     else 
     {
@@ -335,7 +335,7 @@ void DrawSkybox(int option, RotationMatrix *cameraA, RotationMatrix *cameraB)
     {
         if (option < 0) 
         {
-            ds15 = *(int **)tableStart;
+            ds15 = *(int **)tableStart; // first entry
             if (tableStart == tableEnd) 
             {
 
@@ -525,20 +525,20 @@ DrawSkybox_A:
             tableEnd = tableEnd + 1;
         }
 
-        gte_ldVXY0(*ds15);
-        gte_ldVZ0(ds15[1] >> 16);
+        gte_ldVXY0(*ds15); //x = 0x03ec, y = 0x0072
+        gte_ldVZ0(ds15[1] >> 16); // z = 0xff5b
 
         // coordinate transformation and perspective transformation
         gte_rtps_b();
 
         // store 3 screen coordinates to non-continuous addresses. Store screen z 0, 1, 2
         gte_stSZ3(szCoords);
-        gte_stMAC3(szCoords);
+        gte_stMAC3(szCoords); // 0x38d
 
-        if (0 < szCoords - (short)ds15[1]) 
+        if (0 < szCoords - (short)ds15[1]) // 0x01FF
         {
-            *ds43 = (int)ds15;
-            ds43 = (int *)((int **)ds43 + 1);
+            *ds43 = (int)ds15; // addr of the entry
+            ds43 = (int *)((int **)ds43 + 1); // place it unknown storage?
         }
 
     } while( true );

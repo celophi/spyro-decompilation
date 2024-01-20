@@ -91,38 +91,35 @@ WA4S3_Head * WA4S3_MakeAbsoluteAddresses(WA4S3_Head *section)
     return section;
 }
 
-int * ReadWA4S2(WA4S2 *wa4s2, int option)
+/// @brief Creates absolute addresses for an array of DWORDs.
+/// @param address Base address to apply to every value.
+/// @param count Number of DWORDs in the table.
+static void MakeAbsoluteAddresses(WA4S2_T1* address, int count)
 {
-    int w01;
-    int **w05;
-    
-    // data[0x04] => 26
-    _ReadWA4S2_Count = wa4s2->count;
-                    /* data[0x08] => 20 40 3D 10 */
-    _ReadWA4S2_U1_Addr = &wa4s2->u1;
-                    /* _ReadWA4S2_u1 + 416 */
-    _ReadWA4S2_EndU = (int)(_ReadWA4S2_U1_Addr + _ReadWA4S2_Count * 4);
-                    /* WA3S2->Offset // just add offset to beginning of WA3S2 */
-    int* offset = (int *)((int)&wa4s2->offset + wa4s2->offset);
-    _ReadWA4S2_counter = offset[1]; // 0x6D
-    int* tableCursor = offset + 2; // This is just the start of the table where we need to make abs addresses.
-                   
-    _ReadWA4S2_u4 = tableCursor;
-
-     /* Create absolute addresses. Apply a base address in RAM like 0x8xxxxxx to the value looped over. Replace the data with the result. */
-    for (int i = 0; i < _ReadWA4S2_counter; i++)
+    int* cursor = &address->TableStart;
+    for (int i = 0; i < count; i++)
     {
-        *tableCursor = (int)offset + *tableCursor + 4;
-        tableCursor++;
+        *cursor = (int)address + *cursor + 4;
+        cursor++;
     }
+}
 
-    
-                    /* Now deal with data[0x04]. The way this works, the offset is applied to the position of where it is defined in the WAD: &offset2 + offset2. */
-                    /* First load this is false */
-    offset = (int *)((int)offset + *offset);
-    if (option == 0) 
+/// @brief Creates absolute addresses for an array of DWORDs.
+/// @param address Base address to apply to every value.
+/// @param count Number of DWORDs in the table.
+static void MakeAbsoluteAddresses2(WA4S2_T2* address, int count)
+{
+    int* cursor = &address->TableStart;
+    for (int i = 0; i < count; i++)
     {
-        if (*offset < 5) 
+        *cursor = (int)address + *cursor + 4;
+        cursor++;
+    }
+}
+
+static int* HandleOptionA(int* offset)
+{
+    if (*offset < 5) 
         {
             _ReadWA3S2_u5 = 0;
             _ReadWA3S2_u6 = 0;
@@ -174,34 +171,14 @@ int * ReadWA4S2(WA4S2 *wa4s2, int option)
         _ReadWA3S2_u11[5] = (int)w04 + _ReadWA3S2_u11[5];
         _ReadWA3S2_u11[6] = (int)w04 + _ReadWA3S2_u11[6];
         offset = (int *)((int)offset + *offset);
-    }
-                    /* continue on first load */
 
-    
-    WA4S2_T2* table2 = (WA4S2_T2*)offset;
+        return offset;
+}
 
-    // Assign drawing environment RGB
-    _WadDrawEnvRgb.R = table2->RGB.R;
-    _WadDrawEnvRgb.G = table2->RGB.G;
-    _WadDrawEnvRgb.B = table2->RGB.B;
+static int* HandleOptionB(int* offset)
+{
+    int **w05;
 
-                    /* 0x3E */
-    _WA3S2_Table2Count = table2->Count;
-    int* w04 = offset + 3;
-                    /* Build 2nd absolute reference table. */
-    _WA3S2_Table2Start = w04;
-
-    for (int i = 0; i < _WA3S2_Table2Count; i++)
-    {
-        *w04 = (int)offset + *w04 + 4;
-        w04++;
-    }
-
-                    /* skip again on first time */
-    offset = (int *)((int)offset + *offset);
-
-    if (option == 0) 
-    {
         _ReadWA3S2_u14 = *offset;
         int **w06 = (int **)(offset + 1);
         int loop = 0;
@@ -219,7 +196,7 @@ int * ReadWA4S2(WA4S2 *wa4s2, int option)
                 **(int ***)*offset = w05[7];
                 w05 = w05 + 8;
                 *(int ***)(*(int *)*offset + 4) = w05;
-                w01 = 0;
+                int w01 = 0;
 
                 if (0 < **(int **)*offset) 
                 {
@@ -247,6 +224,65 @@ int * ReadWA4S2(WA4S2 *wa4s2, int option)
         _ReadWA3S2_u17 = *offset;
         OG_WA4S2_Loop((WA4S2_U0 *)(offset + 1),1);
         offset = (int *)((int)offset + *offset);
+
+        return offset;
+}
+
+int * ReadWA4S2(WA4S2 *wa4s2, int option)
+{
+    // [4] => 26
+    _ReadWA4S2_Count = wa4s2->count;
+
+    // &[8] => 20 40 3D 10, this must be some entry starting point.
+    _ReadWA4S2_U1_Addr = &wa4s2->u1;
+                    
+    // &[424] => 416 + 8 (for the u1 starting point)
+    _ReadWA4S2_EndU = _ReadWA4S2_U1_Addr + _ReadWA4S2_Count * 4;
+
+
+                    /* WA3S2->Offset // just add offset to beginning of WA3S2 */
+    int* offset = (int *)((int)&wa4s2->offset + wa4s2->offset);
+
+    WA4S2_T1* t1 = (WA4S2_T1*)offset;
+
+    _ReadWA4S2_counter = t1->Count;
+    _WA4S2_Table1 = &t1->TableStart;
+
+     /* Create absolute addresses. Apply a base address in RAM like 0x8xxxxxx to the value looped over. Replace the data with the result. */
+    
+    MakeAbsoluteAddresses(t1, _ReadWA4S2_counter);
+
+                    /* Now deal with data[0x04]. The way this works, the offset is applied to the position of where it is defined in the WAD: &offset2 + offset2. */
+                    /* First load this is false */
+    offset = (int *)((int)offset + *offset);
+
+    // skipped on first load.
+    if (option == 0) 
+    {
+        offset = HandleOptionA(offset);
+    }
+
+    WA4S2_T2* table2 = (WA4S2_T2*)offset;
+
+    // Assign drawing environment RGB
+    _WadDrawEnvRgb.R = table2->RGB.R;
+    _WadDrawEnvRgb.G = table2->RGB.G;
+    _WadDrawEnvRgb.B = table2->RGB.B;
+
+    _WA4S2_Table2 = &table2->TableStart;
+    _WA4S2_Table2Count = table2->Count; // 62
+
+    /* Build 2nd absolute reference table. */
+    MakeAbsoluteAddresses2(table2, _WA4S2_Table2Count);
+    
+
+    offset = (int *)((int)offset + *offset);
+
+    
+    // skipped on first load.
+    if (option == 0) 
+    {
+        offset = HandleOptionB(offset);
     }
 
     return offset;

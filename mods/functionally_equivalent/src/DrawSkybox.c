@@ -50,203 +50,187 @@ uint Confused(int badGuy)
 
 static int HandleInner(int* ds43, RotationMatrix *cameraB)
 {
-    P_TAG *ptagB;
-    uint ds37;
-    int szCoords;
-    int *ds41;
     P_TAG *ptagA;
-    int ds34;
-    int ds28;
-    int ds30;
     uint *ds21;
     uint ds24;
     uint ds13;
     byte *scratch;
     uint scratchEndFlags;
     uint ds02;
-    SkyboxU0 *ds22;
-    uint scratchData;
-    uint *ds31;
-    uint *puVar1;
-    uint *ds32;
-    int ds16;
-    int ds19;
-    uint ds09;
+    
+    *ds43 = 0;
 
-*ds43 = 0;
-
-                gte_ldR11R12(cameraB->R11R12);
-                gte_ldR13R21(cameraB->R13R21);
-                gte_ldR22R23(cameraB->R22R23);
-                gte_ldR31R32(cameraB->R31R32);
-                gte_ldR33(cameraB->R33);
-
+    gte_ldR11R12(cameraB->R11R12);
+    gte_ldR13R21(cameraB->R13R21);
+    gte_ldR22R23(cameraB->R22R23);
+    gte_ldR31R32(cameraB->R31R32);
+    gte_ldR33(cameraB->R33);
 
     ds43 = &_UnknownStorageU0;
-                ptagB = (P_TAG *)((int)_PrimitiveList + 4);
-                ds37 = 0;
-                szCoords = _DrawSkyboxU4 + -0x400;
-                ds41 = (int *)ptagB;
+    P_TAG *ptagB = (P_TAG *)((int)_PrimitiveList + 4);
+    uint ds37 = 0;
+    int szCoords = _DrawSkyboxU4 + -0x400;
+    int *ds41 = (int *)ptagB;
 
-                while (true)
+    while (true)
+    {
+        do 
+        {
+            SkyboxU0 *SBu0 = (SkyboxU0 *)*ds43;
+            ds43 = (int *)((SkyboxU0 **)ds43 + 1);
+            int tail = (int)_PrimitiveList;
+
+            if (SBu0 == NULL) 
+            {
+                PrimitiveLinkedList* stageStart = _PrimitiveStagingStart;
+                _PrimitiveList = ds41;
+
+                if ((P_TAG *)ds41 != ptagB) 
                 {
-                    do 
+                    ptagA = _PrimitiveStagingStart[0x7ff].Tail;
+                    *(uint *)tail = ds37 ^ 0x80000000;
+                    stageStart[0x7ff].Tail = (P_TAG *)tail;
+
+                    if (ptagA == NULL) 
                     {
-                        SkyboxU0 *SBu0 = (SkyboxU0 *)*ds43;
-                        ds43 = (int *)((SkyboxU0 **)ds43 + 1);
-                        int tail = (int)_PrimitiveList;
-
-                        if (SBu0 == NULL) 
-                        {
-                            PrimitiveLinkedList* stageStart = _PrimitiveStagingStart;
-                            _PrimitiveList = ds41;
-
-                            if ((P_TAG *)ds41 != ptagB) 
-                            {
-                                ptagA = _PrimitiveStagingStart[0x7ff].Tail;
-                                *(uint *)tail = ds37 ^ 0x80000000;
-                                stageStart[0x7ff].Tail = (P_TAG *)tail;
-
-                                if (ptagA == NULL) 
-                                {
-                                    stageStart[0x7ff].Head = ptagB;
-                                }
-                                else 
-                                {
-                                    ptagA->addr = (u_long)ptagB;
-                                }
-                            }
-
-                            return 1;
-                        }
-
-                        ds34 = SBu0->U3 >> 16;
-                        ds30 = (int)(short)SBu0->U3;
-                        ds28 = SBu0->U4 >> 0x10;
-                        ds21 = &SBu0->U7;
-                        ds24 = SBu0->U4 & 0xffff;
-                        ds13 = SBu0->U5;
-                        scratch = &_ScratchpadStart;
-                        scratchEndFlags = 0xffffffff;
-                        ds02 = *ds21;
-
-                        gte_ldVZ0((ds02 >> 0x15) + ds28);
-                        gte_ldVXY0((ds30 - (ds02 >> 10 & 0x7ff)) + (ds34 - (ds02 & 0x3ff)) * 0x10000);
-
-                        ds02 = SBu0->U8;
-                        ds22 = SBu0 + 1;
-
-                        do 
-                        {
-                            // coordinate transformation and perspective transformation
-                            gte_rtps_b();
-
-                            uint other = ds02 >> 0x15;
-                            uint inner1 = ds02 >> 10;
-                            uint inner2 = ds02 & 0x3ff;
-                            ds02 = ds22->U1;
-
-                            gte_ldVZ0(other + ds28);
-
-                            int badGuy = 0;
-                            gte_stSXY2(badGuy);
-                            gte_ldVXY0((ds30 - (inner1 & 0x7ff)) + (ds34 - inner2) * 0x10000);
-                            
-                            scratchData = Confused(badGuy);
-
-
-                            ds22 = (SkyboxU0 *)&ds22->U2;
-                            scratchEndFlags = scratchEndFlags & scratchData;
-                            *(uint *)scratch = scratchData;
-                            scratch = (byte *)((int)scratch + 4);
-
-                        } while (ds22 != (SkyboxU0 *)(ds21 + ds24 + 2));
-
-                    } while ((scratchEndFlags & 0xf) != 0);
-
-
-                    ds31 = (uint *)((int)ds21 + (ds13 >> 0xe) + ds24 * 4);
-                    puVar1 = ds31;
-
-                    while( true ) 
+                        stageStart[0x7ff].Head = ptagB;
+                    }
+                    else 
                     {
-                        ds02 = *puVar1;
-                        ds32 = puVar1 + 2;
-
-                        if (puVar1 == ds31 + (ds13 & 0x1fff) * 2)
-                        {
-                            break;
-                        }
-
-                        if (szCoords - (int)ds41 < 1) 
-                        {
-                            _DrawSkyboxU3 = 1;
-                            int tail = (int)_PrimitiveList;
-                            PrimitiveLinkedList* stageStart = _PrimitiveStagingStart;
-                            _PrimitiveList = ds41;
-
-                            if ((P_TAG *)ds41 != ptagB) 
-                            {
-                                ptagA = _PrimitiveStagingStart[0x7ff].Tail;
-                                *(uint *)tail = ds37 ^ 0x80000000;
-                                stageStart[0x7ff].Tail = (P_TAG *)tail;
-
-                                if (ptagA == NULL) 
-                                {
-                                    stageStart[0x7ff].Head = ptagB;
-                                }
-                                else 
-                                {
-                                    ptagA->addr = (u_long)ptagB;
-                                }
-                            }
-
-                            return 1;
-                        }
-
-                        scratchEndFlags = *(uint *)((ds02 >> 0x14) + 0x1f800000);
-                        scratchData = *(uint *)((ds02 >> 10 & 0x3fc) + 0x1f800000);
-                        ds02 = *(uint *)((ds02 & 0x3fc) + 0x1f800000);
-                        ds09 = puVar1[1];
-                        puVar1 = ds32;
-
-                        if ((scratchEndFlags & scratchData & ds02 & 0x1f) == 0) 
-                        {
-                            *(uint *)_PrimitiveList = ds37 ^ (uint)ds41;
-                            ds28 = (int)scratchEndFlags >> 5;
-                            ds30 = (int)scratchData >> 5;
-                            ds34 = (int)ds02 >> 5;
-                            ds41[2] = ds28;
-                            ds41[4] = ds30;
-                            ds41[6] = ds34;
-                            ds02 = ds09 >> 0x14;
-                            ds37 = ds09 >> 10 & 0x3fc;
-                            _PrimitiveList = ds41;
-
-                            if ((ds02 == ds37) && (ds02 == (ds09 & 0x3fc))) 
-                            {
-                                ds37 = 0x84000000;
-                                ds41[1] = *(int *)((int)ds21 + ds02 + ds24 * 4) + -0x10000000;
-                                ds41[2] = ds28;
-                                ds41[3] = ds30;
-                                ds41[4] = ds34;
-                                ds41 = ds41 + 5;
-                            }
-                            else 
-                            {
-                                ds16 = *(int *)((int)ds21 + ds37 + ds24 * 4);
-                                ds19 = *(int *)((int)ds21 + (ds09 & 0x3fc) + ds24 * 4);
-                                ds37 = 0x86000000;
-                                ds41[1] = *(int *)((int)ds21 + ds02 + ds24 * 4);
-                                ds41[3] = ds16;
-                                ds41[5] = ds19;
-                                ds41 = ds41 + 7;
-                            }
-                        }
+                        ptagA->addr = (u_long)ptagB;
                     }
                 }
 
-                return 0;
+                return 1;
+            }
+
+            int ds34 = SBu0->U3 >> 16;
+            int ds30 = (int)(short)SBu0->U3;
+            int ds28 = SBu0->U4 >> 0x10;
+            ds21 = &SBu0->U7;
+            ds24 = SBu0->U4 & 0xffff;
+            ds13 = SBu0->U5;
+            scratch = &_ScratchpadStart;
+            scratchEndFlags = 0xffffffff;
+            ds02 = *ds21;
+
+            gte_ldVZ0((ds02 >> 0x15) + ds28);
+            gte_ldVXY0((ds30 - (ds02 >> 10 & 0x7ff)) + (ds34 - (ds02 & 0x3ff)) * 0x10000);
+
+            ds02 = SBu0->U8;
+            SkyboxU0 *ds22 = SBu0 + 1;
+
+            do 
+            {
+                // coordinate transformation and perspective transformation
+                gte_rtps_b();
+
+                uint other = ds02 >> 0x15;
+                uint inner1 = ds02 >> 10;
+                uint inner2 = ds02 & 0x3ff;
+                ds02 = ds22->U1;
+
+                gte_ldVZ0(other + ds28);
+
+                int badGuy = 0;
+                gte_stSXY2(badGuy);
+                gte_ldVXY0((ds30 - (inner1 & 0x7ff)) + (ds34 - inner2) * 0x10000);
+                
+                uint scratchData = Confused(badGuy);
+
+
+                ds22 = (SkyboxU0 *)&ds22->U2;
+                scratchEndFlags = scratchEndFlags & scratchData;
+                *(uint *)scratch = scratchData;
+                scratch = (byte *)((int)scratch + 4);
+
+            } while (ds22 != (SkyboxU0 *)(ds21 + ds24 + 2));
+
+        } while ((scratchEndFlags & 0xF) != 0);
+
+
+        uint *ds31 = (uint *)((int)ds21 + (ds13 >> 0xe) + ds24 * 4);
+        uint *puVar1 = ds31;
+
+        while( true ) 
+        {
+            ds02 = *puVar1;
+            uint *ds32 = puVar1 + 2;
+
+            if (puVar1 == ds31 + (ds13 & 0x1fff) * 2)
+            {
+                break;
+            }
+
+            if (szCoords - (int)ds41 < 1) 
+            {
+                _DrawSkyboxU3 = 1;
+                int tail = (int)_PrimitiveList;
+                PrimitiveLinkedList* stageStart = _PrimitiveStagingStart;
+                _PrimitiveList = ds41;
+
+                if ((P_TAG *)ds41 != ptagB) 
+                {
+                    ptagA = _PrimitiveStagingStart[0x7ff].Tail;
+                    *(uint *)tail = ds37 ^ 0x80000000;
+                    stageStart[0x7ff].Tail = (P_TAG *)tail;
+
+                    if (ptagA == NULL) 
+                    {
+                        stageStart[0x7ff].Head = ptagB;
+                    }
+                    else 
+                    {
+                        ptagA->addr = (u_long)ptagB;
+                    }
+                }
+
+                return 1;
+            }
+
+            scratchEndFlags = *(uint *)((ds02 >> 0x14) + 0x1f800000);
+            uint scratchData = *(uint *)((ds02 >> 10 & 0x3fc) + 0x1f800000);
+            ds02 = *(uint *)((ds02 & 0x3fc) + 0x1f800000);
+            uint ds09 = puVar1[1];
+            puVar1 = ds32;
+
+            if ((scratchEndFlags & scratchData & ds02 & 0x1F) == 0) 
+            {
+                *(uint *)_PrimitiveList = ds37 ^ (uint)ds41;
+                int ds28 = (int)scratchEndFlags >> 5;
+                int ds30 = (int)scratchData >> 5;
+                int ds34 = (int)ds02 >> 5;
+                ds41[2] = ds28;
+                ds41[4] = ds30;
+                ds41[6] = ds34;
+                ds02 = ds09 >> 0x14;
+                ds37 = ds09 >> 10 & 0x3fc;
+                _PrimitiveList = ds41;
+
+                if ((ds02 == ds37) && (ds02 == (ds09 & 0x3fc))) 
+                {
+                    ds37 = 0x84000000;
+                    ds41[1] = *(int *)((int)ds21 + ds02 + ds24 * 4) + -0x10000000;
+                    ds41[2] = ds28;
+                    ds41[3] = ds30;
+                    ds41[4] = ds34;
+                    ds41 = ds41 + 5;
+                }
+                else 
+                {
+                    int ds16 = *(int *)((int)ds21 + ds37 + ds24 * 4);
+                    int ds19 = *(int *)((int)ds21 + (ds09 & 0x3fc) + ds24 * 4);
+                    ds37 = 0x86000000;
+                    ds41[1] = *(int *)((int)ds21 + ds02 + ds24 * 4);
+                    ds41[3] = ds16;
+                    ds41[5] = ds19;
+                    ds41 = ds41 + 7;
+                }
+            }
+        }
+    }
+
+    return 0;
 }
 
 

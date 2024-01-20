@@ -15,12 +15,26 @@ static func originalFunction = (func) &OG_DrawSkybox;
 static unsigned int hits = 0;
 static unsigned int total = 0;
 
+static unsigned int cooldown = 0;
+
 /// @brief Test assertion code that runs in place of the original function address.
 /// @note The arguments to this should be exactly the same as the new and old functions.
 static void Tester(int option, RotationMatrix *cameraA, RotationMatrix *cameraB)
 {
     EnterCriticalSection();
     func originalFunctionRef = (func) GetOriginalFunction();
+
+    if (cooldown < 50)
+    {
+        originalFunctionRef(option, cameraA, cameraB);
+        cooldown++;
+        LeaveCriticalSection();
+        return;
+    }
+    else
+    {
+        cooldown = 0;
+    }
 
 RESTART:
 

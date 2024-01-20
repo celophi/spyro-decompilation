@@ -48,6 +48,27 @@ uint Confused(int badGuy)
   return scratch;
 }
 
+typedef struct
+{
+    uint Y : 10;
+    uint X : 11;
+    uint Z : 11;
+} PackedVertex;
+_Static_assert(sizeof(PackedVertex) == 4);
+
+typedef struct
+{
+    short X;
+    short Y;
+    short u0;
+    short Z;
+} SkyVertex4;
+
+typedef struct
+{
+    SkyVertex4 Vertices[4];
+} Skybox4;
+
 static int HandleInner(int* ds43, RotationMatrix *cameraB)
 {
     P_TAG *ptagA;
@@ -77,10 +98,13 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
         do 
         {
             SkyboxU0 *SBu0 = (SkyboxU0 *)*ds43;
+            // test new structure
+            Skybox4* sb4 = (Skybox4*)*ds43;
+
             ds43 = (int *)((SkyboxU0 **)ds43 + 1);
             int tail = (int)_PrimitiveList;
 
-            if (SBu0 == NULL) 
+            if (sb4 == NULL) 
             {
                 PrimitiveLinkedList* stageStart = _PrimitiveStagingStart;
                 _PrimitiveList = ds41;
@@ -104,18 +128,22 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
                 return 1;
             }
 
-            int ds34 = SBu0->U3 >> 16;
-            int ds30 = (int)(short)SBu0->U3;
-            int ds28 = SBu0->U4 >> 0x10;
+            short xPart = sb4->Vertices[1].X;
+            short yPart = sb4->Vertices[1].Y;
+            short zPart = sb4->Vertices[1].Z;
+
+        
             ds21 = &SBu0->U7;
+
+
             ds24 = SBu0->U4 & 0xffff;
             ds13 = SBu0->U5;
             scratch = &_ScratchpadStart;
             scratchEndFlags = 0xffffffff;
             ds02 = *ds21;
 
-            gte_ldVZ0((ds02 >> 0x15) + ds28);
-            gte_ldVXY0((ds30 - (ds02 >> 10 & 0x7ff)) + (ds34 - (ds02 & 0x3ff)) * 0x10000);
+            gte_ldVZ0((ds02 >> 21) + zPart);
+            gte_ldVXY0((xPart - (ds02 >> 10 & 0x7ff)) + (yPart - (ds02 & 0x3ff)) * 0x10000);
 
             ds02 = SBu0->U8;
             SkyboxU0 *ds22 = SBu0 + 1;
@@ -125,25 +153,34 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
                 // coordinate transformation and perspective transformation
                 gte_rtps_b();
 
-                uint other = ds02 >> 0x15;
-                uint inner1 = ds02 >> 10;
-                uint inner2 = ds02 & 0x3ff;
-                ds02 = ds22->U1;
-
-                gte_ldVZ0(other + ds28);
-
                 int badGuy = 0;
                 gte_stSXY2(badGuy);
-                gte_ldVXY0((ds30 - (inner1 & 0x7ff)) + (ds34 - inner2) * 0x10000);
+
+                PackedVertex* pv = (PackedVertex*)&ds02;
+
+                uint zComp = pv->Z + zPart;
+                gte_ldVZ0(zComp);
+
+                uint xComp = xPart - pv->X;
+                uint yComp = yPart - pv->Y;
+
+                
+
+                
+
+                
+                
+                gte_ldVXY0(xComp + yComp * 0x10000);
                 
                 uint scratchData = Confused(badGuy);
 
-
-                ds22 = (SkyboxU0 *)&ds22->U2;
+                
                 scratchEndFlags = scratchEndFlags & scratchData;
                 *(uint *)scratch = scratchData;
                 scratch = (byte *)((int)scratch + 4);
 
+                ds02 = ds22->U1;
+                ds22 = (SkyboxU0 *)&ds22->U2;
             } while (ds22 != (SkyboxU0 *)(ds21 + ds24 + 2));
 
         } while ((scratchEndFlags & 0xF) != 0);

@@ -229,7 +229,7 @@ extern int _UnknownStorageU0;
 
 /// @brief WAD archive 4, Section 2 table 2 start
 /// @note Address: 0x80078a44
-extern int _WA4S2_Table2Start;
+extern SkyVertex** _WA4S2_Table2Start;
 
 /// @brief WAD archive 4, Section 2 table 2 count
 /// @note Address: 0x80078a40

@@ -9,13 +9,7 @@
 #include <vector.h>
 #include <draw_stuff.h>
 
-typedef struct
-{
-    short X;
-    short Y;
-    short u0;
-    short Z;
-} SkyVertex;
+
 
 
 uint Confused(int badGuy)
@@ -257,41 +251,7 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
 
 
 void DrawSkybox(int option, RotationMatrix *cameraA, RotationMatrix *cameraB)
-{
-    uint ds02;
-    int szCoords;
-    uint scratchData;
-    P_TAG *ptagA;
-    uint ds09;
-    uint ds13;
-    int ds14;
-    int *ds15;
-    int ds16;
-    int ds17;
-    uint scratchEndFlags;
-    int ds19;
-    int ds20;
-    uint *ds21;
-    SkyboxU0 *ds22;
-    int ds23;
-    uint ds24;
-    int ds25;
-    int ds27;
-    int ds28;
-    int ds29;
-    int ds30;
-    uint *ds31;
-    uint *puVar1;
-    uint *ds32;
-    int ds33;
-    int ds34;
-    byte *scratch;
-    uint ds37;
-    P_TAG *ptagB;
-    int *ds41;
-    int *ds43;
-    
-
+{   
     // Store registers (this is only needed for testing, but we can still do it)
     storeRegisters(&_RegisterStorage);
 
@@ -303,65 +263,62 @@ void DrawSkybox(int option, RotationMatrix *cameraA, RotationMatrix *cameraB)
     gte_ldR33(cameraA->R33);
     gte_ldtr(0, 0, 0);
 
+    SkyVertex** storage = (SkyVertex**)&_UnknownStorageU0;
+    SkyVertex** tableStart = _WA4S2_Table2Start;
 
-    ds43 = &_UnknownStorageU0;
-    ds14 = (int)&_UnknownStorageU0;
-    int tableStart = _WA4S2_Table2Start;
-
-
-    int tableEnd;
+    byte* tableEnd;
     if (option < 0) //true
     {
-        tableEnd = _WA4S2_Table2Start + _WA4S2_Table2Count * 4;
-        ds43 = (int *)ds14; // empty storage?
+        tableEnd = (byte*)(_WA4S2_Table2Start + _WA4S2_Table2Count);
     }
     else 
     {
-        tableEnd = *(int *)(_WA4S2_U7 + option * 4);
+        tableEnd = *(byte**)(_WA4S2_U7 + option * 4);
     }
 
     while (true) 
     {
+        SkyVertex *vertex;
+
         if (option < 0) 
         {
-            ds15 = *(int **)tableStart; // first entry
-            if (tableStart == tableEnd) 
+            vertex = *tableStart; // first entry
+            if (tableStart == (SkyVertex**)tableEnd) 
             {
 
 DrawSkybox_A:
-                int result = HandleInner(ds43, cameraB);
+                int result = HandleInner((int*)storage, cameraB);
                 if (result == 1)
                 {
                     return;
                 }
             }
-            tableStart = tableStart + 4;
+            tableStart++;
         }
         else 
         {
-            if (*(byte *)tableEnd == 0xff)
+            if (*tableEnd == 0xFF)
             {
                 goto DrawSkybox_A;
             }
 
-            ds15 = *(int **)(tableStart + (uint)*(byte *)tableEnd * 4);
+            vertex = tableStart[*tableEnd];
             tableEnd++;
         }
 
-        gte_ldVXY0(*ds15); //x = 0x03ec, y = 0x0072
-        gte_ldVZ0(ds15[1] >> 16); // z = 0xff5b
+        gte_ldVXY0(vertex->XY); //x = 0x03ec, y = 0x0072
+        gte_ldVZ0(vertex->Z); // z = 0xff5b
 
         // coordinate transformation and perspective transformation
         gte_rtps_b();
 
         // store 3 screen coordinates to non-continuous addresses. Store screen z 0, 1, 2
-        gte_stSZ3(szCoords);
-        gte_stMAC3(szCoords); // 0x38d
+        int result;
+        gte_stMAC3(result); // 0x38d
 
-        if (0 < szCoords - (short)ds15[1]) // 0x01FF
+        if (result - vertex->u0 > 0) // 0x01FF
         {
-            *ds43 = (int)ds15; // addr of the entry
-            ds43 = (int *)((int **)ds43 + 1); // place it unknown storage?
+            *storage++ = vertex; // addr of the entry, place it unknown storage?
         }
     }
 }

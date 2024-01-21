@@ -57,20 +57,6 @@
 )
 
 
-
-typedef struct
-{
-    int U1;
-    int U2;
-    int U3;
-    int U4;
-    int U5;
-    int U6;
-    uint U7;
-    int U8;
-} SkyboxU0;
-_Static_assert(sizeof(SkyboxU0) == 32);
-
 /**
  * @brief Adds a primitive to a linked list.
  * @details Seems to be a staging area that gets turned into an ordering table later.

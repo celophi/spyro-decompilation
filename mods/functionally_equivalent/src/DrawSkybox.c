@@ -58,6 +58,19 @@ _Static_assert(sizeof(PackedVertex) == 4);
 
 typedef struct
 {
+    PackedVertex PV1;
+    int U2;
+    int U3;
+    int U4;
+    int U5;
+    int U6;
+    PackedVertex PV;
+    PackedVertex PV8;
+} SkyboxU0;
+_Static_assert(sizeof(SkyboxU0) == 32);
+
+typedef struct
+{
     short X;
     short Y;
     short u0;
@@ -77,7 +90,6 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
     uint ds13;
     byte *scratch;
     uint scratchEndFlags;
-    uint ds02;
     
     *ds43 = 0;
 
@@ -133,20 +145,25 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
             short zPart = sb4->Vertices[1].Z;
 
         
-            ds21 = &SBu0->U7;
+            ds21 = (uint*)&SBu0->PV;
+            PackedVertex* start = &SBu0->PV;
 
 
             ds24 = SBu0->U4 & 0xffff;
             ds13 = SBu0->U5;
             scratch = &_ScratchpadStart;
             scratchEndFlags = 0xffffffff;
-            ds02 = *ds21;
+            
 
-            gte_ldVZ0((ds02 >> 21) + zPart);
-            gte_ldVXY0((xPart - (ds02 >> 10 & 0x7ff)) + (yPart - (ds02 & 0x3ff)) * 0x10000);
+            PackedVertex* pv1 = &SBu0->PV;
 
-            ds02 = SBu0->U8;
-            SkyboxU0 *ds22 = SBu0 + 1;
+            gte_ldVZ0(pv1->Z + zPart);
+            gte_ldVXY0((xPart - pv1->X) + (yPart - pv1->Y) * 0x10000);
+
+            PackedVertex* pv = &SBu0->PV8;
+            SkyboxU0* ds22 = SBu0 + 1;
+
+            PackedVertex* ptr = (PackedVertex*)ds22;
 
             do 
             {
@@ -156,32 +173,22 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
                 int badGuy = 0;
                 gte_stSXY2(badGuy);
 
-                PackedVertex* pv = (PackedVertex*)&ds02;
-
-                uint zComp = pv->Z + zPart;
-                gte_ldVZ0(zComp);
-
-                uint xComp = xPart - pv->X;
-                uint yComp = yPart - pv->Y;
-
-                
-
-                
-
-                
-                
-                gte_ldVXY0(xComp + yComp * 0x10000);
-                
                 uint scratchData = Confused(badGuy);
-
-                
                 scratchEndFlags = scratchEndFlags & scratchData;
                 *(uint *)scratch = scratchData;
                 scratch = (byte *)((int)scratch + 4);
 
-                ds02 = ds22->U1;
-                ds22 = (SkyboxU0 *)&ds22->U2;
-            } while (ds22 != (SkyboxU0 *)(ds21 + ds24 + 2));
+                uint xComp = xPart - pv->X;
+                uint yComp = yPart - pv->Y;
+                uint zComp = zPart + pv->Z;
+
+                gte_ldVZ0(zComp);
+                gte_ldVXY0(xComp + yComp * 0x10000);
+                
+                pv = ptr;
+                ptr++;
+
+            } while (ptr != (PackedVertex *)(start + ds24 + 2));
 
         } while ((scratchEndFlags & 0xF) != 0);
 
@@ -191,7 +198,7 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
 
         while( true ) 
         {
-            ds02 = *puVar1;
+            uint ds02 = *puVar1;
             uint *ds32 = puVar1 + 2;
 
             if (puVar1 == ds31 + (ds13 & 0x1fff) * 2)

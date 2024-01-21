@@ -154,17 +154,26 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
             ds13 = SBu0->U5;
             scratch = &_ScratchpadStart;
             scratchEndFlags = 0xffffffff;
-            
 
-            PackedVertex* pv1 = &SBu0->PV;
-
-            gte_ldVZ0(pv1->Z + zPart);
-            gte_ldVXY0((xPart - pv1->X) + (yPart - pv1->Y) * 0x10000);
-
-            PackedVertex* pv = &SBu0->PV8;
-            
-            do 
+            for (uint i = 0; i <= vertexCount; i++)
             {
+                PackedVertex* pv = &SBu0->PV + i;
+
+                uint xComp = xPart - pv->X;
+                uint yComp = yPart - pv->Y;
+                uint zComp = zPart + pv->Z;
+
+                gte_ldVZ0(zComp);
+                gte_ldVXY0(xComp + yComp * 0x10000);
+
+                // This is here to satisfy testing requirements.
+                // There is an extra load of VXYZ0 which is not necessary in the original code and gets discarded.
+                // To ignore testing restrictions, remove this condition and modify the loop such that `i < vertexCount` instead of `i <= vertexCount`.
+                if (i == vertexCount)
+                {
+                    break;
+                }
+
                 // coordinate transformation and perspective transformation
                 gte_rtps_b();
 
@@ -175,17 +184,7 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
                 scratchEndFlags = scratchEndFlags & scratchData;
                 *(uint *)scratch = scratchData;
                 scratch = (byte *)((int)scratch + 4);
-
-                uint xComp = xPart - pv->X;
-                uint yComp = yPart - pv->Y;
-                uint zComp = zPart + pv->Z;
-
-                gte_ldVZ0(zComp);
-                gte_ldVXY0(xComp + yComp * 0x10000);
-                
-                pv++;
-
-            } while (pv != (PackedVertex *)(start + vertexCount + 1));
+            }
 
         } while ((scratchEndFlags & 0xF) != 0);
 

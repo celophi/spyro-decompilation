@@ -53,8 +53,8 @@ typedef struct
     uint U5 : 8;
     uint U3 : 12;
 
-} Insanity;
-_Static_assert(sizeof(Insanity) == 4);
+} PolygonColors;
+_Static_assert(sizeof(PolygonColors) == 4);
 
 typedef struct
 {
@@ -69,9 +69,8 @@ _Static_assert(sizeof(PolyUnk) == 4);
 
 typedef struct
 {
-    uint A1;
-    Insanity Ins;
-    uint A3;
+    PolyUnk PU;
+    PolygonColors Ins;
 } Sky3;
 
 uint Confused(uint* sxy2)
@@ -206,13 +205,8 @@ static int HandleInner(RotationMatrix *cameraB)
         Sky3* skyStart = (Sky3*)((int)vertexEnd + packedCount->U1);
         Sky3* skyCursor = skyStart;
 
-        while( true ) 
+        while(skyCursor != (Sky3*)(((uint*)skyStart) + packedCount->U3 * 2)) 
         {
-            if (skyCursor == (Sky3*)(((uint*)skyStart) + packedCount->U3 * 2))
-            {
-                break;
-            }
-
             if (szCoords - (int)ds41 < 1) 
             {
                 _DrawSkyboxU3 = 1;
@@ -239,19 +233,17 @@ static int HandleInner(RotationMatrix *cameraB)
                 return 1;
             }
 
-            uint ds02 = skyCursor->A1;
-
             // vertex indexes?
-            PolyUnk* pu = (PolyUnk*)&skyCursor->A1;
+            PolyUnk* pu = &skyCursor->PU;
             uint u1 = pu->U1 << 2;
             uint u3 = pu->U3;
             uint u5 = pu->U5 << 2;
 
             scratchEndFlags = *(uint *)(u3 + 0x1f800000);
             uint scratchData = *(uint *)(u5 + 0x1f800000);
-            ds02 = *(uint *)(u1 + 0x1f800000);
+            uint ds02 = *(uint *)(u1 + 0x1f800000);
 
-            Insanity* ins = &skyCursor->Ins;
+            PolygonColors* ins = &skyCursor->Ins;
             uint test = ins->U1 << 2;
             uint U12 = ins->U3;
             uint U13 = ins->U5 << 2;
@@ -282,8 +274,10 @@ static int HandleInner(RotationMatrix *cameraB)
                     polyF3->x2 = xy2->X;
                     polyF3->y2 = xy2->Y;
 
-                    ds37 = 0x84000000;
+                    
                     ds41[1] = *(int *)((int)vertexEnd + U12) + -0x10000000;
+
+                    ds37 = 0x84000000;
                     ds41 = ds41 + 5;
                 }
                 else 
@@ -298,18 +292,17 @@ static int HandleInner(RotationMatrix *cameraB)
                     
                     polyG3->x2 = xy2->X;
                     polyG3->y2 = xy2->Y;
-
-                    int ds16 = *(int *)((int)vertexEnd + U13);
-                    int ds19 = *(int *)((int)vertexEnd + test);
-                    ds37 = 0x86000000;
+                    
                     ds41[1] = *(int *)((int)vertexEnd + U12);
-                    ds41[3] = ds16;
-                    ds41[5] = ds19;
+                    ds41[3] = *(int *)((int)vertexEnd + U13);
+                    ds41[5] = *(int *)((int)vertexEnd + test);
+
+                    ds37 = 0x86000000;
                     ds41 = ds41 + 7;
                 }
             }
 
-            skyCursor = (Sky3*)&skyCursor->A3;
+            skyCursor++;
         }
     }
 

@@ -24,38 +24,6 @@
     )
 
 
-#define doScratchCalc(bad, scratch) \
-    __asm__ volatile(   \
-        ".set push;" \
-        ".set noreorder;" \
-        "sll         %1, %0, 5;" \
-        "lui         $t5, 0x0001;" \
-        "sub         $a1, %0, $t5;" \
-        "lui         $t6, 0x0100;" \
-        "bgtz        $a1, LAB_8004ee1c;" \
-        "sub         $a1, %0, $t6;" \
-        "addi        %1, %1, 0x1;" \
-        "LAB_8004ee1c:;" \
-        "bltz        $a1, LAB_8004ee28;" \
-        "sll         $a1, %0, 16;" \
-        "addi        %1, %1, 0x2;" \
-        "LAB_8004ee28:;" \
-        "lui         $t7, 0x0200;" \
-        "bgtz        $a1, LAB_8004ee34;" \
-        "sub         $a1, $a1, $t7;" \
-        "addi        %1, %1, 0x4;" \
-        "LAB_8004ee34:;" \
-        "bltz        $a1, LAB_8004ee40;" \
-        "nop;" \
-        "addi        %1, %1, 0x8;" \
-        "LAB_8004ee40:;" \
-        "nop;" \
-        ".set pop;" \
-        : "+r" (bad), "+r" (scratch) \
-        : \
-        : "$a1", "$t5", "$t6", "$t7" \
-)
-
 
 /**
  * @brief Adds a primitive to a linked list.

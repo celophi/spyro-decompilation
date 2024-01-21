@@ -209,7 +209,7 @@ extern int _DrawSkyboxU4;
 
 /// @brief Starting area in RAM for the PSX scratchpad.
 /// @note Address: 0x1f800000
-extern byte _ScratchpadStart;
+extern uint _ScratchpadStart;
 
 /// @brief Storage area for MIPS registers
 /// @note Address: 0x80077dd8

@@ -75,6 +75,36 @@ typedef struct {
     u_short	pad2;
 } POLY_FT4;
 
+typedef struct
+{
+    P_TAG tag;
+    short x0;
+    short y0;
+    u_char r1;
+    u_char g1;
+    u_char b1;
+    u_char pad1;
+    short x1;
+    short y1;
+    u_char r2;
+    u_char g2;
+    u_char b2;
+    u_char pad2;
+    short x2;
+    short y2;
+} POLY_G3;
+
+typedef struct
+{
+    P_TAG tag;
+    short x0;
+    short y0;
+    short x1;
+    short y1;
+    short x2;
+    short y2;
+} POLY_F3;
+
 typedef struct {
 	u_long	tag;
 	u_long	code[15];

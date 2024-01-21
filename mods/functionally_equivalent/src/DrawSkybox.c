@@ -61,7 +61,8 @@ typedef struct
     PackedVertex PV1;
     int U2;
     int U3;
-    int U4;
+    short countA;
+    short U4;
     int U5;
     int U6;
     PackedVertex PV;
@@ -86,7 +87,7 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
 {
     P_TAG *ptagA;
     uint *ds21;
-    uint ds24;
+    uint vertexCount;
     uint ds13;
     byte *scratch;
     uint scratchEndFlags;
@@ -149,7 +150,7 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
             PackedVertex* start = &SBu0->PV;
 
 
-            ds24 = SBu0->U4 & 0xffff;
+            vertexCount = SBu0->countA;
             ds13 = SBu0->U5;
             scratch = &_ScratchpadStart;
             scratchEndFlags = 0xffffffff;
@@ -161,10 +162,7 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
             gte_ldVXY0((xPart - pv1->X) + (yPart - pv1->Y) * 0x10000);
 
             PackedVertex* pv = &SBu0->PV8;
-            SkyboxU0* ds22 = SBu0 + 1;
-
-            PackedVertex* ptr = (PackedVertex*)ds22;
-
+            
             do 
             {
                 // coordinate transformation and perspective transformation
@@ -185,15 +183,14 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
                 gte_ldVZ0(zComp);
                 gte_ldVXY0(xComp + yComp * 0x10000);
                 
-                pv = ptr;
-                ptr++;
+                pv++;
 
-            } while (ptr != (PackedVertex *)(start + ds24 + 2));
+            } while (pv != (PackedVertex *)(start + vertexCount + 1));
 
         } while ((scratchEndFlags & 0xF) != 0);
 
 
-        uint *ds31 = (uint *)((int)ds21 + (ds13 >> 0xe) + ds24 * 4);
+        uint *ds31 = (uint *)((int)ds21 + (ds13 >> 0xe) + vertexCount * 4);
         uint *puVar1 = ds31;
 
         while( true ) 
@@ -254,7 +251,7 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
                 if ((ds02 == ds37) && (ds02 == (ds09 & 0x3fc))) 
                 {
                     ds37 = 0x84000000;
-                    ds41[1] = *(int *)((int)ds21 + ds02 + ds24 * 4) + -0x10000000;
+                    ds41[1] = *(int *)((int)ds21 + ds02 + vertexCount * 4) + -0x10000000;
                     ds41[2] = ds28;
                     ds41[3] = ds30;
                     ds41[4] = ds34;
@@ -262,10 +259,10 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
                 }
                 else 
                 {
-                    int ds16 = *(int *)((int)ds21 + ds37 + ds24 * 4);
-                    int ds19 = *(int *)((int)ds21 + (ds09 & 0x3fc) + ds24 * 4);
+                    int ds16 = *(int *)((int)ds21 + ds37 + vertexCount * 4);
+                    int ds19 = *(int *)((int)ds21 + (ds09 & 0x3fc) + vertexCount * 4);
                     ds37 = 0x86000000;
-                    ds41[1] = *(int *)((int)ds21 + ds02 + ds24 * 4);
+                    ds41[1] = *(int *)((int)ds21 + ds02 + vertexCount * 4);
                     ds41[3] = ds16;
                     ds41[5] = ds19;
                     ds41 = ds41 + 7;

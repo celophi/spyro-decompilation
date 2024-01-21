@@ -41,10 +41,9 @@ typedef struct
     short GZ;
     PackedCount PC;
     int U6;
-    PackedVertex PV;
-    PackedVertex PV8;
+    PackedVertex PV[];
 } SkyboxU0;
-_Static_assert(sizeof(SkyboxU0) == 32);
+//_Static_assert(sizeof(SkyboxU0) == 32);
 
 typedef struct
 {
@@ -56,6 +55,13 @@ typedef struct
 
 } Insanity;
 _Static_assert(sizeof(Insanity) == 4);
+
+typedef struct
+{
+    uint A1;
+    uint A2;
+    uint A3;
+} Sky3;
 
 uint Confused(uint* sxy2)
 {
@@ -85,16 +91,16 @@ uint Confused(uint* sxy2)
     return scratch;
 }
 
-static int HandleInner(int* ds43, RotationMatrix *cameraB)
+static int HandleInner(RotationMatrix *cameraB)
 {
     P_TAG *ptagA;
-    uint *ds21;
+    PackedVertex* ref;
+
+
     uint vertexCount;
     PackedCount* packedCount;
     
     uint scratchEndFlags;
-    
-    *ds43 = 0;
 
     gte_ldR11R12(cameraB->R11R12);
     gte_ldR13R21(cameraB->R13R21);
@@ -102,7 +108,7 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
     gte_ldR31R32(cameraB->R31R32);
     gte_ldR33(cameraB->R33);
 
-    ds43 = &_UnknownStorageU0;
+    SkyVertex** skyVertexStorage = &_SkyVertexStorage;
     P_TAG *ptagB = (P_TAG *)((int)_PrimitiveList + 4);
     uint ds37 = 0;
     int szCoords = _DrawSkyboxU4 - 0x400;
@@ -112,9 +118,9 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
     {
         do 
         {
-            SkyboxU0 *SBu0 = (SkyboxU0 *)*ds43;
+            SkyboxU0 *SBu0 = (SkyboxU0 *)*skyVertexStorage;
+            skyVertexStorage++;
 
-            ds43 = (int *)((SkyboxU0 **)ds43 + 1);
             int tail = (int)_PrimitiveList;
 
             if (SBu0 == NULL) 
@@ -141,8 +147,6 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
                 return 1;
             }
 
-            ds21 = (uint*)&SBu0->PV;
-
             vertexCount = SBu0->VertexCount;
             packedCount = &SBu0->PC;
 
@@ -152,7 +156,8 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
             // Iterate through all vertices and calculate RTPS.
             for (uint i = 0; i <= vertexCount; i++)
             {
-                PackedVertex* pv = &SBu0->PV + i;
+                PackedVertex* pv = &SBu0->PV[i];
+                ref = pv;
 
                 // Calculate the X, Y, Z component from global values.
                 uint xComp = SBu0->GX - pv->X;
@@ -185,15 +190,14 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
 
         } while ((scratchEndFlags & 0xF) != 0);
 
-        uint *ds31 = (uint *)((int)ds21 + packedCount->U1 + vertexCount * 4);
-        uint *puVar1 = ds31;
+        // Get the address of the end of all the vertices.
+        PackedVertex* vertexEnd = ref;
+        Sky3* skyStart = (Sky3*)((int)vertexEnd + packedCount->U1);
+        Sky3* skyCursor = skyStart;
 
         while( true ) 
         {
-            uint ds02 = *puVar1;
-            uint *ds32 = puVar1 + 2;
-
-            if (puVar1 == ds31 + packedCount->U3 * 2)
+            if (skyCursor == (Sky3*)(((uint*)skyStart) + packedCount->U3 * 2))
             {
                 break;
             }
@@ -224,11 +228,14 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
                 return 1;
             }
 
+            uint ds02 = skyCursor->A1;
+
             scratchEndFlags = *(uint *)((ds02 >> 20) + 0x1f800000);
             uint scratchData = *(uint *)((ds02 >> 10 & 0x3FC) + 0x1f800000);
             ds02 = *(uint *)((ds02 & 0x3fc) + 0x1f800000);
-            uint ds09 = puVar1[1];
-            puVar1 = ds32;
+            uint ds09 = skyCursor->A2;
+
+            skyCursor = (Sky3*)&skyCursor->A3;
 
             Insanity* ins = (Insanity*)&ds09;
             uint test = ins->U1 << 2;
@@ -249,7 +256,7 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
                 if ((U12 == U13) && (U12 == test)) 
                 {
                     ds37 = 0x84000000;
-                    ds41[1] = *(int *)((int)ds21 + U12 + vertexCount * 4) + -0x10000000;
+                    ds41[1] = *(int *)((int)vertexEnd + U12) + -0x10000000;
                     ds41[2] = ds28;
                     ds41[3] = ds30;
                     ds41[4] = ds34;
@@ -257,10 +264,10 @@ static int HandleInner(int* ds43, RotationMatrix *cameraB)
                 }
                 else 
                 {
-                    int ds16 = *(int *)((int)ds21 + U13 + vertexCount * 4);
-                    int ds19 = *(int *)((int)ds21 + test + vertexCount * 4);
+                    int ds16 = *(int *)((int)vertexEnd + U13);
+                    int ds19 = *(int *)((int)vertexEnd + test);
                     ds37 = 0x86000000;
-                    ds41[1] = *(int *)((int)ds21 + U12 + vertexCount * 4);
+                    ds41[1] = *(int *)((int)vertexEnd + U12);
                     ds41[3] = ds16;
                     ds41[5] = ds19;
                     ds41 = ds41 + 7;
@@ -286,7 +293,7 @@ void DrawSkybox(int option, RotationMatrix *cameraA, RotationMatrix *cameraB)
     gte_ldR33(cameraA->R33);
     gte_ldtr(0, 0, 0);
 
-    SkyVertex** storage = (SkyVertex**)&_UnknownStorageU0;
+    SkyVertex** storage = &_SkyVertexStorage;
     SkyVertex** tableStart = _WA4S2_Table2Start;
 
     byte* tableEnd;
@@ -310,7 +317,8 @@ void DrawSkybox(int option, RotationMatrix *cameraA, RotationMatrix *cameraB)
             {
 
 DrawSkybox_A:
-                int result = HandleInner((int*)storage, cameraB);
+                *storage = 0;
+                int result = HandleInner(cameraB);
                 if (result == 1)
                 {
                     return;

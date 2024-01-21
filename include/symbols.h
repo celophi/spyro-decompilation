@@ -225,7 +225,7 @@ extern int _RegisterStorage_RA;
 
 /// @brief Unknown storage area.
 /// @note Address: 0x8006fcf4
-extern int _UnknownStorageU0;
+extern SkyVertex* _SkyVertexStorage;
 
 /// @brief WAD archive 4, Section 2 table 2 start
 /// @note Address: 0x80078a44

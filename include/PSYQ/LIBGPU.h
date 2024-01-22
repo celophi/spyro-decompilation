@@ -10,6 +10,7 @@ typedef struct {
     byte b0;
     byte code;
 } P_TAG;
+_Static_assert(sizeof(P_TAG) == 8);
 
 typedef struct {
     u_long tag;
@@ -93,6 +94,7 @@ typedef struct
     short x2;
     short y2;
 } POLY_G3;
+_Static_assert(sizeof(POLY_G3) == 28);
 
 typedef struct
 {
@@ -104,6 +106,7 @@ typedef struct
     short x2;
     short y2;
 } POLY_F3;
+_Static_assert(sizeof(POLY_F3) == 20);
 
 typedef struct {
 	u_long	tag;

@@ -41,9 +41,8 @@ typedef struct
     short GZ;
     PackedCount PC;
     int U6;
-    PackedVertex PV[];
 } SkyboxU0;
-//_Static_assert(sizeof(SkyboxU0) == 32);
+_Static_assert(sizeof(SkyboxU0) == 24);
 
 typedef struct
 {
@@ -104,8 +103,7 @@ uint Confused(uint* sxy2)
 static int HandleInner(RotationMatrix *cameraB)
 {
     P_TAG *ptagA;
-    PackedVertex* ref;
-
+    uint *vertexEnd;
 
     uint vertexCount;
     PackedCount* packedCount;
@@ -160,14 +158,16 @@ static int HandleInner(RotationMatrix *cameraB)
             vertexCount = SBu0->VertexCount;
             packedCount = &SBu0->PC;
 
+            PackedVertex* packs = (PackedVertex*)(SBu0 + 1);
+            vertexEnd = (uint*)(packs + vertexCount);
+
             uint *scratch = &_ScratchpadStart;
             scratchEndFlags = 0xFFFFFFFF;
 
             // Iterate through all vertices and calculate RTPS.
             for (uint i = 0; i <= vertexCount; i++)
             {
-                PackedVertex* pv = &SBu0->PV[i];
-                ref = pv;
+                PackedVertex* pv = &packs[i];
 
                 // Calculate the X, Y, Z component from global values.
                 uint xComp = SBu0->GX - pv->X;
@@ -201,7 +201,6 @@ static int HandleInner(RotationMatrix *cameraB)
         } while ((scratchEndFlags & 0xF) != 0);
 
         // Get the address of the end of all the vertices.
-        PackedVertex* vertexEnd = ref;
         Sky3* skyStart = (Sky3*)((int)vertexEnd + packedCount->U1);
         Sky3* skyCursor = skyStart;
 
@@ -259,45 +258,50 @@ static int HandleInner(RotationMatrix *cameraB)
                 Vec2u16* xy1 = (Vec2u16*)&ds30;
                 Vec2u16* xy2 = (Vec2u16*)&ds34;
 
+                // These are assigned here instead of the conditional because otherwise, test fails with a difference in memory.
+                // It's probably a mistake from the developers.
+                POLY_G3* polyG3 = (POLY_G3*)ds41;
+
+                polyG3->x0 = xy0->X;
+                polyG3->y0 = xy0->Y;
+
+                polyG3->x1 = xy1->X;
+                polyG3->y1 = xy1->Y;
+                
+                polyG3->x2 = xy2->X;
+                polyG3->y2 = xy2->Y;
+
                 _PrimitiveList = ds41;
 
                 if ((U12 == U13) && (U12 == test)) 
                 {
                     POLY_F3* polyF3 = (POLY_F3*)ds41;
 
+                    ds37 = 0x84000000;
+                    ds41[1] = *(int *)((int)vertexEnd + U12) + -0x10000000;
+                    
+                    //ds41[2] = ds28;
                     polyF3->x0 = xy0->X;
                     polyF3->y0 = xy0->Y;
 
+
+                    //ds41[3] = ds30;
                     polyF3->x1 = xy1->X;
                     polyF3->y1 = xy1->Y;
-                    
+
+                    //ds41[4] = ds34;
                     polyF3->x2 = xy2->X;
                     polyF3->y2 = xy2->Y;
 
-                    
-                    ds41[1] = *(int *)((int)vertexEnd + U12) + -0x10000000;
 
-                    ds37 = 0x84000000;
                     ds41 = ds41 + 5;
                 }
                 else 
                 {
-                    POLY_G3* polyG3 = (POLY_G3*)ds41;
-
-                    polyG3->x0 = xy0->X;
-                    polyG3->y0 = xy0->Y;
-
-                    polyG3->x1 = xy1->X;
-                    polyG3->y1 = xy1->Y;
-                    
-                    polyG3->x2 = xy2->X;
-                    polyG3->y2 = xy2->Y;
-                    
+                    ds37 = 0x86000000;
                     ds41[1] = *(int *)((int)vertexEnd + U12);
                     ds41[3] = *(int *)((int)vertexEnd + U13);
                     ds41[5] = *(int *)((int)vertexEnd + test);
-
-                    ds37 = 0x86000000;
                     ds41 = ds41 + 7;
                 }
             }

@@ -14,6 +14,7 @@ typedef struct
     ushort X;
     ushort Y;
 } Vec2u16;
+_Static_assert(sizeof(Vec2u16) == 4);
 
 typedef struct
 {

@@ -102,7 +102,7 @@ static Vec2s16 ConvertToVector(BoundedVertex* boundedVector)
 /// @brief Converts a vector to a bounded vector with metadata about the offscreen visibility.
 /// @param vector 2D vector that is scaled up by 32x in order to hold metadata about the offscreen coordinate positions.
 /// @return Vector with out of bounds information.
-BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
+static BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
 {
     // Scale the vector by 32 in or to make 5 bits to hold metadata about which coordinates are outside the camera range.
     BoundedVertex boundedVector = { .vector = *(uint*)vector << 5 };
@@ -130,16 +130,84 @@ BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
     return boundedVector;
 }
 
+static byte RunPerspectiveTransformations(SkyboxU0* skybox)
+{
+    uint vertexCount = skybox->VertexCount;
+    PackedVertex* packs = (PackedVertex*)(skybox + 1);
+
+    BoundedVertex *storedVectors = &_ScratchpadDrawSkybox;
+    byte endFlags = 0x0F;
+
+    // Iterate through all vertices and calculate RTPS.
+    for (uint i = 0; i <= vertexCount; i++)
+    {
+        PackedVertex* pv = &packs[i];
+
+        // Calculate the X, Y, Z component from global values.
+        uint xComp = skybox->GX - pv->X;
+        uint yComp = skybox->GY - pv->Y;
+        uint zComp = skybox->GZ + pv->Z;
+
+        gte_ldVZ0(zComp);
+        gte_ldVXY0(xComp + yComp * 0x10000);
+
+        // This is here to satisfy testing requirements.
+        // There is an extra load of VXYZ0 which is not necessary in the original code and gets discarded.
+        // To ignore testing restrictions, remove this condition and modify the loop such that `i < vertexCount` instead of `i <= vertexCount`.
+        if (i == vertexCount)
+        {
+            break;
+        }
+
+        // coordinate transformation and perspective transformation
+        gte_rtps_b();
+
+        uint badGuy = 0;
+        gte_stSXY2(badGuy);
+
+        // Convert this vector to a structure that has out of bounds information.
+        BoundedVertex bv = ConvertToBoundedVector((Vec2s16*)&badGuy);
+            
+        // Set flags based on the boundary metadata to make sure that a primitive can be drawn.
+        endFlags = endFlags & bv.flags;
+
+        // Save calculation to the scratchpad for later.
+        *storedVectors++ = bv;
+    }
+
+    return endFlags;
+}
+
+static void thing(int* polygon, P_TAG* ptagB, uint ptagMask, P_TAG* ptagA)
+{
+    int tail = (int)_PrimitiveList;
+    PrimitiveLinkedList* stageStart = _PrimitiveStagingStart;
+    _PrimitiveList = polygon;
+
+    if ((P_TAG *)polygon != ptagB) 
+    {
+        ptagA = _PrimitiveStagingStart[0x7ff].Tail;
+        *(uint *)tail = ptagMask ^ 0x80000000;
+        stageStart[0x7FF].Tail = (P_TAG *)tail;
+
+        if (ptagA == NULL) 
+        {
+            stageStart[0x7FF].Head = ptagB;
+        }
+        else 
+        {
+            ptagA->addr = (u_long)ptagB;
+        }
+    }
+}
 
 static int HandleInner(RotationMatrix *cameraB)
 {
     P_TAG *ptagA;
     uint *vertexEnd;
 
-    uint vertexCount;
-    PackedCount* packedCount;
     
-    byte endFlags;
+    PackedCount* packedCount;
 
     gte_ldR11R12(cameraB->R11R12);
     gte_ldR13R21(cameraB->R13R21);
@@ -149,90 +217,32 @@ static int HandleInner(RotationMatrix *cameraB)
 
     SkyVertex** skyVertexStorage = &_SkyVertexStorage;
     P_TAG *ptagB = (P_TAG *)((int)_PrimitiveList + 4);
-    uint ds37 = 0;
-    int szCoords = _DrawSkyboxU4 - 0x400;
+    uint ptagMask = 0;
     int *polygon = (int *)ptagB;
 
     while (true)
     {
-        do 
+        while (true) 
         {
             SkyboxU0 *SBu0 = (SkyboxU0 *)*skyVertexStorage;
             skyVertexStorage++;
 
-            int tail = (int)_PrimitiveList;
-
             if (SBu0 == NULL) 
             {
-                PrimitiveLinkedList* stageStart = _PrimitiveStagingStart;
-                _PrimitiveList = polygon;
-
-                if ((P_TAG *)polygon != ptagB) 
-                {
-                    ptagA = _PrimitiveStagingStart[0x7ff].Tail;
-                    *(uint *)tail = ds37 ^ 0x80000000;
-                    stageStart[0x7FF].Tail = (P_TAG *)tail;
-
-                    if (ptagA == NULL) 
-                    {
-                        stageStart[0x7FF].Head = ptagB;
-                    }
-                    else 
-                    {
-                        ptagA->addr = (u_long)ptagB;
-                    }
-                }
-
+                thing(polygon, ptagB, ptagMask, ptagA);
                 return 1;
             }
 
-            vertexCount = SBu0->VertexCount;
-            packedCount = &SBu0->PC;
+            byte endFlags = RunPerspectiveTransformations(SBu0);
 
-            PackedVertex* packs = (PackedVertex*)(SBu0 + 1);
-            vertexEnd = (uint*)(packs + vertexCount);
-
-            BoundedVertex *storedVectors = &_ScratchpadDrawSkybox;
-            endFlags = 0x0F;
-
-            // Iterate through all vertices and calculate RTPS.
-            for (uint i = 0; i <= vertexCount; i++)
+            if ((endFlags & 0xF) == 0)
             {
-                PackedVertex* pv = &packs[i];
-
-                // Calculate the X, Y, Z component from global values.
-                uint xComp = SBu0->GX - pv->X;
-                uint yComp = SBu0->GY - pv->Y;
-                uint zComp = SBu0->GZ + pv->Z;
-
-                gte_ldVZ0(zComp);
-                gte_ldVXY0(xComp + yComp * 0x10000);
-
-                // This is here to satisfy testing requirements.
-                // There is an extra load of VXYZ0 which is not necessary in the original code and gets discarded.
-                // To ignore testing restrictions, remove this condition and modify the loop such that `i < vertexCount` instead of `i <= vertexCount`.
-                if (i == vertexCount)
-                {
-                    break;
-                }
-
-                // coordinate transformation and perspective transformation
-                gte_rtps_b();
-
-                uint badGuy = 0;
-                gte_stSXY2(badGuy);
-
-                // Convert this vector to a structure that has out of bounds information.
-                BoundedVertex bv = ConvertToBoundedVector((Vec2s16*)&badGuy);
-                 
-                // Set flags based on the boundary metadata to make sure that a primitive can be drawn.
-                endFlags = endFlags & bv.flags;
-
-                // Save calculation to the scratchpad for later.
-                *storedVectors++ = bv;
+                packedCount = &SBu0->PC;
+                PackedVertex* packs = (PackedVertex*)(SBu0 + 1);
+                vertexEnd = (uint*)(packs + SBu0->VertexCount);
+                break;
             }
-
-        } while ((endFlags & 0xF) != 0);
+        }
 
         // Get the address of the end of all the vertices.
         Sky3* skyStart = (Sky3*)((int)vertexEnd + packedCount->U1);
@@ -240,43 +250,20 @@ static int HandleInner(RotationMatrix *cameraB)
 
         while(skyCursor != (Sky3*)(((uint*)skyStart) + packedCount->U3 * 2)) 
         {
+            int szCoords = _DrawSkyboxU4 - 0x400;
             if (szCoords - (int)polygon < 1) 
             {
                 _DrawSkyboxU3 = 1;
-                int tail = (int)_PrimitiveList;
-                PrimitiveLinkedList* stageStart = _PrimitiveStagingStart;
-                _PrimitiveList = polygon;
-
-                if ((P_TAG *)polygon != ptagB) 
-                {
-                    ptagA = _PrimitiveStagingStart[0x7ff].Tail;
-                    *(uint *)tail = ds37 ^ 0x80000000;
-                    stageStart[0x7ff].Tail = (P_TAG *)tail;
-
-                    if (ptagA == NULL) 
-                    {
-                        stageStart[0x7ff].Head = ptagB;
-                    }
-                    else 
-                    {
-                        ptagA->addr = (u_long)ptagB;
-                    }
-                }
-
+                thing(polygon, ptagB, ptagMask, ptagA);
                 return 1;
             }
 
-            // During testing, it seems like clearing the last two bits with 0xFFFFFFFC doesn't change the output.
-            // However, they are kept here because it's technically the same as the assembly.
-            // It's probably a safeguard to make sure not to access a vertex on an unaligned DWORD boundary.
+            // The vertex indexes XY1 and XY2 have the last two bits cleared in the original code to prevent accessing on an unaligned address.
+            // This is removed, but can be added back if needed: XY1 & 0xFFFFFFFC, and XY2 & 0xFFFFFFFC.
             VertexIndex* pu = &skyCursor->PU;
-            uint u3 = pu->XY0;
-            uint u5 = pu->XY1 & 0xFFFFFFFC;
-            uint u1 = pu->XY2 & 0xFFFFFFFC;
-            
-            BoundedVertex* scaledXy0 = &_ScratchpadDrawSkybox + (u3 / sizeof(uint));
-            BoundedVertex* scaledXy1 = &_ScratchpadDrawSkybox + (u5 / sizeof(uint));
-            BoundedVertex* scaledXy2 = &_ScratchpadDrawSkybox + (u1 / sizeof(uint));
+            BoundedVertex* scaledXy0 = &_ScratchpadDrawSkybox + (pu->XY0 / sizeof(uint));
+            BoundedVertex* scaledXy1 = &_ScratchpadDrawSkybox + (pu->XY1 / sizeof(uint));
+            BoundedVertex* scaledXy2 = &_ScratchpadDrawSkybox + (pu->XY2 / sizeof(uint));
 
             PolygonColors* ins = &skyCursor->Ins;
             uint test = ins->U1 << 2;
@@ -286,7 +273,7 @@ static int HandleInner(RotationMatrix *cameraB)
             // only checks lower 5 bits, Should make triangle?
             if ((scaledXy0->flags & scaledXy1->flags & scaledXy2->flags & 0x1F) == 0) 
             {
-                *(uint *)_PrimitiveList = ds37 ^ (uint)polygon;
+                *(uint *)_PrimitiveList = ptagMask ^ (uint)polygon;
                 _PrimitiveList = polygon;
 
                 Vec2s16 xy0 = ConvertToVector(scaledXy0);
@@ -310,7 +297,7 @@ static int HandleInner(RotationMatrix *cameraB)
                 {
                     POLY_F3* polyF3 = (POLY_F3*)polygon;
 
-                    ds37 = 0x84000000;
+                    ptagMask = 0x84000000;
                     polygon[1] = *(int *)((int)vertexEnd + U12) + -0x10000000;
                     
                     polyF3->x0 = xy0.X;
@@ -326,7 +313,7 @@ static int HandleInner(RotationMatrix *cameraB)
                 }
                 else 
                 {
-                    ds37 = 0x86000000;
+                    ptagMask = 0x86000000;
                     polygon[1] = *(int *)((int)vertexEnd + U12);
                     polygon[3] = *(int *)((int)vertexEnd + U13);
                     polygon[5] = *(int *)((int)vertexEnd + test);

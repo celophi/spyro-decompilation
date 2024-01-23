@@ -65,11 +65,9 @@ _Static_assert(sizeof(SkyboxU0) == 24);
 
 typedef struct
 {
-    uint Unused1 : 2;
-    uint U1 : 8;
-    uint Unused2 : 2;
-    uint U5 : 8;
-    uint U3 : 12;
+    uint Color1 : 10;
+    uint Color2 : 10;
+    uint Color3 : 12;
 
 } PolygonColors;
 _Static_assert(sizeof(PolygonColors) == 4);
@@ -88,6 +86,15 @@ typedef struct
     VertexIndex PU;
     PolygonColors Ins;
 } Sky3;
+
+typedef struct
+{
+    byte Red;
+    byte Green;
+    byte Blue;
+    byte Padding;
+} RGBu8P;
+_Static_assert(sizeof(RGBu8P) == 4);
 
 /// @brief Converts a bounded vector to a normal 2D vector.
 /// @details Restores a vector that was scaled up (in order to hold additional metadata) back to it's original value.
@@ -266,11 +273,13 @@ static int HandleInner(RotationMatrix *cameraB)
             BoundedVertex* scaledXy2 = &_ScratchpadDrawSkybox + (pu->XY2 / sizeof(uint));
 
             PolygonColors* ins = &skyCursor->Ins;
-            uint test = ins->U1 << 2;
-            uint U12 = ins->U3;
-            uint U13 = ins->U5 << 2;
+            uint color1 = ins->Color1 & 0xFFFFFFFC;
+            uint color2 = ins->Color2 & 0xFFFFFFFC;
+            uint color3 = ins->Color3;
+            
 
             // only checks lower 5 bits, Should make triangle?
+            // Don't draw a triangle if all of three vertices exist off screen.
             if ((scaledXy0->flags & scaledXy1->flags & scaledXy2->flags & 0x1F) == 0) 
             {
                 *(uint *)_PrimitiveList = ptagMask ^ (uint)polygon;
@@ -293,12 +302,22 @@ static int HandleInner(RotationMatrix *cameraB)
                 polyG3->x2 = xy2.X;
                 polyG3->y2 = xy2.Y;
 
-                if ((U12 == U13) && (U12 == test)) 
+                // POLY_F3 and POLY_G3 have overlapping memory, so this can be set once here.
+                RGBu8P rgb = *(RGBu8P*)(vertexEnd + (color3 / sizeof(RGBu8P)));
+                polyG3->tag.r0 = rgb.Red;
+                polyG3->tag.b0 = rgb.Blue;
+                polyG3->tag.g0 = rgb.Green;
+                polyG3->tag.code = rgb.Padding;
+
+                // If all colors are the same draw POLY_F3.
+                if ((color3 == color2) && (color3 == color1)) 
                 {
                     POLY_F3* polyF3 = (POLY_F3*)polygon;
 
                     ptagMask = 0x84000000;
-                    polygon[1] = *(int *)((int)vertexEnd + U12) + -0x10000000;
+
+                    // I am not sure why this is necessary. What is going on here??
+                    polyF3->tag.code -= 0x10;
                     
                     polyF3->x0 = xy0.X;
                     polyF3->y0 = xy0.Y;
@@ -314,9 +333,18 @@ static int HandleInner(RotationMatrix *cameraB)
                 else 
                 {
                     ptagMask = 0x86000000;
-                    polygon[1] = *(int *)((int)vertexEnd + U12);
-                    polygon[3] = *(int *)((int)vertexEnd + U13);
-                    polygon[5] = *(int *)((int)vertexEnd + test);
+
+                    rgb = *(RGBu8P*)(vertexEnd + (color2 / sizeof(RGBu8P)));
+                    polyG3->r1 = rgb.Red;
+                    polyG3->b1 = rgb.Blue;
+                    polyG3->g1 = rgb.Green;
+                    polyG3->pad1 = rgb.Padding;
+
+                    rgb = *(RGBu8P*)(vertexEnd + (color1 / sizeof(RGBu8P)));
+                    polyG3->r2 = rgb.Red;
+                    polyG3->b2 = rgb.Blue;
+                    polyG3->g2 = rgb.Green;
+                    polyG3->pad2 = rgb.Padding;
 
                     polygon = (int*)(polyG3 + 1);
                 }

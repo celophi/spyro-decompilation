@@ -20,10 +20,12 @@ enum OffscreenStatus
 typedef byte OffscreenStatus;
 _Static_assert(sizeof(OffscreenStatus) == 1);
 
+/// @brief Represents a 2D vector that is upscaled in order to hold metadata about its visibiility.
+/// @details The flags member requires 5 bits of space.
 typedef union 
 {
     uint vector;
-    byte flags;
+    OffscreenStatus flags;
 } BoundedVertex;
 _Static_assert(sizeof(BoundedVertex) == 4);
 
@@ -74,18 +76,16 @@ _Static_assert(sizeof(PolygonColors) == 4);
 
 typedef struct
 {
-    uint Unused1 : 2;
-    uint U1 : 8;
-    uint Unused2 : 2;
-    uint U5 : 8;
-    uint U3 : 12;
+    uint XY2 : 10;
+    uint XY1 : 10;
+    uint XY0 : 12;
 
-} PolyUnk;
-_Static_assert(sizeof(PolyUnk) == 4);
+} VertexIndex;
+_Static_assert(sizeof(VertexIndex) == 4);
 
 typedef struct
 {
-    PolyUnk PU;
+    VertexIndex PU;
     PolygonColors Ins;
 } Sky3;
 
@@ -129,18 +129,6 @@ BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
 
     return boundedVector;
 }
-
-/// @brief Restores the vector back to its original value without the flags.
-/// @param value Shifted vector.
-/// @return Vec2s16
-static Vec2s16 UnboundVector(uint value)
-{
-    int shiftedValue = (int)value >> 5;
-    return *(Vec2s16*)&shiftedValue;
-}
-
-
-
 
 
 static int HandleInner(RotationMatrix *cameraB)
@@ -204,7 +192,7 @@ static int HandleInner(RotationMatrix *cameraB)
             PackedVertex* packs = (PackedVertex*)(SBu0 + 1);
             vertexEnd = (uint*)(packs + vertexCount);
 
-            uint *scratch = &_ScratchpadStart;
+            BoundedVertex *storedVectors = &_ScratchpadDrawSkybox;
             endFlags = 0x0F;
 
             // Iterate through all vertices and calculate RTPS.
@@ -234,13 +222,14 @@ static int HandleInner(RotationMatrix *cameraB)
                 uint badGuy = 0;
                 gte_stSXY2(badGuy);
 
+                // Convert this vector to a structure that has out of bounds information.
                 BoundedVertex bv = ConvertToBoundedVector((Vec2s16*)&badGuy);
                  
-
+                // Set flags based on the boundary metadata to make sure that a primitive can be drawn.
                 endFlags = endFlags & bv.flags;
 
                 // Save calculation to the scratchpad for later.
-                *scratch++ = bv.vector;
+                *storedVectors++ = bv;
             }
 
         } while ((endFlags & 0xF) != 0);
@@ -277,12 +266,14 @@ static int HandleInner(RotationMatrix *cameraB)
                 return 1;
             }
 
-            // vertex indexes?
-            PolyUnk* pu = &skyCursor->PU;
-            uint u1 = pu->U1 << 2;
-            uint u3 = pu->U3;
-            uint u5 = pu->U5 << 2;
-
+            // During testing, it seems like clearing the last two bits with 0xFFFFFFFC doesn't change the output.
+            // However, they are kept here because it's technically the same as the assembly.
+            // It's probably a safeguard to make sure not to access a vertex on an unaligned DWORD boundary.
+            VertexIndex* pu = &skyCursor->PU;
+            uint u3 = pu->XY0;
+            uint u5 = pu->XY1 & 0xFFFFFFFC;
+            uint u1 = pu->XY2 & 0xFFFFFFFC;
+            
             BoundedVertex* scaledXy0 = &_ScratchpadDrawSkybox + (u3 / sizeof(uint));
             BoundedVertex* scaledXy1 = &_ScratchpadDrawSkybox + (u5 / sizeof(uint));
             BoundedVertex* scaledXy2 = &_ScratchpadDrawSkybox + (u1 / sizeof(uint));

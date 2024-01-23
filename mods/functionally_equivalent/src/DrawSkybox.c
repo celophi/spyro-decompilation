@@ -9,11 +9,28 @@
 #include <vector.h>
 #include <draw_stuff.h>
 
-typedef struct
+/// @brief Defines flags that represent whether a vector is outside of the visibility of the camera.
+enum OffscreenStatus
 {
-    short X;
-    short Y;
-} SXY;
+    OFFSCREEN_BOTTOM = 1,
+    OFFSCREEN_TOP = 2,
+    OFFSCREEN_LEFT = 4,
+    OFFSCREEN_RIGHT = 8,
+};
+typedef byte OffscreenStatus;
+_Static_assert(sizeof(OffscreenStatus) == 1);
+
+typedef union 
+{
+    uint vector;
+    byte flags;
+} BoundedVertex;
+_Static_assert(sizeof(BoundedVertex) == 4);
+
+
+/// @brief Scratchpad start in RAM used for storing skybox vectors.
+/// @note Address: 0x1f800000
+extern BoundedVertex _ScratchpadDrawSkybox;
 
 typedef struct
 {
@@ -72,33 +89,59 @@ typedef struct
     PolygonColors Ins;
 } Sky3;
 
-uint Confused(uint* sxy2)
+/// @brief Converts a bounded vector to a normal 2D vector.
+/// @details Restores a vector that was scaled up (in order to hold additional metadata) back to it's original value.
+/// @param boundedVector Vector that contains metadata about its visibility.
+/// @return Restored 2D vector.
+static Vec2s16 ConvertToVector(BoundedVertex* boundedVector)
 {
-    SXY* vec = (SXY*)sxy2;
-    uint scratch = *sxy2 << 5;
-
-    if (vec->Y <= 0)
-    {
-        scratch += 1;
-    }
-
-    if (vec->Y >= 256)
-    {
-        scratch += 2;
-    }
-
-    if (vec->X <= 0)
-    {
-        scratch += 4;
-    }
-
-    if (vec->X >= 512)
-    {
-        scratch += 8;
-    }
-
-    return scratch;
+    int originalValue = (int)boundedVector->vector >> 5;
+    return *(Vec2s16*)&originalValue;
 }
+
+/// @brief Converts a vector to a bounded vector with metadata about the offscreen visibility.
+/// @param vector 2D vector that is scaled up by 32x in order to hold metadata about the offscreen coordinate positions.
+/// @return Vector with out of bounds information.
+BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
+{
+    // Scale the vector by 32 in or to make 5 bits to hold metadata about which coordinates are outside the camera range.
+    BoundedVertex boundedVector = { .vector = *(uint*)vector << 5 };
+
+    if (vector->Y <= 0)
+    {
+        boundedVector.flags |= OFFSCREEN_BOTTOM;
+    }
+
+    if (vector->Y >= 256)
+    {
+        boundedVector.flags |= OFFSCREEN_TOP;
+    }
+
+    if (vector->X <= 0)
+    {
+        boundedVector.flags |= OFFSCREEN_LEFT;
+    }
+
+    if (vector->X >= 512)
+    {
+        boundedVector.flags |= OFFSCREEN_RIGHT;
+    }
+
+    return boundedVector;
+}
+
+/// @brief Restores the vector back to its original value without the flags.
+/// @param value Shifted vector.
+/// @return Vec2s16
+static Vec2s16 UnboundVector(uint value)
+{
+    int shiftedValue = (int)value >> 5;
+    return *(Vec2s16*)&shiftedValue;
+}
+
+
+
+
 
 static int HandleInner(RotationMatrix *cameraB)
 {
@@ -108,7 +151,7 @@ static int HandleInner(RotationMatrix *cameraB)
     uint vertexCount;
     PackedCount* packedCount;
     
-    uint scratchEndFlags;
+    byte endFlags;
 
     gte_ldR11R12(cameraB->R11R12);
     gte_ldR13R21(cameraB->R13R21);
@@ -120,7 +163,7 @@ static int HandleInner(RotationMatrix *cameraB)
     P_TAG *ptagB = (P_TAG *)((int)_PrimitiveList + 4);
     uint ds37 = 0;
     int szCoords = _DrawSkyboxU4 - 0x400;
-    int *ds41 = (int *)ptagB;
+    int *polygon = (int *)ptagB;
 
     while (true)
     {
@@ -134,9 +177,9 @@ static int HandleInner(RotationMatrix *cameraB)
             if (SBu0 == NULL) 
             {
                 PrimitiveLinkedList* stageStart = _PrimitiveStagingStart;
-                _PrimitiveList = ds41;
+                _PrimitiveList = polygon;
 
-                if ((P_TAG *)ds41 != ptagB) 
+                if ((P_TAG *)polygon != ptagB) 
                 {
                     ptagA = _PrimitiveStagingStart[0x7ff].Tail;
                     *(uint *)tail = ds37 ^ 0x80000000;
@@ -162,7 +205,7 @@ static int HandleInner(RotationMatrix *cameraB)
             vertexEnd = (uint*)(packs + vertexCount);
 
             uint *scratch = &_ScratchpadStart;
-            scratchEndFlags = 0xFFFFFFFF;
+            endFlags = 0x0F;
 
             // Iterate through all vertices and calculate RTPS.
             for (uint i = 0; i <= vertexCount; i++)
@@ -191,14 +234,16 @@ static int HandleInner(RotationMatrix *cameraB)
                 uint badGuy = 0;
                 gte_stSXY2(badGuy);
 
-                uint scratchData = Confused(&badGuy);
-                scratchEndFlags = scratchEndFlags & scratchData;
+                BoundedVertex bv = ConvertToBoundedVector((Vec2s16*)&badGuy);
+                 
+
+                endFlags = endFlags & bv.flags;
 
                 // Save calculation to the scratchpad for later.
-                *scratch++ = scratchData;
+                *scratch++ = bv.vector;
             }
 
-        } while ((scratchEndFlags & 0xF) != 0);
+        } while ((endFlags & 0xF) != 0);
 
         // Get the address of the end of all the vertices.
         Sky3* skyStart = (Sky3*)((int)vertexEnd + packedCount->U1);
@@ -206,14 +251,14 @@ static int HandleInner(RotationMatrix *cameraB)
 
         while(skyCursor != (Sky3*)(((uint*)skyStart) + packedCount->U3 * 2)) 
         {
-            if (szCoords - (int)ds41 < 1) 
+            if (szCoords - (int)polygon < 1) 
             {
                 _DrawSkyboxU3 = 1;
                 int tail = (int)_PrimitiveList;
                 PrimitiveLinkedList* stageStart = _PrimitiveStagingStart;
-                _PrimitiveList = ds41;
+                _PrimitiveList = polygon;
 
-                if ((P_TAG *)ds41 != ptagB) 
+                if ((P_TAG *)polygon != ptagB) 
                 {
                     ptagA = _PrimitiveStagingStart[0x7ff].Tail;
                     *(uint *)tail = ds37 ^ 0x80000000;
@@ -238,71 +283,64 @@ static int HandleInner(RotationMatrix *cameraB)
             uint u3 = pu->U3;
             uint u5 = pu->U5 << 2;
 
-            scratchEndFlags = *(uint *)(u3 + 0x1f800000);
-            uint scratchData = *(uint *)(u5 + 0x1f800000);
-            uint ds02 = *(uint *)(u1 + 0x1f800000);
+            BoundedVertex* scaledXy0 = &_ScratchpadDrawSkybox + (u3 / sizeof(uint));
+            BoundedVertex* scaledXy1 = &_ScratchpadDrawSkybox + (u5 / sizeof(uint));
+            BoundedVertex* scaledXy2 = &_ScratchpadDrawSkybox + (u1 / sizeof(uint));
 
             PolygonColors* ins = &skyCursor->Ins;
             uint test = ins->U1 << 2;
             uint U12 = ins->U3;
             uint U13 = ins->U5 << 2;
 
-            if ((scratchEndFlags & scratchData & ds02 & 0x1F) == 0) 
+            // only checks lower 5 bits, Should make triangle?
+            if ((scaledXy0->flags & scaledXy1->flags & scaledXy2->flags & 0x1F) == 0) 
             {
-                *(uint *)_PrimitiveList = ds37 ^ (uint)ds41;
-                int ds28 = (int)scratchEndFlags >> 5;
-                int ds30 = (int)scratchData >> 5;
-                int ds34 = (int)ds02 >> 5;
+                *(uint *)_PrimitiveList = ds37 ^ (uint)polygon;
+                _PrimitiveList = polygon;
 
-                Vec2u16* xy0 = (Vec2u16*)&ds28;
-                Vec2u16* xy1 = (Vec2u16*)&ds30;
-                Vec2u16* xy2 = (Vec2u16*)&ds34;
+                Vec2s16 xy0 = ConvertToVector(scaledXy0);
+                Vec2s16 xy1 = ConvertToVector(scaledXy1);
+                Vec2s16 xy2 = ConvertToVector(scaledXy2);
 
                 // These are assigned here instead of the conditional because otherwise, test fails with a difference in memory.
-                // It's probably a mistake from the developers.
-                POLY_G3* polyG3 = (POLY_G3*)ds41;
+                // It's probably a mistake from the developers where in the case of POLY_F3, additional bytes are added to the end.
+                POLY_G3* polyG3 = (POLY_G3*)polygon;
 
-                polyG3->x0 = xy0->X;
-                polyG3->y0 = xy0->Y;
+                polyG3->x0 = xy0.X;
+                polyG3->y0 = xy0.Y;
 
-                polyG3->x1 = xy1->X;
-                polyG3->y1 = xy1->Y;
+                polyG3->x1 = xy1.X;
+                polyG3->y1 = xy1.Y;
                 
-                polyG3->x2 = xy2->X;
-                polyG3->y2 = xy2->Y;
-
-                _PrimitiveList = ds41;
+                polyG3->x2 = xy2.X;
+                polyG3->y2 = xy2.Y;
 
                 if ((U12 == U13) && (U12 == test)) 
                 {
-                    POLY_F3* polyF3 = (POLY_F3*)ds41;
+                    POLY_F3* polyF3 = (POLY_F3*)polygon;
 
                     ds37 = 0x84000000;
-                    ds41[1] = *(int *)((int)vertexEnd + U12) + -0x10000000;
+                    polygon[1] = *(int *)((int)vertexEnd + U12) + -0x10000000;
                     
-                    //ds41[2] = ds28;
-                    polyF3->x0 = xy0->X;
-                    polyF3->y0 = xy0->Y;
+                    polyF3->x0 = xy0.X;
+                    polyF3->y0 = xy0.Y;
 
+                    polyF3->x1 = xy1.X;
+                    polyF3->y1 = xy1.Y;
 
-                    //ds41[3] = ds30;
-                    polyF3->x1 = xy1->X;
-                    polyF3->y1 = xy1->Y;
+                    polyF3->x2 = xy2.X;
+                    polyF3->y2 = xy2.Y;
 
-                    //ds41[4] = ds34;
-                    polyF3->x2 = xy2->X;
-                    polyF3->y2 = xy2->Y;
-
-
-                    ds41 = ds41 + 5;
+                    polygon = (int*)(polyF3 + 1);
                 }
                 else 
                 {
                     ds37 = 0x86000000;
-                    ds41[1] = *(int *)((int)vertexEnd + U12);
-                    ds41[3] = *(int *)((int)vertexEnd + U13);
-                    ds41[5] = *(int *)((int)vertexEnd + test);
-                    ds41 = ds41 + 7;
+                    polygon[1] = *(int *)((int)vertexEnd + U12);
+                    polygon[3] = *(int *)((int)vertexEnd + U13);
+                    polygon[5] = *(int *)((int)vertexEnd + test);
+
+                    polygon = (int*)(polyG3 + 1);
                 }
             }
 

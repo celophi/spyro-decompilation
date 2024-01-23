@@ -1,4 +1,5 @@
 _ScratchpadStart = 0x1f800000;
+_ScratchpadDrawSkybox = 0x1f800000;
 _DataSectionStart = 0x8006bbe0;
 _CdReading = 0x800756e0;
 _PrimitiveLinkedList = 0x8007581c;

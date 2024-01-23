@@ -18,6 +18,13 @@ _Static_assert(sizeof(Vec2u16) == 4);
 
 typedef struct
 {
+    short X;
+    short Y;
+} Vec2s16;
+_Static_assert(sizeof(Vec2s16) == 4);
+
+typedef struct
+{
     byte X;
     byte Y;
     byte Z;

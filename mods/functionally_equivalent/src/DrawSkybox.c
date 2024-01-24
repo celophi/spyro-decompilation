@@ -176,8 +176,6 @@ static BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
     return boundedVector;
 }
 
-
-
 static byte RunPerspectiveTransformations(SkyboxModel* skybox)
 {
     uint vertexCount = skybox->VertexCount;
@@ -227,53 +225,152 @@ static byte RunPerspectiveTransformations(SkyboxModel* skybox)
     return endFlags;
 }
 
-static void thing(int* polygon, P_TAG* ptagB, uint ptagMask, P_TAG* ptagA)
+static void StagePrimitive(P_TAG* polygon, P_TAG* current, uint ptagMask)
 {
-    int tail = (int)_PrimitiveList;
-    PrimitiveLinkedList* stageStart = _PrimitiveStagingStart;
+    P_TAG* head = _PrimitiveList;
     _PrimitiveList = polygon;
 
-    if ((P_TAG *)polygon != ptagB) 
+    if (polygon == current)
     {
-        ptagA = _PrimitiveStagingStart[0x7ff].Tail;
-        *(uint *)tail = ptagMask ^ 0x80000000;
-        stageStart[0x7FF].Tail = (P_TAG *)tail;
+        return;
+    }
 
-        if (ptagA == NULL) 
-        {
-            stageStart[0x7FF].Head = ptagB;
-        }
-        else 
-        {
-            ptagA->addr = (u_long)ptagB;
-        }
+    *(uint *)head = ptagMask ^ 0x80000000;
+
+    // Add the primitive onto the staging linked list.
+    P_TAG* tail = _PrimitiveStagingStart[0x7ff].Tail;
+    if (tail == NULL) 
+    {
+        _PrimitiveStagingStart[0x7FF].Head = current;
+    }
+    else 
+    {
+        tail->addr = (u_long)current;
+    }
+
+    _PrimitiveStagingStart[0x7FF].Tail = head;
+}
+
+/// @brief Draws either a POLY_F3 or POLY_G3 triangle if vertices exist on screen.
+/// @param metadata 
+/// @param ptagMask 
+/// @param polygon 
+/// @param vertexEnd 
+static void DrawTriangle(PolyMeta* metadata, uint* ptagMask, P_TAG** polygon, uint* vertexEnd)
+{
+    // The vertex indexes XY1 and XY2 have the last two bits cleared in the original code to prevent accessing on an unaligned address.
+    // This is removed, but can be added back if needed: XY1 & 0xFFFFFFFC, and XY2 & 0xFFFFFFFC.
+    VertexIndex* pu = &metadata->PU;
+    BoundedVertex* scaledXy0 = &_ScratchpadDrawSkybox + (pu->XY0 / sizeof(uint));
+    BoundedVertex* scaledXy1 = &_ScratchpadDrawSkybox + (pu->XY1 / sizeof(uint));
+    BoundedVertex* scaledXy2 = &_ScratchpadDrawSkybox + (pu->XY2 / sizeof(uint));
+
+    // Skip drawing a triangle if all of three vertices exist off screen.
+    if ((scaledXy0->flags & scaledXy1->flags & scaledXy2->flags & 0x1F) != 0)
+    {
+        return;
+    }
+    
+    Vec2s16 xy0 = ConvertToVector(scaledXy0);
+    Vec2s16 xy1 = ConvertToVector(scaledXy1);
+    Vec2s16 xy2 = ConvertToVector(scaledXy2);
+
+    // The color indexes 1 and 2 have the last two bits cleared in the original code to prevent accessing on an unaligned address.
+    // This is removed, but can be added back if needed: Color1 & 0xFFFFFFFC, and Color2 & 0xFFFFFFFC.
+    PolygonColors* ins = &metadata->Ins;
+    uint color2 = ins->Color1;
+    uint color1 = ins->Color2;
+    uint color0 = ins->Color3;
+
+    *(uint *)_PrimitiveList = *ptagMask ^ (uint)*polygon;
+    _PrimitiveList = *polygon;
+
+    // These are assigned here instead of the conditional because otherwise, test fails with a difference in memory.
+    // It's probably a mistake from the developers where in the case of POLY_F3, additional bytes are added to the end.
+    POLY_G3* polyG3 = (POLY_G3*)*polygon;
+
+    polyG3->x0 = xy0.X;
+    polyG3->y0 = xy0.Y;
+
+    polyG3->x1 = xy1.X;
+    polyG3->y1 = xy1.Y;
+    
+    polyG3->x2 = xy2.X;
+    polyG3->y2 = xy2.Y;
+
+    // POLY_F3 and POLY_G3 have overlapping memory, so this can be set once here.
+    RGBu8P rgb = *(RGBu8P*)(vertexEnd + (color0 / sizeof(RGBu8P)));
+    polyG3->tag.r0 = rgb.Red;
+    polyG3->tag.b0 = rgb.Blue;
+    polyG3->tag.g0 = rgb.Green;
+    polyG3->tag.code = rgb.Padding;
+
+    // If all colors are the same draw POLY_F3.
+    if ((color0 == color1) && (color0 == color2)) 
+    {
+        POLY_F3* polyF3 = (POLY_F3*)*polygon;
+
+        *ptagMask = 0x84000000;
+
+        // I am not sure why this is necessary. What is going on here??
+        polyF3->tag.code -= 0x10;
+        
+        polyF3->x0 = xy0.X;
+        polyF3->y0 = xy0.Y;
+
+        polyF3->x1 = xy1.X;
+        polyF3->y1 = xy1.Y;
+
+        polyF3->x2 = xy2.X;
+        polyF3->y2 = xy2.Y;
+
+        *polygon = (P_TAG*)(polyF3 + 1);
+    }
+    else 
+    {
+        *ptagMask = 0x86000000;
+
+        rgb = *(RGBu8P*)(vertexEnd + (color1 / sizeof(RGBu8P)));
+
+        polyG3->r1 = rgb.Red;
+        polyG3->b1 = rgb.Blue;
+        polyG3->g1 = rgb.Green;
+        polyG3->pad1 = rgb.Padding;
+
+        rgb = *(RGBu8P*)(vertexEnd + (color2 / sizeof(RGBu8P)));
+
+        polyG3->r2 = rgb.Red;
+        polyG3->b2 = rgb.Blue;
+        polyG3->g2 = rgb.Green;
+        polyG3->pad2 = rgb.Padding;
+
+        *polygon = (P_TAG*)(polyG3 + 1);
     }
 }
 
 
 static void CreatePolygons()
 {
-    P_TAG *ptagA;
     uint *vertexEnd;
 
     
     PackedCount* packedCount;
 
-    SkyVertex** skyVertexStorage = (SkyVertex**)&_SkyboxModelsToRender;
+    SkyboxModel** skyVertexStorage = &_SkyboxModelsToRender;
     P_TAG *ptagB = (P_TAG *)((int)_PrimitiveList + 4);
     uint ptagMask = 0;
-    int *polygon = (int *)ptagB;
+    P_TAG* polygon = ptagB;
 
     while (true)
     {
         while (true) 
         {
-            SkyboxModel *skybox = (SkyboxModel *)*skyVertexStorage;
+            SkyboxModel *skybox = *skyVertexStorage;
             skyVertexStorage++;
 
             if (skybox == NULL) 
             {
-                thing(polygon, ptagB, ptagMask, ptagA);
+                StagePrimitive(polygon, ptagB, ptagMask);
                 return;
             }
 
@@ -298,96 +395,11 @@ static void CreatePolygons()
             if (szCoords - (int)polygon < 1) 
             {
                 _DrawSkyboxU3 = 1;
-                thing(polygon, ptagB, ptagMask, ptagA);
+                StagePrimitive(polygon, ptagB, ptagMask);
                 return;
             }
 
-            // The vertex indexes XY1 and XY2 have the last two bits cleared in the original code to prevent accessing on an unaligned address.
-            // This is removed, but can be added back if needed: XY1 & 0xFFFFFFFC, and XY2 & 0xFFFFFFFC.
-            VertexIndex* pu = &skyCursor->PU;
-            BoundedVertex* scaledXy0 = &_ScratchpadDrawSkybox + (pu->XY0 / sizeof(uint));
-            BoundedVertex* scaledXy1 = &_ScratchpadDrawSkybox + (pu->XY1 / sizeof(uint));
-            BoundedVertex* scaledXy2 = &_ScratchpadDrawSkybox + (pu->XY2 / sizeof(uint));
-
-            // The color indexes 1 and 2 have the last two bits cleared in the original code to prevent accessing on an unaligned address.
-            // This is removed, but can be added back if needed: Color1 & 0xFFFFFFFC, and Color2 & 0xFFFFFFFC.
-            PolygonColors* ins = &skyCursor->Ins;
-            uint color1 = ins->Color1;
-            uint color2 = ins->Color2;
-            uint color3 = ins->Color3;
-
-            // only checks lower 5 bits, Should make triangle?
-            // Don't draw a triangle if all of three vertices exist off screen.
-            if ((scaledXy0->flags & scaledXy1->flags & scaledXy2->flags & 0x1F) == 0) 
-            {
-                *(uint *)_PrimitiveList = ptagMask ^ (uint)polygon;
-                _PrimitiveList = polygon;
-
-                Vec2s16 xy0 = ConvertToVector(scaledXy0);
-                Vec2s16 xy1 = ConvertToVector(scaledXy1);
-                Vec2s16 xy2 = ConvertToVector(scaledXy2);
-
-                // These are assigned here instead of the conditional because otherwise, test fails with a difference in memory.
-                // It's probably a mistake from the developers where in the case of POLY_F3, additional bytes are added to the end.
-                POLY_G3* polyG3 = (POLY_G3*)polygon;
-
-                polyG3->x0 = xy0.X;
-                polyG3->y0 = xy0.Y;
-
-                polyG3->x1 = xy1.X;
-                polyG3->y1 = xy1.Y;
-                
-                polyG3->x2 = xy2.X;
-                polyG3->y2 = xy2.Y;
-
-                // POLY_F3 and POLY_G3 have overlapping memory, so this can be set once here.
-                RGBu8P rgb = *(RGBu8P*)(vertexEnd + (color3 / sizeof(RGBu8P)));
-                polyG3->tag.r0 = rgb.Red;
-                polyG3->tag.b0 = rgb.Blue;
-                polyG3->tag.g0 = rgb.Green;
-                polyG3->tag.code = rgb.Padding;
-
-                // If all colors are the same draw POLY_F3.
-                if ((color3 == color2) && (color3 == color1)) 
-                {
-                    POLY_F3* polyF3 = (POLY_F3*)polygon;
-
-                    ptagMask = 0x84000000;
-
-                    // I am not sure why this is necessary. What is going on here??
-                    polyF3->tag.code -= 0x10;
-                    
-                    polyF3->x0 = xy0.X;
-                    polyF3->y0 = xy0.Y;
-
-                    polyF3->x1 = xy1.X;
-                    polyF3->y1 = xy1.Y;
-
-                    polyF3->x2 = xy2.X;
-                    polyF3->y2 = xy2.Y;
-
-                    polygon = (int*)(polyF3 + 1);
-                }
-                else 
-                {
-                    ptagMask = 0x86000000;
-
-                    rgb = *(RGBu8P*)(vertexEnd + (color2 / sizeof(RGBu8P)));
-                    polyG3->r1 = rgb.Red;
-                    polyG3->b1 = rgb.Blue;
-                    polyG3->g1 = rgb.Green;
-                    polyG3->pad1 = rgb.Padding;
-
-                    rgb = *(RGBu8P*)(vertexEnd + (color1 / sizeof(RGBu8P)));
-                    polyG3->r2 = rgb.Red;
-                    polyG3->b2 = rgb.Blue;
-                    polyG3->g2 = rgb.Green;
-                    polyG3->pad2 = rgb.Padding;
-
-                    polygon = (int*)(polyG3 + 1);
-                }
-            }
-
+            DrawTriangle(skyCursor, &ptagMask, &polygon, vertexEnd);
             skyCursor++;
         }
     }

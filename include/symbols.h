@@ -223,21 +223,9 @@ extern int _RegisterStorage_SP;
 /// @note Address: 0x80077e04
 extern int _RegisterStorage_RA;
 
-/// @brief Unknown storage area.
-/// @note Address: 0x8006fcf4
-extern SkyVertex* _SkyVertexStorage;
-
-/// @brief WAD archive 4, Section 2 table 2 start
-/// @note Address: 0x80078a44
-extern SkyVertex** _WA4S2_Table2Start;
-
 /// @brief WAD archive 4, Section 2 table 2 count
 /// @note Address: 0x80078a40
 extern int _WA4S2_Table2Count;
-
-/// @brief WAD archive 4, Section 2, Unknown 7
-/// @note Address: 0x80078a4c
-extern int _WA4S2_U7;
 
 /// @brief WA4S2 Unknown.
 /// @note Address: 0x800785c8
@@ -294,10 +282,6 @@ extern RGBu8 _WadDrawEnvRgb;
 /// @brief Unknown.
 /// @note Address: 0x80077784
 extern int* _WA4S2_Table2;
-
-/// @brief Unknown.
-/// @note Address: 0x80077780
-extern int _WA4S2_Table2Count;
 
 /// @brief Unknown.
 /// @note Address: 0x800758bc

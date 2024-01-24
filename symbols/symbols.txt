@@ -76,9 +76,10 @@ _RegisterStorage = 0x80077dd8;
 _RegisterStorage_SP = 0x80077dfc;
 _RegisterStorage_RA = 0x80077e04;
 
-_SkyVertexStorage = 0x8006fcf4;
-_WA4S2_Table2Start = 0x80078a44;
+_SkyboxModelsToRender = 0x8006fcf4;
+_SkyboxWadModels = 0x80078a44;
 _WA4S2_Table2Count = 0x80078a40;
+_SkyboxWadModelCount = 0x80078a40;
 _WA4S2_U7 = 0x80078a4c;
 _ReadWA4S2_Count = 0x800785c8;
 _ReadWA4S2_U1_Addr = 0x800785c0;

@@ -272,9 +272,3 @@ extern PrimitiveLinkedList2* _PrimitiveLinkedList;
 extern byte _DataSectionStart;
 extern PrimitiveLinkedList* _PrimitiveStagingStart;
 
-typedef struct
-{
-    int XY;
-    short u0;
-    short Z;
-} SkyVertex;

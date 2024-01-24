@@ -44,9 +44,9 @@ _Static_assert(sizeof(PackedVertex) == 4);
 
 typedef struct
 {
-    uint U3 : 13;
+    uint VertexIndexEnd : 13;
     uint U2 : 1;
-    uint U1 : 18;
+    uint VertexIndexStart : 18;
 } PackedCount;
 _Static_assert(sizeof(PackedCount) == 4);
 
@@ -81,11 +81,13 @@ typedef struct
 } VertexIndex;
 _Static_assert(sizeof(VertexIndex) == 4);
 
+/// @brief Describes a structure that contains offsets to vertex and color information for building polygon primitives.
 typedef struct
 {
     VertexIndex PU;
     PolygonColors Ins;
-} Sky3;
+} PolyMeta;
+_Static_assert(sizeof(PolyMeta) == 8);
 
 typedef struct
 {
@@ -95,6 +97,42 @@ typedef struct
     byte Padding;
 } RGBu8P;
 _Static_assert(sizeof(RGBu8P) == 4);
+
+typedef struct
+{
+    int XY;
+    short Clip;
+    short Z;
+} SkyVertex;
+
+/// @brief Sky models that have been selected to draw primitives from.
+/// @details Models that are in view of the camera that we can draw primitives from.
+/// @note Address: 0x8006fcf4
+extern SkyVertex* _SkyboxModelsToRender;
+
+/// @brief Sky models that are loaded from the WAD.
+/// @note Address: 0x80078a44
+extern SkyVertex** _SkyboxWadModels;
+
+/// @brief WAD archive 4, Section 2, Unknown 7
+/// @note Address: 0x80078a4c
+extern byte** _WA4S2_U7;
+
+
+/// @brief Number of sky models that exist within a loaded section of the WAD.
+/// @note Address: 0x80077780
+extern int _SkyboxWadModelCount;
+
+/// @brief Load a camera rotation matrix and translation vector.
+/// @param camera Rotation matrix.
+static void LoadCameraMatrix(RotationMatrix* camera)
+{
+    gte_ldR11R12(camera->R11R12);
+    gte_ldR13R21(camera->R13R21);
+    gte_ldR22R23(camera->R22R23);
+    gte_ldR31R32(camera->R31R32);
+    gte_ldR33(camera->R33);
+}
 
 /// @brief Converts a bounded vector to a normal 2D vector.
 /// @details Restores a vector that was scaled up (in order to hold additional metadata) back to it's original value.
@@ -137,6 +175,8 @@ static BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
     return boundedVector;
 }
 
+
+
 static byte RunPerspectiveTransformations(SkyboxU0* skybox)
 {
     uint vertexCount = skybox->VertexCount;
@@ -146,6 +186,7 @@ static byte RunPerspectiveTransformations(SkyboxU0* skybox)
     byte endFlags = 0x0F;
 
     // Iterate through all vertices and calculate RTPS.
+    // Something to think about, maybe doing RTPT would be faster.
     for (uint i = 0; i <= vertexCount; i++)
     {
         PackedVertex* pv = &packs[i];
@@ -208,21 +249,19 @@ static void thing(int* polygon, P_TAG* ptagB, uint ptagMask, P_TAG* ptagA)
     }
 }
 
-static int HandleInner(RotationMatrix *cameraB)
+
+static void HandleInner(RotationMatrix *cameraB, SkyVertex** unkStorage)
 {
+    *unkStorage = 0;
+    LoadCameraMatrix(cameraB);
+
     P_TAG *ptagA;
     uint *vertexEnd;
 
     
     PackedCount* packedCount;
 
-    gte_ldR11R12(cameraB->R11R12);
-    gte_ldR13R21(cameraB->R13R21);
-    gte_ldR22R23(cameraB->R22R23);
-    gte_ldR31R32(cameraB->R31R32);
-    gte_ldR33(cameraB->R33);
-
-    SkyVertex** skyVertexStorage = &_SkyVertexStorage;
+    SkyVertex** skyVertexStorage = &_SkyboxModelsToRender;
     P_TAG *ptagB = (P_TAG *)((int)_PrimitiveList + 4);
     uint ptagMask = 0;
     int *polygon = (int *)ptagB;
@@ -231,38 +270,38 @@ static int HandleInner(RotationMatrix *cameraB)
     {
         while (true) 
         {
-            SkyboxU0 *SBu0 = (SkyboxU0 *)*skyVertexStorage;
+            SkyboxU0 *skybox = (SkyboxU0 *)*skyVertexStorage;
             skyVertexStorage++;
 
-            if (SBu0 == NULL) 
+            if (skybox == NULL) 
             {
                 thing(polygon, ptagB, ptagMask, ptagA);
-                return 1;
+                return;
             }
 
-            byte endFlags = RunPerspectiveTransformations(SBu0);
+            byte endFlags = RunPerspectiveTransformations(skybox);
 
             if ((endFlags & 0xF) == 0)
             {
-                packedCount = &SBu0->PC;
-                PackedVertex* packs = (PackedVertex*)(SBu0 + 1);
-                vertexEnd = (uint*)(packs + SBu0->VertexCount);
+                packedCount = &skybox->PC;
+                PackedVertex* packs = (PackedVertex*)(skybox + 1);
+                vertexEnd = (uint*)(packs + skybox->VertexCount);
                 break;
             }
         }
 
         // Get the address of the end of all the vertices.
-        Sky3* skyStart = (Sky3*)((int)vertexEnd + packedCount->U1);
-        Sky3* skyCursor = skyStart;
+        PolyMeta* skyStart = (PolyMeta*)((int)vertexEnd + packedCount->VertexIndexStart);
+        PolyMeta* skyCursor = skyStart;
 
-        while(skyCursor != (Sky3*)(((uint*)skyStart) + packedCount->U3 * 2)) 
+        while(skyCursor != (PolyMeta*)(((uint*)skyStart) + packedCount->VertexIndexEnd * 2)) 
         {
             int szCoords = _DrawSkyboxU4 - 0x400;
             if (szCoords - (int)polygon < 1) 
             {
                 _DrawSkyboxU3 = 1;
                 thing(polygon, ptagB, ptagMask, ptagA);
-                return 1;
+                return;
             }
 
             // The vertex indexes XY1 and XY2 have the last two bits cleared in the original code to prevent accessing on an unaligned address.
@@ -272,11 +311,12 @@ static int HandleInner(RotationMatrix *cameraB)
             BoundedVertex* scaledXy1 = &_ScratchpadDrawSkybox + (pu->XY1 / sizeof(uint));
             BoundedVertex* scaledXy2 = &_ScratchpadDrawSkybox + (pu->XY2 / sizeof(uint));
 
+            // The color indexes 1 and 2 have the last two bits cleared in the original code to prevent accessing on an unaligned address.
+            // This is removed, but can be added back if needed: Color1 & 0xFFFFFFFC, and Color2 & 0xFFFFFFFC.
             PolygonColors* ins = &skyCursor->Ins;
-            uint color1 = ins->Color1 & 0xFFFFFFFC;
-            uint color2 = ins->Color2 & 0xFFFFFFFC;
+            uint color1 = ins->Color1;
+            uint color2 = ins->Color2;
             uint color3 = ins->Color3;
-            
 
             // only checks lower 5 bits, Should make triangle?
             // Don't draw a triangle if all of three vertices exist off screen.
@@ -353,66 +393,62 @@ static int HandleInner(RotationMatrix *cameraB)
             skyCursor++;
         }
     }
-
-    return 0;
 }
 
+static void GetNextVertex()
+{
 
-void DrawSkybox(int option, RotationMatrix *cameraA, RotationMatrix *cameraB)
+}
+
+void DrawSkybox(int index, RotationMatrix *cameraA, RotationMatrix *cameraB)
 {   
-    // Store registers (this is only needed for testing, but we can still do it)
+    // Store registers. (This doesn't seem to have an effect on the game working, but it's needed for testing.)
     storeRegisters(&_RegisterStorage);
 
-    // Load a camera rotation matrix and translation vector
-    gte_ldR11R12(cameraA->R11R12);
-    gte_ldR13R21(cameraA->R13R21);
-    gte_ldR22R23(cameraA->R22R23);
-    gte_ldR31R32(cameraA->R31R32);
-    gte_ldR33(cameraA->R33);
+    LoadCameraMatrix(cameraA);
+
+    // Clear the translation vector.
     gte_ldtr(0, 0, 0);
 
-    SkyVertex** storage = &_SkyVertexStorage;
-    SkyVertex** tableStart = _WA4S2_Table2Start;
+    SkyVertex** storage = &_SkyboxModelsToRender;
+    SkyVertex** tableStart = _SkyboxWadModels;
 
-    byte* tableEnd;
-    if (option < 0) //true
+    SkyVertex** tableEnd = NULL;
+    byte* tableIndex = NULL;
+
+    if (index < 0)
     {
-        tableEnd = (byte*)(_WA4S2_Table2Start + _WA4S2_Table2Count);
+        tableEnd = _SkyboxWadModels + _SkyboxWadModelCount;
     }
     else 
     {
-        tableEnd = *(byte**)(_WA4S2_U7 + option * 4);
+        tableIndex = _WA4S2_U7[index];
     }
 
     while (true) 
     {
         SkyVertex *vertex;
 
-        if (option < 0) 
+        if (index < 0) 
         {
             vertex = *tableStart; // first entry
-            if (tableStart == (SkyVertex**)tableEnd) 
-            {
 
-DrawSkybox_A:
-                *storage = 0;
-                int result = HandleInner(cameraB);
-                if (result == 1)
-                {
-                    return;
-                }
+            if (tableStart == tableEnd) 
+            {
+                break;
             }
+
             tableStart++;
         }
         else 
         {
-            if (*tableEnd == 0xFF)
+            if (*tableIndex == 0xFF)
             {
-                goto DrawSkybox_A;
+                break;
             }
 
-            vertex = tableStart[*tableEnd];
-            tableEnd++;
+            vertex = tableStart[*tableIndex];
+            tableIndex++;
         }
 
         gte_ldVXY0(vertex->XY); //x = 0x03ec, y = 0x0072
@@ -423,11 +459,17 @@ DrawSkybox_A:
 
         // store 3 screen coordinates to non-continuous addresses. Store screen z 0, 1, 2
         int result;
+
+        // SSZ = TRZ + R31*VX0 + R32*VY0 + R33*VZ0; <3> = MAC3
         gte_stMAC3(result); // 0x38d
 
-        if (result - vertex->u0 > 0) // 0x01FF
+        // This could be far/near plane clipping?
+        // The SZ3 result needs to be greater than zero to draw; otherwise, clipping and distortion might happen?
+        if (result - vertex->Clip > 0) // 0x01FF
         {
             *storage++ = vertex; // addr of the entry, place it unknown storage?
         }
     }
+
+    HandleInner(cameraB, storage);
 }

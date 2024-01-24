@@ -29,16 +29,15 @@ typedef union
 } BoundedVertex;
 _Static_assert(sizeof(BoundedVertex) == 4);
 
-
+/// @brief Not entirely sure on this, but I think it is some kind of coordinate information that is used to determine if a model should be ignored.
+/// @details The XYZ values are used to perform RTPS and get a Z value that is compared to the cutoff member. The result of which determines if model should be processed.
 typedef struct
 {
     int XY;
-    short Clip;
+    short Cutoff;
     short Z;
-} SkyVertex;
-_Static_assert(sizeof(SkyVertex) == 8);
-
-
+} ClipCalculation;
+_Static_assert(sizeof(ClipCalculation) == 8);
 
 typedef struct
 {
@@ -56,9 +55,11 @@ typedef struct
 } PackedCount;
 _Static_assert(sizeof(PackedCount) == 4);
 
+/// @brief This is the header or start of an entire model for drawing sky primitives.
+/// @note Following this structure immediately adjacent in memory are a VertexIndex array, ColorIndex array, and then a PolyMeta array.
 typedef struct
 {
-    SkyVertex SV;
+    ClipCalculation ClipCalculation;
     short GX;
     short GY;
     short VertexCount;
@@ -68,32 +69,36 @@ typedef struct
 } SkyboxModel;
 _Static_assert(sizeof(SkyboxModel) == 24);
 
+/// @brief Represents a structure that indexes where primitive RGB colors should be located.
+/// @details These are byte offsets into the WAD to find colors. They come immediately after vertex information.
 typedef struct
 {
-    uint Color1 : 10;
     uint Color2 : 10;
-    uint Color3 : 12;
+    uint Color1 : 10;
+    uint Color0 : 12;
+} ColorIndex;
+_Static_assert(sizeof(ColorIndex) == 4);
 
-} PolygonColors;
-_Static_assert(sizeof(PolygonColors) == 4);
-
+/// @brief Indexes that show where to find vertex information for primitives.
+/// @details These are byte offsets into the WAD to find vertices. They come immediately after SkyboxModel data.
 typedef struct
 {
     uint XY2 : 10;
     uint XY1 : 10;
     uint XY0 : 12;
-
 } VertexIndex;
 _Static_assert(sizeof(VertexIndex) == 4);
 
 /// @brief Describes a structure that contains offsets to vertex and color information for building polygon primitives.
+/// @details These are structures in the WAD that come after color index information.
 typedef struct
 {
     VertexIndex PU;
-    PolygonColors Ins;
+    ColorIndex ColorIndex;
 } PolyMeta;
 _Static_assert(sizeof(PolyMeta) == 8);
 
+/// @brief RGB structure that also includes padding.
 typedef struct
 {
     byte Red;
@@ -181,8 +186,8 @@ static byte RunPerspectiveTransformations(SkyboxModel* skybox)
     uint vertexCount = skybox->VertexCount;
     PackedVertex* packs = (PackedVertex*)(skybox + 1);
 
-    BoundedVertex *storedVectors = &_ScratchpadDrawSkybox;
     byte endFlags = 0x0F;
+    BoundedVertex *storedVectors = &_ScratchpadDrawSkybox;
 
     // Iterate through all vertices and calculate RTPS.
     // Something to think about, maybe doing RTPT would be faster.
@@ -207,13 +212,12 @@ static byte RunPerspectiveTransformations(SkyboxModel* skybox)
         }
 
         // coordinate transformation and perspective transformation
+        uint xy2 = 0;
         gte_rtps_b();
-
-        uint badGuy = 0;
-        gte_stSXY2(badGuy);
+        gte_stSXY2(xy2);
 
         // Convert this vector to a structure that has out of bounds information.
-        BoundedVertex bv = ConvertToBoundedVector((Vec2s16*)&badGuy);
+        BoundedVertex bv = ConvertToBoundedVector((Vec2s16*)&xy2);
             
         // Set flags based on the boundary metadata to make sure that a primitive can be drawn.
         endFlags = endFlags & bv.flags;
@@ -225,6 +229,10 @@ static byte RunPerspectiveTransformations(SkyboxModel* skybox)
     return endFlags;
 }
 
+/// @brief Adds primitives to a staging list.
+/// @param polygon Primitive that gets added to the list.
+/// @param current Unknown.
+/// @param ptagMask Mask that needs to be applied to set the length of the primitive correctly.
 static void StagePrimitive(P_TAG* polygon, P_TAG* current, uint ptagMask)
 {
     P_TAG* head = _PrimitiveList;
@@ -235,6 +243,7 @@ static void StagePrimitive(P_TAG* polygon, P_TAG* current, uint ptagMask)
         return;
     }
 
+    // This is just setting the P_TAG length of the primitive and making certain that it doesn't clear the address.
     *(uint *)head = ptagMask ^ 0x80000000;
 
     // Add the primitive onto the staging linked list.
@@ -271,17 +280,19 @@ static void DrawTriangle(PolyMeta* metadata, uint* ptagMask, P_TAG** polygon, ui
         return;
     }
     
+    // Restore the vectors back to the unscaled version that does not have embedded screen boundary data.
     Vec2s16 xy0 = ConvertToVector(scaledXy0);
     Vec2s16 xy1 = ConvertToVector(scaledXy1);
     Vec2s16 xy2 = ConvertToVector(scaledXy2);
 
     // The color indexes 1 and 2 have the last two bits cleared in the original code to prevent accessing on an unaligned address.
     // This is removed, but can be added back if needed: Color1 & 0xFFFFFFFC, and Color2 & 0xFFFFFFFC.
-    PolygonColors* ins = &metadata->Ins;
-    uint color2 = ins->Color1;
-    uint color1 = ins->Color2;
-    uint color0 = ins->Color3;
+    ColorIndex* colorIndex = &metadata->ColorIndex;
+    uint color0 = colorIndex->Color0;
+    uint color1 = colorIndex->Color1;
+    uint color2 = colorIndex->Color2;
 
+    // The mask includes '8' in order to clear the address of the polygon.
     *(uint *)_PrimitiveList = *ptagMask ^ (uint)*polygon;
     _PrimitiveList = *polygon;
 
@@ -310,6 +321,7 @@ static void DrawTriangle(PolyMeta* metadata, uint* ptagMask, P_TAG** polygon, ui
     {
         POLY_F3* polyF3 = (POLY_F3*)*polygon;
 
+        // The length of the primitive is 4.
         *ptagMask = 0x84000000;
 
         // I am not sure why this is necessary. What is going on here??
@@ -328,6 +340,7 @@ static void DrawTriangle(PolyMeta* metadata, uint* ptagMask, P_TAG** polygon, ui
     }
     else 
     {
+        // The length of the primitive is 6.
         *ptagMask = 0x86000000;
 
         rgb = *(RGBu8P*)(vertexEnd + (color1 / sizeof(RGBu8P)));
@@ -352,35 +365,32 @@ static void DrawTriangle(PolyMeta* metadata, uint* ptagMask, P_TAG** polygon, ui
 static void CreatePolygons()
 {
     uint *vertexEnd;
-
-    
     PackedCount* packedCount;
+    SkyboxModel** modelsToRender = &_SkyboxModelsToRender;
 
-    SkyboxModel** skyVertexStorage = &_SkyboxModelsToRender;
     P_TAG *ptagB = (P_TAG *)((int)_PrimitiveList + 4);
-    uint ptagMask = 0;
     P_TAG* polygon = ptagB;
+    uint ptagMask = 0;
 
     while (true)
     {
         while (true) 
         {
-            SkyboxModel *skybox = *skyVertexStorage;
-            skyVertexStorage++;
+            SkyboxModel *model = *modelsToRender++;
 
-            if (skybox == NULL) 
+            if (model == NULL) 
             {
                 StagePrimitive(polygon, ptagB, ptagMask);
                 return;
             }
 
-            byte endFlags = RunPerspectiveTransformations(skybox);
-
-            if ((endFlags & 0xF) == 0)
+            // Perform RTPS and if it results in at least some set of vertices that are visible, then move on to building polygons.
+            // The comparison of 0xF is to handle out of bounds flags that can be set.
+            if ((RunPerspectiveTransformations(model) & 0xF) == 0)
             {
-                packedCount = &skybox->PC;
-                PackedVertex* packs = (PackedVertex*)(skybox + 1);
-                vertexEnd = (uint*)(packs + skybox->VertexCount);
+                packedCount = &model->PC;
+                PackedVertex* packs = (PackedVertex*)(model + 1);
+                vertexEnd = (uint*)(packs + model->VertexCount);
                 break;
             }
         }
@@ -391,8 +401,9 @@ static void CreatePolygons()
 
         while(skyCursor != (PolyMeta*)(((uint*)skyStart) + packedCount->VertexIndexEnd * 2)) 
         {
-            int szCoords = _DrawSkyboxU4 - 0x400;
-            if (szCoords - (int)polygon < 1) 
+            // Not sure what this is. Could it be prioritizing HUD primitives and making sure sky ones appear behind them?
+            int unkPtag = _DrawSkyboxU4 - 0x400;
+            if (unkPtag - (int)polygon < 1) 
             {
                 _DrawSkyboxU3 = 1;
                 StagePrimitive(polygon, ptagB, ptagMask);
@@ -413,14 +424,14 @@ static void CalculateModelsToRender(SkyboxModel*** modelsToRender, SkyboxModel* 
     // store 3 screen coordinates to non-continuous addresses. Store screen z 0, 1, 2
     int SZ3;
 
-    gte_ldVXY0(model->SV.XY);
-    gte_ldVZ0(model->SV.Z);
+    gte_ldVXY0(model->ClipCalculation.XY);
+    gte_ldVZ0(model->ClipCalculation.Z);
     gte_rtps_b();
     gte_stMAC3(SZ3);
 
     // This could be far/near plane clipping?
     // The SZ3 result needs to be greater than zero to draw; otherwise, clipping and distortion might happen?
-    if (SZ3 - model->SV.Clip > 0)
+    if (SZ3 - model->ClipCalculation.Cutoff > 0)
     {
         *(*modelsToRender)++ = model;
     }

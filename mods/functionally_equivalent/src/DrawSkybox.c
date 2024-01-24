@@ -30,9 +30,15 @@ typedef union
 _Static_assert(sizeof(BoundedVertex) == 4);
 
 
-/// @brief Scratchpad start in RAM used for storing skybox vectors.
-/// @note Address: 0x1f800000
-extern BoundedVertex _ScratchpadDrawSkybox;
+typedef struct
+{
+    int XY;
+    short Clip;
+    short Z;
+} SkyVertex;
+_Static_assert(sizeof(SkyVertex) == 8);
+
+
 
 typedef struct
 {
@@ -52,16 +58,15 @@ _Static_assert(sizeof(PackedCount) == 4);
 
 typedef struct
 {
-    PackedVertex PV1;
-    int U2;
+    SkyVertex SV;
     short GX;
     short GY;
     short VertexCount;
     short GZ;
     PackedCount PC;
     int U6;
-} SkyboxU0;
-_Static_assert(sizeof(SkyboxU0) == 24);
+} SkyboxModel;
+_Static_assert(sizeof(SkyboxModel) == 24);
 
 typedef struct
 {
@@ -98,30 +103,26 @@ typedef struct
 } RGBu8P;
 _Static_assert(sizeof(RGBu8P) == 4);
 
-typedef struct
-{
-    int XY;
-    short Clip;
-    short Z;
-} SkyVertex;
-
-/// @brief Sky models that have been selected to draw primitives from.
-/// @details Models that are in view of the camera that we can draw primitives from.
-/// @note Address: 0x8006fcf4
-extern SkyVertex* _SkyboxModelsToRender;
-
 /// @brief Sky models that are loaded from the WAD.
 /// @note Address: 0x80078a44
-extern SkyVertex** _SkyboxWadModels;
+extern SkyboxModel** _SkyboxWadModels;
 
-/// @brief WAD archive 4, Section 2, Unknown 7
+/// @brief Pointers that can be used to reference skybox WAD models directly instead of starting at the beginning of the WAD section.
 /// @note Address: 0x80078a4c
-extern byte** _WA4S2_U7;
-
+extern byte** _SkyboxWadModelPointers;
 
 /// @brief Number of sky models that exist within a loaded section of the WAD.
 /// @note Address: 0x80077780
 extern int _SkyboxWadModelCount;
+
+/// @brief Sky models that have been selected to draw primitives from.
+/// @details Models that are in view of the camera that we can draw primitives from.
+/// @note Address: 0x8006fcf4
+extern SkyboxModel* _SkyboxModelsToRender;
+
+/// @brief Scratchpad start in RAM used for storing skybox vectors.
+/// @note Address: 0x1f800000
+extern BoundedVertex _ScratchpadDrawSkybox;
 
 /// @brief Load a camera rotation matrix and translation vector.
 /// @param camera Rotation matrix.
@@ -177,7 +178,7 @@ static BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
 
 
 
-static byte RunPerspectiveTransformations(SkyboxU0* skybox)
+static byte RunPerspectiveTransformations(SkyboxModel* skybox)
 {
     uint vertexCount = skybox->VertexCount;
     PackedVertex* packs = (PackedVertex*)(skybox + 1);
@@ -250,9 +251,8 @@ static void thing(int* polygon, P_TAG* ptagB, uint ptagMask, P_TAG* ptagA)
 }
 
 
-static void HandleInner(RotationMatrix *cameraB, SkyVertex** unkStorage)
+static void HandleInner(RotationMatrix *cameraB)
 {
-    *unkStorage = 0;
     LoadCameraMatrix(cameraB);
 
     P_TAG *ptagA;
@@ -261,7 +261,7 @@ static void HandleInner(RotationMatrix *cameraB, SkyVertex** unkStorage)
     
     PackedCount* packedCount;
 
-    SkyVertex** skyVertexStorage = &_SkyboxModelsToRender;
+    SkyVertex** skyVertexStorage = (SkyVertex**)&_SkyboxModelsToRender;
     P_TAG *ptagB = (P_TAG *)((int)_PrimitiveList + 4);
     uint ptagMask = 0;
     int *polygon = (int *)ptagB;
@@ -270,7 +270,7 @@ static void HandleInner(RotationMatrix *cameraB, SkyVertex** unkStorage)
     {
         while (true) 
         {
-            SkyboxU0 *skybox = (SkyboxU0 *)*skyVertexStorage;
+            SkyboxModel *skybox = (SkyboxModel *)*skyVertexStorage;
             skyVertexStorage++;
 
             if (skybox == NULL) 
@@ -395,9 +395,26 @@ static void HandleInner(RotationMatrix *cameraB, SkyVertex** unkStorage)
     }
 }
 
-static void GetNextVertex()
+static void ProcessVertex(SkyboxModel*** modelsToRender, SkyboxModel* vertex)
 {
+    gte_ldVXY0(vertex->SV.XY); //x = 0x03ec, y = 0x0072
+    gte_ldVZ0(vertex->SV.Z); // z = 0xff5b
 
+    // coordinate transformation and perspective transformation
+    gte_rtps_b();
+
+    // store 3 screen coordinates to non-continuous addresses. Store screen z 0, 1, 2
+    int result;
+
+    // SSZ = TRZ + R31*VX0 + R32*VY0 + R33*VZ0; <3> = MAC3
+    gte_stMAC3(result); // 0x38d
+
+    // This could be far/near plane clipping?
+    // The SZ3 result needs to be greater than zero to draw; otherwise, clipping and distortion might happen?
+    if (result - vertex->SV.Clip > 0) // 0x01FF
+    {
+        *(*modelsToRender)++ = vertex; // addr of the entry, place it unknown storage?
+    }
 }
 
 void DrawSkybox(int index, RotationMatrix *cameraA, RotationMatrix *cameraB)
@@ -410,66 +427,36 @@ void DrawSkybox(int index, RotationMatrix *cameraA, RotationMatrix *cameraB)
     // Clear the translation vector.
     gte_ldtr(0, 0, 0);
 
-    SkyVertex** storage = &_SkyboxModelsToRender;
-    SkyVertex** tableStart = _SkyboxWadModels;
+    SkyboxModel** modelsToRender = &_SkyboxModelsToRender;
+    SkyboxModel** modelCursor = _SkyboxWadModels;
 
-    SkyVertex** tableEnd = NULL;
+    SkyboxModel** tableEnd = NULL;
     byte* tableIndex = NULL;
 
     if (index < 0)
     {
         tableEnd = _SkyboxWadModels + _SkyboxWadModelCount;
+
+        while (modelCursor != tableEnd)
+        {
+            SkyboxModel *vertex = *modelCursor++;
+            ProcessVertex(&modelsToRender, vertex);
+        }
     }
     else 
     {
-        tableIndex = _WA4S2_U7[index];
-    }
+        tableIndex = _SkyboxWadModelPointers[index];
 
-    while (true) 
-    {
-        SkyVertex *vertex;
-
-        if (index < 0) 
+        while (*tableIndex != 0xFF)
         {
-            vertex = *tableStart; // first entry
-
-            if (tableStart == tableEnd) 
-            {
-                break;
-            }
-
-            tableStart++;
-        }
-        else 
-        {
-            if (*tableIndex == 0xFF)
-            {
-                break;
-            }
-
-            vertex = tableStart[*tableIndex];
+            SkyboxModel *vertex = _SkyboxWadModels[*tableIndex];
+            ProcessVertex(&modelsToRender, vertex);
             tableIndex++;
         }
-
-        gte_ldVXY0(vertex->XY); //x = 0x03ec, y = 0x0072
-        gte_ldVZ0(vertex->Z); // z = 0xff5b
-
-        // coordinate transformation and perspective transformation
-        gte_rtps_b();
-
-        // store 3 screen coordinates to non-continuous addresses. Store screen z 0, 1, 2
-        int result;
-
-        // SSZ = TRZ + R31*VX0 + R32*VY0 + R33*VZ0; <3> = MAC3
-        gte_stMAC3(result); // 0x38d
-
-        // This could be far/near plane clipping?
-        // The SZ3 result needs to be greater than zero to draw; otherwise, clipping and distortion might happen?
-        if (result - vertex->Clip > 0) // 0x01FF
-        {
-            *storage++ = vertex; // addr of the entry, place it unknown storage?
-        }
     }
 
-    HandleInner(cameraB, storage);
+    // Explitly set the end of the list of models to render.
+    *modelsToRender = 0;
+
+    HandleInner(cameraB);
 }

@@ -251,10 +251,8 @@ static void thing(int* polygon, P_TAG* ptagB, uint ptagMask, P_TAG* ptagA)
 }
 
 
-static void HandleInner(RotationMatrix *cameraB)
+static void CreatePolygons()
 {
-    LoadCameraMatrix(cameraB);
-
     P_TAG *ptagA;
     uint *vertexEnd;
 
@@ -395,68 +393,69 @@ static void HandleInner(RotationMatrix *cameraB)
     }
 }
 
-static void ProcessVertex(SkyboxModel*** modelsToRender, SkyboxModel* vertex)
+/// @brief Performs RTPS and stores sky models to a list for rendering if they are not clipped from view.
+/// @param modelsToRender List of sky models that will need to be transformed into primitives.
+/// @param model Sky model to process.
+static void CalculateModelsToRender(SkyboxModel*** modelsToRender, SkyboxModel* model)
 {
-    gte_ldVXY0(vertex->SV.XY); //x = 0x03ec, y = 0x0072
-    gte_ldVZ0(vertex->SV.Z); // z = 0xff5b
-
-    // coordinate transformation and perspective transformation
-    gte_rtps_b();
-
     // store 3 screen coordinates to non-continuous addresses. Store screen z 0, 1, 2
-    int result;
+    int SZ3;
 
-    // SSZ = TRZ + R31*VX0 + R32*VY0 + R33*VZ0; <3> = MAC3
-    gte_stMAC3(result); // 0x38d
+    gte_ldVXY0(model->SV.XY);
+    gte_ldVZ0(model->SV.Z);
+    gte_rtps_b();
+    gte_stMAC3(SZ3);
 
     // This could be far/near plane clipping?
     // The SZ3 result needs to be greater than zero to draw; otherwise, clipping and distortion might happen?
-    if (result - vertex->SV.Clip > 0) // 0x01FF
+    if (SZ3 - model->SV.Clip > 0)
     {
-        *(*modelsToRender)++ = vertex; // addr of the entry, place it unknown storage?
+        *(*modelsToRender)++ = model;
     }
 }
 
+/// @brief Draws the sky for cutscenes and levels.
+/// @param index Used for specifying a selection of sky models to render.
+/// @param cameraA 
+/// @param cameraB 
 void DrawSkybox(int index, RotationMatrix *cameraA, RotationMatrix *cameraB)
 {   
     // Store registers. (This doesn't seem to have an effect on the game working, but it's needed for testing.)
     storeRegisters(&_RegisterStorage);
 
+    // Load the camera and clear the translation vector to do clip calculations.
     LoadCameraMatrix(cameraA);
-
-    // Clear the translation vector.
     gte_ldtr(0, 0, 0);
 
+    // Create a list of models that will need to be rendered depending on the camera state.
     SkyboxModel** modelsToRender = &_SkyboxModelsToRender;
-    SkyboxModel** modelCursor = _SkyboxWadModels;
-
-    SkyboxModel** tableEnd = NULL;
-    byte* tableIndex = NULL;
-
+    
     if (index < 0)
     {
-        tableEnd = _SkyboxWadModels + _SkyboxWadModelCount;
+        SkyboxModel** cursor = _SkyboxWadModels;
 
-        while (modelCursor != tableEnd)
+        // Iterate through all models loaded from the WAD.
+        while (cursor != (_SkyboxWadModels + _SkyboxWadModelCount))
         {
-            SkyboxModel *vertex = *modelCursor++;
-            ProcessVertex(&modelsToRender, vertex);
+            SkyboxModel *model = *cursor++;
+            CalculateModelsToRender(&modelsToRender, model);
         }
     }
     else 
     {
-        tableIndex = _SkyboxWadModelPointers[index];
+        byte* tableIndex = _SkyboxWadModelPointers[index];
 
+        // Iterate through a select number of models loaded based on some kind of index.
         while (*tableIndex != 0xFF)
         {
-            SkyboxModel *vertex = _SkyboxWadModels[*tableIndex];
-            ProcessVertex(&modelsToRender, vertex);
+            SkyboxModel *model = _SkyboxWadModels[*tableIndex];
+            CalculateModelsToRender(&modelsToRender, model);
             tableIndex++;
         }
     }
 
     // Explitly set the end of the list of models to render.
     *modelsToRender = 0;
-
-    HandleInner(cameraB);
+    LoadCameraMatrix(cameraB);
+    CreatePolygons();
 }

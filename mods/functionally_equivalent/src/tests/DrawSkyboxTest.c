@@ -24,17 +24,6 @@ static void Tester(int option, RotationMatrix *cameraA, RotationMatrix *cameraB)
     EnterCriticalSection();
     func originalFunctionRef = (func) GetOriginalFunction();
 
-    if (cooldown < 100)
-    {
-        originalFunctionRef(option, cameraA, cameraB);
-        cooldown++;
-        LeaveCriticalSection();
-        return;
-    }
-    else
-    {
-        cooldown = 0;
-    }
 
 RESTART:
 

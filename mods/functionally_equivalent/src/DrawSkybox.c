@@ -158,7 +158,7 @@ static BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
     // Scale the vector by 32 in or to make 5 bits to hold metadata about which coordinates are outside the camera range.
     BoundedVertex boundedVector = { .vector = *(uint*)vector << 5 };
 
-    if (vector->Y <= 0)
+    if (vector->Y <= 0 || vector->X == 0 && vector->Y == 1)
     {
         boundedVector.flags |= OFFSCREEN_BOTTOM;
     }

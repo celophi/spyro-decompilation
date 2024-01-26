@@ -39,6 +39,7 @@ typedef struct
 } ClipCalculation;
 _Static_assert(sizeof(ClipCalculation) == 8);
 
+/// @brief Vector structure that gets transformed for a perspective.
 typedef struct
 {
     uint Y : 10;
@@ -47,10 +48,11 @@ typedef struct
 } PackedVertex;
 _Static_assert(sizeof(PackedVertex) == 4);
 
+/// @brief Packed vertex count.
 typedef struct
 {
     uint VertexIndexEnd : 13;
-    uint U2 : 1;
+    uint Unused : 1;
     uint VertexIndexStart : 18;
 } PackedCount;
 _Static_assert(sizeof(PackedCount) == 4);
@@ -158,6 +160,7 @@ static BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
     // Scale the vector by 32 in or to make 5 bits to hold metadata about which coordinates are outside the camera range.
     BoundedVertex boundedVector = { .vector = *(uint*)vector << 5 };
 
+    // The case where Y = 1 and X = 0 seems odd, but is technically correct, and satisfies ((int)(vector - 0x10000) < 1).
     if (vector->Y <= 0 || vector->X == 0 && vector->Y == 1)
     {
         boundedVector.flags |= OFFSCREEN_BOTTOM;
@@ -181,10 +184,13 @@ static BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
     return boundedVector;
 }
 
-static byte RunPerspectiveTransformations(SkyboxModel* skybox)
+/// @brief Performs RTPS on vertices contained within a model.
+/// @param model 
+/// @return 
+static byte RunPerspectiveTransformations(SkyboxModel* model)
 {
-    uint vertexCount = skybox->VertexCount;
-    PackedVertex* packs = (PackedVertex*)(skybox + 1);
+    uint vertexCount = model->VertexCount;
+    PackedVertex* packs = (PackedVertex*)(model + 1);
 
     byte endFlags = 0x0F;
     BoundedVertex *storedVectors = &_ScratchpadDrawSkybox;
@@ -196,9 +202,9 @@ static byte RunPerspectiveTransformations(SkyboxModel* skybox)
         PackedVertex* pv = &packs[i];
 
         // Calculate the X, Y, Z component from global values.
-        uint xComp = skybox->GX - pv->X;
-        uint yComp = skybox->GY - pv->Y;
-        uint zComp = skybox->GZ + pv->Z;
+        uint xComp = model->GX - pv->X;
+        uint yComp = model->GY - pv->Y;
+        uint zComp = model->GZ + pv->Z;
 
         gte_ldVZ0(zComp);
         gte_ldVXY0(xComp + yComp * 0x10000);
@@ -361,7 +367,7 @@ static void DrawTriangle(PolyMeta* metadata, uint* ptagMask, P_TAG** polygon, ui
     }
 }
 
-
+/// @brief Draws and creates primitives while performing perspective transformations.
 static void CreatePolygons()
 {
     uint *vertexEnd;
@@ -396,10 +402,10 @@ static void CreatePolygons()
         }
 
         // Get the address of the end of all the vertices.
-        PolyMeta* skyStart = (PolyMeta*)((int)vertexEnd + packedCount->VertexIndexStart);
-        PolyMeta* skyCursor = skyStart;
+        PolyMeta* metadataStart = (PolyMeta*)((int)vertexEnd + packedCount->VertexIndexStart);
+        PolyMeta* metadataCursor = metadataStart;
 
-        while(skyCursor != (PolyMeta*)(((uint*)skyStart) + packedCount->VertexIndexEnd * 2)) 
+        while(metadataCursor != (PolyMeta*)(((uint*)metadataStart) + packedCount->VertexIndexEnd * 2)) 
         {
             // Not sure what this is. Could it be prioritizing HUD primitives and making sure sky ones appear behind them?
             int unkPtag = _DrawSkyboxU4 - 0x400;
@@ -410,8 +416,8 @@ static void CreatePolygons()
                 return;
             }
 
-            DrawTriangle(skyCursor, &ptagMask, &polygon, vertexEnd);
-            skyCursor++;
+            DrawTriangle(metadataCursor, &ptagMask, &polygon, vertexEnd);
+            metadataCursor++;
         }
     }
 }

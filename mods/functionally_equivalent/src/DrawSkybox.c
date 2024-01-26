@@ -444,6 +444,11 @@ static void CalculateModelsToRender(SkyboxModel*** modelsToRender, SkyboxModel* 
 }
 
 /// @brief Draws the sky for cutscenes and levels.
+/// @details Draws the skybox rendering primitives from the WAD based on camera perspectives.
+///     - Address: 0x8004eba8
+///     - Hook: DrawSkybox.s
+///     - Test: DrawSkyboxTest.c
+///     - Test Status: Passing
 /// @param index Used for specifying a selection of sky models to render.
 /// @param cameraA 
 /// @param cameraB 

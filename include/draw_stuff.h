@@ -61,4 +61,13 @@ int GetClampedDifference(int value, int timer);
 */
 void DrawTextbox(int xBound1, int xBound2, int yBound1, int yBound2);
 
-void DrawSkybox(int option,RotationMatrix *cameraA,RotationMatrix *cameraB);
+/// @brief Draws the sky for cutscenes and levels.
+/// @details Draws the skybox rendering primitives from the WAD based on camera perspectives.
+///     - Address: 0x8004eba8
+///     - Hook: DrawSkybox.s
+///     - Test: DrawSkyboxTest.c
+///     - Test Status: Passing
+/// @param index Used for specifying a selection of sky models to render.
+/// @param cameraA 
+/// @param cameraB 
+void DrawSkybox(int index, RotationMatrix *cameraA, RotationMatrix *cameraB);

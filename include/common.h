@@ -562,11 +562,6 @@ extern u_long* _FrameBufferStorage;
 extern byte _cdStatus; //0x80074e44
 
 
-
-extern int _InitializeMemoryCards_u0;
-extern int _InitializeMemoryCards_u1;
-
-
 typedef struct {
     int U0[8];
 } SoundFileU0;

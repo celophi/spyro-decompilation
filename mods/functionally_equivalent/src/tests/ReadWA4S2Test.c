@@ -1,53 +1,37 @@
 #include <tests/framework/TestHarness.h>
+#include <wad.h>
+#include <common.h>
 #include <symbols.h>
-#include <draw_stuff.h>
 
 /// @brief Function signature of the system under test.
-typedef void (*func)(int option, RotationMatrix *cameraA, RotationMatrix *cameraB);
+typedef int* (*func)(WA4S2 *wa4s2, int option);
 
 /// @brief Address of the new function to invoke.
-static func decompiledFunction = (func) &DrawSkybox;
+static func decompiledFunction = (func) &ReadWA4S2;
 
 /// @brief Address of the original function to invoke.
-extern int OG_DrawSkybox;
-static func originalFunction = (func) &OG_DrawSkybox;
+extern int OG_ReadWA4S2;
+static func originalFunction = (func) &OG_ReadWA4S2;
 
 static unsigned int hits = 0;
 static unsigned int total = 0;
 
-static unsigned int cooldown = 0;
-
 /// @brief Test assertion code that runs in place of the original function address.
 /// @note The arguments to this should be exactly the same as the new and old functions.
-static void Tester(int option, RotationMatrix *cameraA, RotationMatrix *cameraB)
+static int* Tester(WA4S2 *wa4s2, int option)
 {
     EnterCriticalSection();
     func originalFunctionRef = (func) GetOriginalFunction();
 
-    if (cooldown < 59)
-    {
-        originalFunctionRef(option, cameraA, cameraB);
-        cooldown++;
-        LeaveCriticalSection();
-        return;
-    }
-    else
-    {
-        cooldown = 0;
-    }
-
-RESTART:
-
     BackupStartingState();
 
     // Invoke both old and new functions.
-    decompiledFunction(option, cameraA, cameraB);
+    decompiledFunction(wa4s2, option);
 
     BackupNewFunctionState();
     LoadStartingState();
 
-    originalFunctionRef(option, cameraA, cameraB);
-
+    int* result = originalFunctionRef(wa4s2, option);
     BackupOldFunctionState();
     
     // Assert equivalency.
@@ -56,20 +40,16 @@ RESTART:
     {
         hits++;
     }
-    else
-    {
-        LoadStartingState();
-        goto RESTART;
-    }
 
     // Record results.
-    printf("DrawSkybox Test Result: %d/%d\n", hits, total);
+    printf("ReadWA4S2 Test Result: %d/%d\n", hits, total);
     
     LeaveCriticalSection();
+    return result;
 }
 
 /// @brief Hook installation entry point.
-void InstallDrawSkyboxTest()
+void InstallReadWA4S2Test()
 {
     InstallHook((void*)&Tester, (void*)originalFunction, 0);
 }

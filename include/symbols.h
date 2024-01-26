@@ -5,6 +5,9 @@
 #include "shapes.h"
 #include <hud.h>
 
+extern int _InitializeMemoryCards_u0;
+extern int _InitializeMemoryCards_u1;
+
 /// @brief This is the pause/inventory menu timer. It is only running in those menus. \n Address: 0x8007588c
 extern int _LoadingTimer;
 
@@ -206,7 +209,7 @@ extern int _DrawSkyboxU4;
 
 /// @brief Starting area in RAM for the PSX scratchpad.
 /// @note Address: 0x1f800000
-extern byte _ScratchpadStart;
+extern uint _ScratchpadStart;
 
 /// @brief Storage area for MIPS registers
 /// @note Address: 0x80077dd8
@@ -220,18 +223,78 @@ extern int _RegisterStorage_SP;
 /// @note Address: 0x80077e04
 extern int _RegisterStorage_RA;
 
-/// @brief Unknown storage area.
-/// @note Address: 0x8006fcf4
-extern int _UnknownStorageU0;
-
-/// @brief WAD archive 4, Section 2 table 2 start
-/// @note Address: 0x80078a44
-extern int _WA4S2_Table2Start;
-
 /// @brief WAD archive 4, Section 2 table 2 count
 /// @note Address: 0x80078a40
 extern int _WA4S2_Table2Count;
 
-/// @brief WAD archive 4, Section 2, Unknown 7
-/// @note Address: 0x80078a4c
-extern int _WA4S2_U7;
+/// @brief WA4S2 Unknown.
+/// @note Address: 0x800785c8
+extern int _ReadWA4S2_Count;
+
+/// @brief WA4S2 Unknown.
+/// @note Address: 0x800785c0
+extern int* _ReadWA4S2_U1_Addr;
+
+/// @brief Unknown.
+/// @note Address: 0x800785c4
+extern int* _ReadWA4S2_EndU;
+
+/// @brief Unknown.
+/// @note Address: 0x800785ac
+extern int _ReadWA4S2_counter;
+
+/// @brief Unknown.
+/// @note Address: 0x800785a8
+extern int* _WA4S2_Table1;
+
+/// @brief Unknown.
+/// @note Address: 0x800785b4
+extern int _ReadWA3S2_u5;
+
+/// @brief Unknown.
+/// @note Address: 0x800785b0
+extern int _ReadWA3S2_u6;
+
+/// @brief Unknown.
+/// @note Address: 0x8007778c
+extern int _ReadWA3S2_u7;
+
+/// @brief Unknown.
+/// @note Address: 0x80077788
+extern int _ReadWA3S2_u8;
+
+/// @brief Unknown.
+/// @note Address: 0x800785bc
+extern int _ReadWA3S2_u9;
+
+/// @brief Unknown.
+/// @note Address: 0x800785b8
+extern int _ReadWA3S2_u10;
+
+/// @brief Unknown.
+/// @note Address: 0x800785d4
+extern int* _ReadWA3S2_u11;
+
+/// @brief Color used for the drawing environment by default. This appears to be a tan colored yellow often.
+/// @note Address: 0x80077790
+extern RGBu8 _WadDrawEnvRgb;
+
+/// @brief Unknown.
+/// @note Address: 0x80077784
+extern int* _WA4S2_Table2;
+
+/// @brief Unknown.
+/// @note Address: 0x800758bc
+extern int _ReadWA3S2_u14;
+
+/// @brief Unknown.
+/// @note Address: 0x80078640
+extern int _ReadWA3S2_u15;
+
+/// @brief Unknown.
+/// @note Address: 0x80076278
+extern int _ReadWA3S2_u16;
+
+/// @brief Unknown.
+/// @note Address: 0x80076234
+extern int _ReadWA3S2_u17;

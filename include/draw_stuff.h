@@ -4,73 +4,6 @@
 #include <custom_types.h>
 #include <shapes.h>
 
-#define storeRegisters(r0)                         \
-    __asm__ volatile(                              \
-        "sw $s0, 0(%0);"                           \
-        "sw $s1, 4(%0);"                           \
-        "sw $s2, 8(%0);"                           \
-        "sw $s3, 12(%0);"                          \
-        "sw $s4, 16(%0);"                          \
-        "sw $s5, 20(%0);"                          \
-        "sw $s6, 24(%0);"                          \
-        "sw $s7, 28(%0);"                          \
-        "sw $gp, 32(%0);"                          \
-        "sw $sp, 36(%0);"                          \
-        "sw $fp, 40(%0);"                          \
-        "sw $ra, 44(%0);"                          \
-        :                                          \
-        : "r"(r0)                                  \
-        :                                          \
-    )
-
-
-#define doScratchCalc(bad, scratch) \
-    __asm__ volatile(   \
-        ".set push;" \
-        ".set noreorder;" \
-        "sll         %1, %0, 5;" \
-        "lui         $t5, 0x0001;" \
-        "sub         $a1, %0, $t5;" \
-        "lui         $t6, 0x0100;" \
-        "bgtz        $a1, LAB_8004ee1c;" \
-        "sub         $a1, %0, $t6;" \
-        "addi        %1, %1, 0x1;" \
-        "LAB_8004ee1c:;" \
-        "bltz        $a1, LAB_8004ee28;" \
-        "sll         $a1, %0, 16;" \
-        "addi        %1, %1, 0x2;" \
-        "LAB_8004ee28:;" \
-        "lui         $t7, 0x0200;" \
-        "bgtz        $a1, LAB_8004ee34;" \
-        "sub         $a1, $a1, $t7;" \
-        "addi        %1, %1, 0x4;" \
-        "LAB_8004ee34:;" \
-        "bltz        $a1, LAB_8004ee40;" \
-        "nop;" \
-        "addi        %1, %1, 0x8;" \
-        "LAB_8004ee40:;" \
-        "nop;" \
-        ".set pop;" \
-        : "+r" (bad), "+r" (scratch) \
-        : \
-        : "$a1", "$t5", "$t6", "$t7" \
-)
-
-
-
-typedef struct
-{
-    int U1;
-    int U2;
-    int U3;
-    int U4;
-    int U5;
-    int U6;
-    uint U7;
-    int U8;
-} SkyboxU0;
-_Static_assert(sizeof(SkyboxU0) == 32);
-
 /**
  * @brief Adds a primitive to a linked list.
  * @details Seems to be a staging area that gets turned into an ordering table later.
@@ -107,4 +40,13 @@ int GetClampedDifference(int value, int timer);
 */
 void DrawTextbox(int xBound1, int xBound2, int yBound1, int yBound2);
 
-void DrawSkybox(int option,RotationMatrix *cameraA,RotationMatrix *cameraB);
+/// @brief Draws the sky for cutscenes and levels.
+/// @details Draws the skybox rendering primitives from the WAD based on camera perspectives.
+///     - Address: 0x8004eba8
+///     - Hook: DrawSkybox.s
+///     - Test: DrawSkyboxTest.c
+///     - Test Status: Passing
+/// @param index Used for specifying a selection of sky models to render.
+/// @param cameraA 
+/// @param cameraB 
+void DrawSkybox(int index, RotationMatrix *cameraA, RotationMatrix *cameraB);

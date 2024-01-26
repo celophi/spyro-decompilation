@@ -10,6 +10,7 @@ typedef struct {
     byte b0;
     byte code;
 } P_TAG;
+_Static_assert(sizeof(P_TAG) == 8);
 
 typedef struct {
     u_long tag;
@@ -74,6 +75,38 @@ typedef struct {
     u_char v3;
     u_short	pad2;
 } POLY_FT4;
+
+typedef struct
+{
+    P_TAG tag;
+    short x0;
+    short y0;
+    u_char r1;
+    u_char g1;
+    u_char b1;
+    u_char pad1;
+    short x1;
+    short y1;
+    u_char r2;
+    u_char g2;
+    u_char b2;
+    u_char pad2;
+    short x2;
+    short y2;
+} POLY_G3;
+_Static_assert(sizeof(POLY_G3) == 28);
+
+typedef struct
+{
+    P_TAG tag;
+    short x0;
+    short y0;
+    short x1;
+    short y1;
+    short x2;
+    short y2;
+} POLY_F3;
+_Static_assert(sizeof(POLY_F3) == 20);
 
 typedef struct {
 	u_long	tag;

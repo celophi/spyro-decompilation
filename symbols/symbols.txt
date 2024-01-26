@@ -1,4 +1,5 @@
 _ScratchpadStart = 0x1f800000;
+_ScratchpadDrawSkybox = 0x1f800000;
 _DataSectionStart = 0x8006bbe0;
 _CdReading = 0x800756e0;
 _PrimitiveLinkedList = 0x8007581c;
@@ -75,10 +76,29 @@ _RegisterStorage = 0x80077dd8;
 _RegisterStorage_SP = 0x80077dfc;
 _RegisterStorage_RA = 0x80077e04;
 
-_UnknownStorageU0 = 0x8006fcf4;
-_WA4S2_Table2Start = 0x80078a44;
+_SkyboxModelsToRender = 0x8006fcf4;
+_SkyboxWadModels = 0x80078a44;
 _WA4S2_Table2Count = 0x80078a40;
-_WA4S2_U7 = 0x80078a4c;
+_SkyboxWadModelCount = 0x80078a40;
+_SkyboxWadModelPointers = 0x80078a4c;
+_ReadWA4S2_Count = 0x800785c8;
+_ReadWA4S2_U1_Addr = 0x800785c0;
+_ReadWA4S2_EndU = 0x800785c4;
+_ReadWA4S2_counter = 0x800785ac;
+_WA4S2_Table1 = 0x800785a8;
+_ReadWA3S2_u5 = 0x800785b4;
+_ReadWA3S2_u6 = 0x800785b0;
+_ReadWA3S2_u7 = 0x8007778c;
+_ReadWA3S2_u8 = 0x80077788;
+_ReadWA3S2_u9 = 0x800785bc;
+_ReadWA3S2_u10 = 0x800785b8;
+_ReadWA3S2_u11 = 0x800785d4;
+_WadDrawEnvRgb = 0x80077790;
+_WA4S2_Table2 = 0x80077784;
+_ReadWA3S2_u14 = 0x800758bc;
+_ReadWA3S2_u15 = 0x80078640;
+_ReadWA3S2_u16 = 0x80076278;
+_ReadWA3S2_u17 = 0x80076234;
 
 
 

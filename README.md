@@ -1,6 +1,5 @@
 ## Note
-This is a fork of [spyro1-reverse-engineering](https://github.com/C0mposer/spyro1-reverse-engineering) with changes that deviate from the initial effort. 
-It's my intention to try to get this research merged back in to the original project if it becomes active again.
+This is a fork of [spyro1-reverse-engineering](https://github.com/C0mposer/spyro1-reverse-engineering) which is just my very much work in progress of the original project.
 
 ## Symbol Map
 [Click here to see the in-game variables & functions we have labeled](https://c0mposer.github.io/spyro1-reverse-engineering/html/symbol_map.html)

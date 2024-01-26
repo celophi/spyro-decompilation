@@ -455,7 +455,31 @@ static void CalculateModelsToRender(SkyboxModel*** modelsToRender, SkyboxModel* 
 void DrawSkybox(int index, RotationMatrix *cameraA, RotationMatrix *cameraB)
 {   
     // Store registers. (This doesn't seem to have an effect on the game working, but it's needed for testing.)
-    storeRegisters(&_RegisterStorage);
+    register int s0 asm("$16");
+    register int s1 asm("$17");
+    register int s2 asm("$18");
+    register int s3 asm("$19");
+    register int s4 asm("$20");
+    register int s5 asm("$21");
+    register int s6 asm("$22");
+    register int s7 asm("$23");
+    register int gp asm("$28");
+    register int sp asm("$29");
+    register int fp asm("$30");
+    register int ra asm("$31");
+
+    _RegisterStorage.S0 = s0;
+    _RegisterStorage.S1 = s1;
+    _RegisterStorage.S2 = s2;
+    _RegisterStorage.S3 = s3;
+    _RegisterStorage.S4 = s4;
+    _RegisterStorage.S5 = s5;
+    _RegisterStorage.S6 = s6;
+    _RegisterStorage.S7 = s7;
+    _RegisterStorage.SP = sp;
+    _RegisterStorage.FP = fp;
+    _RegisterStorage.RA = ra;
+    _RegisterStorage.GP = gp;
 
     // Load the camera and clear the translation vector to do clip calculations.
     LoadCameraMatrix(cameraA);

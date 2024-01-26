@@ -4,27 +4,6 @@
 #include <custom_types.h>
 #include <shapes.h>
 
-#define storeRegisters(r0)                         \
-    __asm__ volatile(                              \
-        "sw $s0, 0(%0);"                           \
-        "sw $s1, 4(%0);"                           \
-        "sw $s2, 8(%0);"                           \
-        "sw $s3, 12(%0);"                          \
-        "sw $s4, 16(%0);"                          \
-        "sw $s5, 20(%0);"                          \
-        "sw $s6, 24(%0);"                          \
-        "sw $s7, 28(%0);"                          \
-        "sw $gp, 32(%0);"                          \
-        "sw $sp, 36(%0);"                          \
-        "sw $fp, 40(%0);"                          \
-        "sw $ra, 44(%0);"                          \
-        :                                          \
-        : "r"(r0)                                  \
-        :                                          \
-    )
-
-
-
 /**
  * @brief Adds a primitive to a linked list.
  * @details Seems to be a staging area that gets turned into an ordering table later.

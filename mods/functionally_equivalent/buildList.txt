@@ -42,13 +42,13 @@ NTSC, header, 0x80200000, 0x0, src/*.c src/tests/framework/*.c src/tests/*.c, mo
 //NTSC, exe, OG_DrawHudMobys, 0x0, asm/DrawHudMobys.s
 //NTSC, exe, OG_ExitPauseMenu, 0x0, asm/ExitPauseMenu.s
 //NTSC, exe, OG_GetStringLength, 0x0, asm/GetStringLength.s
+//NTSC, exe, OG_DrawSkybox, 0x0, asm/DrawSkybox.s
 //
 //
 //
 //// work in progress
 //NTSC, exe, 0x8001256c, 0x0, asm/PrepareSoundFiles.s
 //NTSC, exe, 0x800567f4, 0x0, asm/PlayMusicTrack.s
-//NTSC, exe, OG_DrawSkybox, 0x0, asm/DrawSkybox.s
 //NTSC, exe, OG_ReadWA4S2, 0x0, asm/ReadWA4S2.s
 
 // Uncomment the following in order to run test code.
@@ -70,5 +70,6 @@ NTSC, header, 0x80200000, 0x0, src/*.c src/tests/framework/*.c src/tests/*.c, mo
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawTextArrowTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/GetStringLengthTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawDragonRescuedTextTest.s
-NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawSkyboxTest.s
+//NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawSkyboxTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/ReadWA4S2Test.s
+NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawFadeEffectTest.s

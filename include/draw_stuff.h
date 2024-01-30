@@ -50,3 +50,15 @@ void DrawTextbox(int xBound1, int xBound2, int yBound1, int yBound2);
 /// @param cameraA 
 /// @param cameraB 
 void DrawSkybox(int index, RotationMatrix *cameraA, RotationMatrix *cameraB);
+
+/// @brief Draws a primitive with opacity to simulate a fade in / fade out effect.
+/// @details Adds POLY_F4 with transparency and DRAW_MODE primitives to the screen.
+///     - Address: 0x800190d4
+///     - Hook: DrawFadeEffect.s
+///     - Test: DrawFadeEffectTest.c
+///     - Test Status: Passing
+/// @param tpage
+/// @param red 
+/// @param green
+/// @param blue
+void DrawFadeEffect(int tpage, byte red, byte green, byte blue);

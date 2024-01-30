@@ -459,6 +459,20 @@ extern short _cameraRotationMatrix[3][3];
 extern short _cameraPureRotationMatrix[3][3];
 
 /**
+ * @note Address: 0x80076de4
+*/
+extern RotationMatrix _CameraA;
+
+/**
+ * @note Address: 0x80076dd0
+*/
+extern RotationMatrix _CameraB;
+
+extern int _DrawFadeInSkybox_U0;
+extern uint _DrawFadeInSkybox_U1;
+extern int _DrawFadeInSkybox_U2;
+
+/**
  * @brief A scaled up sin lookup table \n Address: 0x8006cbf8
  * @see SinScaled()
  */ 

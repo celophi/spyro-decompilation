@@ -62,3 +62,7 @@ void DrawSkybox(int index, RotationMatrix *cameraA, RotationMatrix *cameraB);
 /// @param green
 /// @param blue
 void DrawFadeEffect(int tpage, byte red, byte green, byte blue);
+
+
+
+void DrawFadeInSkybox(void);

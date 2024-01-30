@@ -132,6 +132,37 @@ extern SkyboxModel* _SkyboxModelsToRender;
 /// @note Address: 0x1f800000
 extern byte _ScratchpadDrawSkybox;
 
+/// @brief Converts a vector to a bounded vector with metadata about the offscreen visibility.
+/// @param vector 2D vector that is scaled up by 32x in order to hold metadata about the offscreen coordinate positions.
+/// @return Vector with out of bounds information.
+static BoundedVertex ConvertToBoundedVector(Vec2s16* vector)
+{
+    // Scale the vector by 32 in or to make 5 bits to hold metadata about which coordinates are outside the camera range.
+    BoundedVertex boundedVector = { .vector = *(uint*)vector << 5 };
+
+    // The case where Y = 1 and X = 0 seems odd, but is technically correct, and satisfies ((int)(vector - 0x10000) < 1).
+    if (vector->Y <= 0 || vector->X == 0 && vector->Y == 1)
+    {
+        boundedVector.flags |= OFFSCREEN_BOTTOM;
+    }
+
+    if (vector->Y >= 256)
+    {
+        boundedVector.flags |= OFFSCREEN_TOP;
+    }
+
+    if (vector->X <= 0)
+    {
+        boundedVector.flags |= OFFSCREEN_LEFT;
+    }
+
+    if (vector->X >= 512)
+    {
+        boundedVector.flags |= OFFSCREEN_RIGHT;
+    }
+
+    return boundedVector;
+}
 
 /// @brief TESTS PASSING 32/32 frames
 /// @param  
@@ -142,7 +173,6 @@ void DrawFadeInSkybox(void)
     uint uVar2;
     int depth;
     uint uVar3;
-    uint iVar4;
     P_TAG *pPVar4;
     uint uVar5;
     int *piVar6;
@@ -306,30 +336,17 @@ DrawFadeInSkybox_A:
                 uVar7 = uVar2 & 0x3ff;
                 uVar2 = *puVar11;
                 gte_ldVZ0(uVar3 + iVar12);
-                gte_stSXY2(iVar4);
+
+                uint vector;
+                gte_stSXY2(vector);
                 gte_ldVXY0((iVar13 - (uVar5 & 0x7ff)) + (iVar16 - uVar7) * 0x10000);
-                uVar3 = iVar4 * 0x20;
 
-                if ((int)(iVar4 - 0x10000) < 1) 
-                {
-                    uVar3 = uVar3 + 1;
-                }
-                if (-1 < (int)(iVar4 - 0x1000000)) 
-                {
-                    uVar3 = uVar3 + 2;
-                }
-                if ((int)(iVar4 * 0x10000) < 1) 
-                {
-                    uVar3 = uVar3 + 4;
-                }
+                // Convert this vector to a structure that has out of bounds information.
+                BoundedVertex bv = ConvertToBoundedVector((Vec2s16*)&vector);
+
                 puVar11 = puVar11 + 1;
-                if (-1 < (int)(iVar4 * 0x10000 + -0x2000000)) 
-                {
-                    uVar3 = uVar3 + 8;
-                }
-
-                uVar10 = uVar10 & uVar3;
-                *(uint *)pbVar17 = uVar3;
+                uVar10 = uVar10 & bv.vector;
+                *(uint *)pbVar17 = bv.vector;
                 pbVar17 = (byte *)((int)pbVar17 + 4);
 
             } while (puVar11 != puVar14 + 2);

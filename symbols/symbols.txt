@@ -133,14 +133,17 @@ _sinArray = 0x8006cbf8;
 _cameraPosition = 0x80076DF8;
 _cameraAngle = 0x80076E1C;
 
+_CameraA = 0x80076de4;
+_CameraB = 0x80076dd0;
 _cameraRotationMatrix = 0x80076dd0;
 _cameraPureRotationMatrix = 0x80076de4;
 
 _shouldCameraFollowSpyro = 0x80033b4c;
 _LockCameraToSpyroPTR = 0x80035fb4;
 
-
-
+_DrawFadeInSkybox_U0 = 0x800724f4;
+_DrawFadeInSkybox_U1 = 0x800757d4;
+_DrawFadeInSkybox_U2 = 0x8007575c;
 
 
 _effect_ScreenFadeIn = 0x80075918;

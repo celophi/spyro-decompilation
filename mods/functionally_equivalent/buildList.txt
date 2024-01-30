@@ -72,4 +72,5 @@ NTSC, header, 0x80200000, 0x0, src/*.c src/tests/framework/*.c src/tests/*.c, mo
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawDragonRescuedTextTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawSkyboxTest.s
 //NTSC, exe, OG_Initialize, 0x0, asm/tests/ReadWA4S2Test.s
-NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawFadeEffectTest.s
+//NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawFadeEffectTest.s
+NTSC, exe, OG_Initialize, 0x0, asm/tests/DrawFadeInSkyboxTest.s
